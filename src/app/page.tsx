@@ -436,27 +436,12 @@ export default function HomePage() {
   return (
     <div className="min-h-screen bg-white">
       {/* Header minimalista */}
-      <header className="fixed top-0 left-0 right-0 z-50 bg-white border-b">
-        <div className="max-w-7xl mx-auto px-4 py-3">
-          <div className="flex items-center justify-between">
-            <div className="text-sm text-gray-600">
-              {currentStepIndex + 1} de {steps.length}
-            </div>
-            <div className="w-32 bg-gray-200 rounded-full h-1">
-              <div 
-                className="bg-gray-900 h-1 rounded-full transition-all duration-300"
-                style={{ width: `${((currentStepIndex + 1) / steps.length) * 100}%` }}
-              />
-            </div>
-          </div>
-        </div>
-      </header>
 
       {/* Main content - 2 columnas */}
       <main className="h-screen flex">
         {/* Video column - Izquierda */}
-        <div className="w-1/2 bg-yellow-100 border-4 border-yellow-500 flex items-center justify-center">
-          <div className="relative w-full h-full bg-gray-100 overflow-hidden border-2 border-purple-500">
+        <div className="w-1/2 flex items-center justify-center">
+          <div className="relative w-full h-full bg-gray-100 overflow-hidden">
                 <video
                   ref={videoRef}
                   key={currentStepIndex}
@@ -496,13 +481,13 @@ export default function HomePage() {
 
         {/* Content column - Derecha */}
         <div className="w-1/2 bg-white flex flex-col">
-          {/* Header con paso actual, menú y continuar */}
+          {/* Header con menú y navegación */}
           <div className="sticky top-0 bg-white border-b border-gray-200 p-4 z-10">
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-3">
                 <button
                   onClick={() => setIsMenuOpen(!isMenuOpen)}
-                  className="p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors"
+                  className="p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-full transition-colors"
                 >
                   <Menu className="w-5 h-5" />
                 </button>
@@ -515,23 +500,21 @@ export default function HomePage() {
                 <button
                   onClick={handlePrevious}
                   disabled={currentStepIndex === 0}
-                  className="flex items-center space-x-1 px-3 py-1.5 text-sm text-gray-600 hover:text-gray-900 border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                  className="p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-full disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                 >
                   <ArrowLeft className="w-4 h-4" />
-                  <span>Anterior</span>
                 </button>
                 <button
                   onClick={handleDummyData}
-                  className="px-3 py-1.5 text-sm text-gray-600 hover:text-gray-900 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+                  className="p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-full transition-colors"
                 >
-                  Ver ejemplo
+                  <RefreshCw className="w-4 h-4" />
                 </button>
                 <button
                   onClick={handleNext}
                   disabled={currentStepIndex === steps.length - 1}
-                  className="flex items-center space-x-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                  className="p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-full disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                 >
-                  <span>Continuar</span>
                   <ArrowRight className="w-4 h-4" />
                 </button>
               </div>
@@ -563,9 +546,12 @@ export default function HomePage() {
             )}
           </div>
           
-          {/* Contenido centrado */}
-          <div className="flex-1 flex items-center justify-center p-8">
+          {/* Contenido con margen de 64pt */}
+          <div className="flex-1 flex items-center justify-center p-16">
             <div className="w-full max-w-md">
+              {/* Línea separadora */}
+              <div className="w-full h-px bg-gray-300 mb-8" style={{opacity: 0.08}}></div>
+              
               <div className="space-y-6">
                 {renderStep()}
               </div>
