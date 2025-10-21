@@ -652,15 +652,19 @@ export default function HomePage() {
 
   const getSectionTitle = (stepId: string) => {
     const sectionMap: { [key: string]: string } = {
+      'strategy-0': '1 STRATEGY / 1.0 Strategy',
       'strategy-1': '1 STRATEGY / 1.1 Context',
       'strategy-2': '1 STRATEGY / 1.2 Market',
       'strategy-3': '1 STRATEGY / 1.3 Plan',
+      'brand-0': '2 BRANDS / 2.0 Brand',
       'brand-1': '2 BRANDS / 2.1 Values',
       'brand-2': '2 BRANDS / 2.2 Verbal',
       'brand-3': '2 BRANDS / 2.3 Visual',
+      'product-0': '3 PRODUCT / 3.0 Product',
       'product-1': '3 PRODUCT / 3.1 Features',
       'product-2': '3 PRODUCT / 3.2 Iteration',
       'product-3': '3 PRODUCT / 3.3 Shipping',
+      'messages-0': '4 MESSAGES / 4.0 Messages',
       'messages-1': '4 MESSAGES / 4.1 Social',
       'messages-2': '4 MESSAGES / 4.2 Ads',
       'messages-3': '4 MESSAGES / 4.3 Merch',
