@@ -205,6 +205,28 @@ export default function HomePage() {
     return current;
   };
 
+  const getSectionTitle = (stepId: string) => {
+    const sectionMap: { [key: string]: string } = {
+      'welcome-1': 'WELCOME / 1.1 Name',
+      'welcome-2': 'WELCOME / 1.2 Company',
+      'strategy-1': '1 STRATEGY / 1.1 Context',
+      'strategy-2': '1 STRATEGY / 1.2 Market',
+      'strategy-3': '1 STRATEGY / 1.3 Plan',
+      'brand-1': '2 BRAND / 2.1 Values',
+      'brand-2': '2 BRAND / 2.2 Verbal',
+      'brand-3': '2 BRAND / 2.3 Visual',
+      'product-1': '3 PRODUCT / 3.1 Features',
+      'product-2': '3 PRODUCT / 3.2 Iteration',
+      'product-3': '3 PRODUCT / 3.3 Shipping',
+      'messages-1': '4 MESSAGES / 4.1 Social',
+      'messages-2': '4 MESSAGES / 4.2 Ads',
+      'messages-3': '4 MESSAGES / 4.3 Merch',
+      'launch-1': '5 LAUNCH / 5.1 Validation',
+      'launch-2': '5 LAUNCH / 5.2 Brandbook'
+    };
+    return sectionMap[stepId] || '';
+  };
+
   const getStepContent = (stepId: string) => {
     const contentMap: { [key: string]: string } = {
       'welcome-1': 'Las ideas están por todas partes. Las hay buenas, malas, raras, olvidadas… e icónicas. Pero, ¿cómo lo consiguen? ¿Qué les hizo llegar hasta ahí?',
@@ -627,6 +649,7 @@ export default function HomePage() {
           alignItems: 'center',
           justifyContent: 'space-between'
         }}>
+          {/* Left: Menu + Previous */}
           <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
             <button
               onClick={() => setIsMenuOpen(!isMenuOpen)}
@@ -647,12 +670,6 @@ export default function HomePage() {
             >
               <Menu style={{ width: '16px', height: '16px' }} />
             </button>
-            <div style={{ fontSize: '14px', color: '#666666' }}>
-              {currentStepIndex + 1} de {steps.length}
-            </div>
-          </div>
-
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
             <button
               onClick={handlePrevious}
               disabled={currentStepIndex === 0}
@@ -678,25 +695,20 @@ export default function HomePage() {
             >
               <ArrowLeft style={{ width: '16px', height: '16px' }} />
             </button>
-            <button
-              onClick={handleDummyData}
-              style={{ 
-                width: '32px', 
-                height: '32px', 
-                display: 'flex', 
-                alignItems: 'center', 
-                justifyContent: 'center', 
-                backgroundColor: 'transparent', 
-                border: 'none', 
-                cursor: 'pointer',
-                color: '#666666',
-                transition: 'color 0.2s ease'
-              }}
-              onMouseEnter={(e) => e.target.style.color = '#ffffff'}
-              onMouseLeave={(e) => e.target.style.color = '#666666'}
-            >
-              <RefreshCw style={{ width: '16px', height: '16px' }} />
-            </button>
+          </div>
+          
+          {/* Center: Section Title */}
+          <div style={{ 
+            fontSize: '16px', 
+            color: '#ffffff', 
+            fontWeight: '500',
+            textAlign: 'center'
+          }}>
+            {getSectionTitle(steps[currentStepIndex].id)}
+          </div>
+          
+          {/* Right: Next + Refresh */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
             <button
               onClick={handleNext}
               disabled={currentStepIndex === steps.length - 1}
@@ -721,6 +733,25 @@ export default function HomePage() {
               }}
             >
               <ArrowRight style={{ width: '16px', height: '16px' }} />
+            </button>
+            <button
+              onClick={handleDummyData}
+              style={{ 
+                width: '32px', 
+                height: '32px', 
+                display: 'flex', 
+                alignItems: 'center', 
+                justifyContent: 'center', 
+                backgroundColor: 'transparent', 
+                border: 'none', 
+                cursor: 'pointer',
+                color: '#666666',
+                transition: 'color 0.2s ease'
+              }}
+              onMouseEnter={(e) => e.target.style.color = '#ffffff'}
+              onMouseLeave={(e) => e.target.style.color = '#666666'}
+            >
+              <RefreshCw style={{ width: '16px', height: '16px' }} />
             </button>
           </div>
         </div>
