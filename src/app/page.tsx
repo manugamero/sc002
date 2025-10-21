@@ -1,7 +1,8 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
-import { ArrowRight, ArrowLeft, Plus, Trash2, RefreshCw, Wand2, Menu, SkipForward, Mic, MicOff } from 'lucide-react';
+import { ArrowRight, ArrowLeft, Plus, Trash2, RefreshCw, Wand2, Menu, SkipForward, Mic, MicOff, Zap, Rocket, Lightbulb, Target, Star, Flame, Gem, Sparkles } from 'lucide-react';
+import IntroductionVideoSequence from '@/components/IntroductionVideoSequence';
 
 interface ProjectData {
   name: string;
@@ -91,6 +92,7 @@ export default function HomePage() {
   const [selectedMode, setSelectedMode] = useState<'startup' | 'scaleup' | 'corporate'>('startup');
   const [selectedVersion, setSelectedVersion] = useState<number>(1);
   const [isAnimating, setIsAnimating] = useState(false);
+  const [showIntroduction, setShowIntroduction] = useState(true);
   const [showElements, setShowElements] = useState({
     video: false,
     title: false,
@@ -98,6 +100,133 @@ export default function HomePage() {
     form: false,
     selectors: false
   });
+
+  // Función para generar contenido aleatorio
+  const generateRandomContent = (fieldType: string) => {
+    const randomData = {
+      companyNames: ['TechCorp', 'InnovateLab', 'FutureSoft', 'DigitalFlow', 'CloudSync', 'DataVault', 'SmartTech', 'NextGen'],
+      companySizes: ['1-10', '11-50', '51-200', '201-500', '500+'],
+      industries: ['Tecnología', 'Salud', 'Educación', 'Finanzas', 'Retail', 'Manufactura', 'Consultoría', 'Marketing'],
+      founderNames: ['María García', 'Carlos Rodríguez', 'Ana López', 'David Martínez', 'Laura Sánchez', 'Javier Pérez', 'Carmen Ruiz', 'Antonio González'],
+      descriptions: [
+        'Una empresa innovadora enfocada en soluciones tecnológicas para el futuro.',
+        'Startup disruptiva que transforma la industria con tecnología de vanguardia.',
+        'Compañía líder en digitalización y automatización de procesos empresariales.',
+        'Empresa emergente especializada en inteligencia artificial y machine learning.',
+        'Innovadora en el sector de la sostenibilidad y tecnología verde.'
+      ]
+    };
+
+    switch (fieldType) {
+      case 'name':
+        return randomData.companyNames[Math.floor(Math.random() * randomData.companyNames.length)];
+      case 'size':
+        return randomData.companySizes[Math.floor(Math.random() * randomData.companySizes.length)];
+      case 'industry':
+        return randomData.industries[Math.floor(Math.random() * randomData.industries.length)];
+      case 'founder':
+        return randomData.founderNames[Math.floor(Math.random() * randomData.founderNames.length)];
+      case 'description':
+        return randomData.descriptions[Math.floor(Math.random() * randomData.descriptions.length)];
+      default:
+        return '';
+    }
+  };
+
+  // Función para obtener componentes de iconos
+  const getIconComponent = (iconName: string) => {
+    const iconMap = {
+      'zap': <Zap size={32} />,
+      'rocket': <Rocket size={32} />,
+      'lightbulb': <Lightbulb size={32} />,
+      'target': <Target size={32} />,
+      'star': <Star size={32} />,
+      'flame': <Flame size={32} />,
+      'gem': <Gem size={32} />,
+      'sparkles': <Sparkles size={32} />
+    };
+    return iconMap[iconName] || <Star size={32} />;
+  };
+
+  // Función para procesar texto de voz y extraer información inteligentemente
+  const processVoiceText = (text: string, fieldType: string) => {
+    const lowerText = text.toLowerCase();
+    
+    // Patrones para extraer información específica
+    const patterns = {
+      name: [
+        /(?:nombre|empresa|compañía|se llama|es)\s+(?:de\s+)?(?:la\s+)?(?:empresa\s+)?([a-zA-Z\s]+?)(?:\s|$|\.|,)/i,
+        /(?:la\s+)?(?:empresa\s+)?([a-zA-Z\s]{2,20})\s+(?:es\s+una|es\s+un|se\s+dedica)/i
+      ],
+      size: [
+        /(?:tamaño|tienen|somos|empleados|trabajadores).*?(?:entre\s+)?(\d+)\s*(?:y\s+(\d+)|a\s+(\d+)|menos|más)/i,
+        /(?:empresa\s+)?(?:pequeña|mediana|grande)/i
+      ],
+      industry: [
+        /(?:sector|industria|dedicamos|nos\s+dedicamos|somos\s+una\s+empresa\s+de)\s+(?:la\s+)?([a-zA-Z\s]+?)(?:\s|$|\.|,)/i,
+        /(?:tecnología|salud|educación|finanzas|retail|manufactura|consultoría|marketing)/i
+      ],
+      founder: [
+        /(?:fundador|fundadora|creador|creadora|director|directora)\s+(?:es\s+)?([a-zA-Z\s]+?)(?:\s|$|\.|,)/i,
+        /(?:me\s+llamo|soy)\s+([a-zA-Z\s]+?)(?:\s|$|\.|,)/i
+      ],
+      description: [
+        /(?:descripción|somos|empresa|compañía).*?(.+)/i
+      ]
+    };
+
+    // Buscar coincidencias
+    for (const pattern of patterns[fieldType] || []) {
+      const match = lowerText.match(pattern);
+      if (match) {
+        if (fieldType === 'size') {
+          // Lógica especial para tamaño
+          if (match[1] && match[2]) {
+            const min = parseInt(match[1]);
+            const max = parseInt(match[2] || match[3]);
+            if (max <= 10) return '1-10';
+            if (max <= 50) return '11-50';
+            if (max <= 200) return '51-200';
+            if (max <= 500) return '201-500';
+            return '500+';
+          }
+          if (lowerText.includes('pequeña')) return '1-10';
+          if (lowerText.includes('mediana')) return '51-200';
+          if (lowerText.includes('grande')) return '500+';
+        }
+        
+        if (fieldType === 'industry') {
+          // Mapear texto a industrias válidas
+          const industryMap = {
+            'tecnología': 'Tecnología',
+            'tech': 'Tecnología',
+            'software': 'Tecnología',
+            'salud': 'Salud',
+            'médico': 'Salud',
+            'educación': 'Educación',
+            'educativo': 'Educación',
+            'finanzas': 'Finanzas',
+            'bancario': 'Finanzas',
+            'retail': 'Retail',
+            'comercio': 'Retail',
+            'manufactura': 'Manufactura',
+            'consultoría': 'Consultoría',
+            'marketing': 'Marketing'
+          };
+          
+          const foundIndustry = Object.keys(industryMap).find(key => 
+            lowerText.includes(key)
+          );
+          return foundIndustry ? industryMap[foundIndustry] : match[1]?.trim();
+        }
+        
+        return match[1]?.trim() || match[0]?.trim();
+      }
+    }
+    
+    // Si no encuentra patrones específicos, devolver el texto completo
+    return text.trim();
+  };
   const [typewriterText, setTypewriterText] = useState('');
   const [isListening, setIsListening] = useState(false);
   const [activeVoiceField, setActiveVoiceField] = useState<string | null>(null);
@@ -168,7 +297,7 @@ export default function HomePage() {
                   } else {
                     clearInterval(wordInterval);
                   }
-                }, 200); // Más rápido: 200ms por palabra
+                }, 80); // Más rápido y suave: 80ms por palabra
               }
             }, 1000);
     
@@ -246,6 +375,14 @@ export default function HomePage() {
       
       return newData;
     });
+  };
+
+  const handleIntroductionComplete = () => {
+    setShowIntroduction(false);
+  };
+
+  const handleIntroductionSkip = () => {
+    setShowIntroduction(false);
   };
 
   const handleAIGenerate = async (field: string, currentValue: string) => {
@@ -693,40 +830,65 @@ export default function HomePage() {
                   }}
                   autoFocus
                 />
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    startVoiceRecognition(`${step.field}.name`);
-                  }}
-                  style={{
-                    width: '32px',
-                    height: '32px',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    backgroundColor: 'transparent',
-                    border: 'none',
-                    cursor: 'pointer',
-                    color: isListening && activeVoiceField === `${step.field}.name` ? '#ffffff' : '#666666',
-                    transition: 'color 0.2s ease'
-                  }}
-                  onMouseEnter={(e) => {
-                    if (!isListening || activeVoiceField !== `${step.field}.name`) {
-                      e.target.style.color = '#ffffff';
-                    }
-                  }}
-                  onMouseLeave={(e) => {
-                    if (!isListening || activeVoiceField !== `${step.field}.name`) {
-                      e.target.style.color = '#666666';
-                    }
-                  }}
-                >
-                  {isListening && activeVoiceField === `${step.field}.name` ? (
-                    <MicOff style={{ width: '16px', height: '16px' }} />
-                  ) : (
-                    <Mic style={{ width: '16px', height: '16px' }} />
-                  )}
-                </button>
+                <div style={{ display: 'flex', gap: '8px' }}>
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      const randomName = generateRandomContent('name');
+                      updateField(step.field, { ...value, name: randomName });
+                    }}
+                    style={{
+                      width: '32px',
+                      height: '32px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      backgroundColor: 'transparent',
+                      border: 'none',
+                      cursor: 'pointer',
+                      color: '#666666',
+                      transition: 'color 0.2s ease'
+                    }}
+                    onMouseEnter={(e) => e.target.style.color = '#ffffff'}
+                    onMouseLeave={(e) => e.target.style.color = '#666666'}
+                  >
+                    <Wand2 style={{ width: '16px', height: '16px' }} />
+                  </button>
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      startVoiceRecognition(`${step.field}.name`);
+                    }}
+                    style={{
+                      width: '32px',
+                      height: '32px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      backgroundColor: 'transparent',
+                      border: 'none',
+                      cursor: 'pointer',
+                      color: isListening && activeVoiceField === `${step.field}.name` ? '#ffffff' : '#666666',
+                      transition: 'color 0.2s ease'
+                    }}
+                    onMouseEnter={(e) => {
+                      if (!isListening || activeVoiceField !== `${step.field}.name`) {
+                        e.target.style.color = '#ffffff';
+                      }
+                    }}
+                    onMouseLeave={(e) => {
+                      if (!isListening || activeVoiceField !== `${step.field}.name`) {
+                        e.target.style.color = '#666666';
+                      }
+                    }}
+                  >
+                    {isListening && activeVoiceField === `${step.field}.name` ? (
+                      <MicOff style={{ width: '16px', height: '16px' }} />
+                    ) : (
+                      <Mic style={{ width: '16px', height: '16px' }} />
+                    )}
+                  </button>
+                </div>
               </div>
             </div>
 
@@ -831,40 +993,65 @@ export default function HomePage() {
                     +
                   </button>
                 </div>
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    startVoiceRecognition(`${step.field}.size`);
-                  }}
-                  style={{
-                    width: '32px',
-                    height: '32px',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    backgroundColor: 'transparent',
-                    border: 'none',
-                    cursor: 'pointer',
-                    color: isListening && activeVoiceField === `${step.field}.size` ? '#ffffff' : '#666666',
-                    transition: 'color 0.2s ease'
-                  }}
-                  onMouseEnter={(e) => {
-                    if (!isListening || activeVoiceField !== `${step.field}.size`) {
-                      e.target.style.color = '#ffffff';
-                    }
-                  }}
-                  onMouseLeave={(e) => {
-                    if (!isListening || activeVoiceField !== `${step.field}.size`) {
-                      e.target.style.color = '#666666';
-                    }
-                  }}
-                >
-                  {isListening && activeVoiceField === `${step.field}.size` ? (
-                    <MicOff style={{ width: '16px', height: '16px' }} />
-                  ) : (
-                    <Mic style={{ width: '16px', height: '16px' }} />
-                  )}
-                </button>
+                <div style={{ display: 'flex', gap: '8px' }}>
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      const randomSize = generateRandomContent('size');
+                      updateField(step.field, { ...value, size: randomSize });
+                    }}
+                    style={{
+                      width: '32px',
+                      height: '32px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      backgroundColor: 'transparent',
+                      border: 'none',
+                      cursor: 'pointer',
+                      color: '#666666',
+                      transition: 'color 0.2s ease'
+                    }}
+                    onMouseEnter={(e) => e.target.style.color = '#ffffff'}
+                    onMouseLeave={(e) => e.target.style.color = '#666666'}
+                  >
+                    <Wand2 style={{ width: '16px', height: '16px' }} />
+                  </button>
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      startVoiceRecognition(`${step.field}.size`);
+                    }}
+                    style={{
+                      width: '32px',
+                      height: '32px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      backgroundColor: 'transparent',
+                      border: 'none',
+                      cursor: 'pointer',
+                      color: isListening && activeVoiceField === `${step.field}.size` ? '#ffffff' : '#666666',
+                      transition: 'color 0.2s ease'
+                    }}
+                    onMouseEnter={(e) => {
+                      if (!isListening || activeVoiceField !== `${step.field}.size`) {
+                        e.target.style.color = '#ffffff';
+                      }
+                    }}
+                    onMouseLeave={(e) => {
+                      if (!isListening || activeVoiceField !== `${step.field}.size`) {
+                        e.target.style.color = '#666666';
+                      }
+                    }}
+                  >
+                    {isListening && activeVoiceField === `${step.field}.size` ? (
+                      <MicOff style={{ width: '16px', height: '16px' }} />
+                    ) : (
+                      <Mic style={{ width: '16px', height: '16px' }} />
+                    )}
+                  </button>
+                </div>
               </div>
             </div>
 
@@ -933,6 +1120,29 @@ export default function HomePage() {
                   <option value="Marketing" style={{ backgroundColor: '#1a1a1a', color: '#ffffff' }}>Marketing</option>
                   <option value="Otro" style={{ backgroundColor: '#1a1a1a', color: '#ffffff' }}>Otro</option>
                 </select>
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    const randomIndustry = generateRandomContent('industry');
+                    updateField(step.field, { ...value, industry: randomIndustry });
+                  }}
+                  style={{
+                    width: '32px',
+                    height: '32px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    backgroundColor: 'transparent',
+                    border: 'none',
+                    cursor: 'pointer',
+                    color: '#666666',
+                    transition: 'color 0.2s ease'
+                  }}
+                  onMouseEnter={(e) => e.target.style.color = '#ffffff'}
+                  onMouseLeave={(e) => e.target.style.color = '#666666'}
+                >
+                  <Wand2 style={{ width: '16px', height: '16px' }} />
+                </button>
               </div>
             </div>
 
@@ -985,40 +1195,65 @@ export default function HomePage() {
                     transition: 'all 0.2s ease'
                   }}
                 />
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    startVoiceRecognition(`${step.field}.founder`);
-                  }}
-                  style={{
-                    width: '32px',
-                    height: '32px',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    backgroundColor: 'transparent',
-                    border: 'none',
-                    cursor: 'pointer',
-                    color: isListening && activeVoiceField === `${step.field}.founder` ? '#ffffff' : '#666666',
-                    transition: 'color 0.2s ease'
-                  }}
-                  onMouseEnter={(e) => {
-                    if (!isListening || activeVoiceField !== `${step.field}.founder`) {
-                      e.target.style.color = '#ffffff';
-                    }
-                  }}
-                  onMouseLeave={(e) => {
-                    if (!isListening || activeVoiceField !== `${step.field}.founder`) {
-                      e.target.style.color = '#666666';
-                    }
-                  }}
-                >
-                  {isListening && activeVoiceField === `${step.field}.founder` ? (
-                    <MicOff style={{ width: '16px', height: '16px' }} />
-                  ) : (
-                    <Mic style={{ width: '16px', height: '16px' }} />
-                  )}
-                </button>
+                <div style={{ display: 'flex', gap: '8px' }}>
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      const randomFounder = generateRandomContent('founder');
+                      updateField(step.field, { ...value, founder: randomFounder });
+                    }}
+                    style={{
+                      width: '32px',
+                      height: '32px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      backgroundColor: 'transparent',
+                      border: 'none',
+                      cursor: 'pointer',
+                      color: '#666666',
+                      transition: 'color 0.2s ease'
+                    }}
+                    onMouseEnter={(e) => e.target.style.color = '#ffffff'}
+                    onMouseLeave={(e) => e.target.style.color = '#666666'}
+                  >
+                    <Wand2 style={{ width: '16px', height: '16px' }} />
+                  </button>
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      startVoiceRecognition(`${step.field}.founder`);
+                    }}
+                    style={{
+                      width: '32px',
+                      height: '32px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      backgroundColor: 'transparent',
+                      border: 'none',
+                      cursor: 'pointer',
+                      color: isListening && activeVoiceField === `${step.field}.founder` ? '#ffffff' : '#666666',
+                      transition: 'color 0.2s ease'
+                    }}
+                    onMouseEnter={(e) => {
+                      if (!isListening || activeVoiceField !== `${step.field}.founder`) {
+                        e.target.style.color = '#ffffff';
+                      }
+                    }}
+                    onMouseLeave={(e) => {
+                      if (!isListening || activeVoiceField !== `${step.field}.founder`) {
+                        e.target.style.color = '#666666';
+                      }
+                    }}
+                  >
+                    {isListening && activeVoiceField === `${step.field}.founder` ? (
+                      <MicOff style={{ width: '16px', height: '16px' }} />
+                    ) : (
+                      <Mic style={{ width: '16px', height: '16px' }} />
+                    )}
+                  </button>
+                </div>
               </div>
             </div>
 
@@ -1051,23 +1286,50 @@ export default function HomePage() {
               }}>
                 Descripción
               </label>
-              <textarea
-                data-field="description"
-                value={value?.description || ''}
-                onChange={(e) => updateField(step.field, { ...value, description: e.target.value })}
-                style={{
-                  width: '400px',
-                  minHeight: '80px',
-                  padding: '12px 16px',
-                  fontSize: '16px',
-                  border: 'none',
-                  backgroundColor: 'transparent',
-                  color: '#ffffff',
-                  outline: 'none',
-                  resize: 'vertical',
-                  transition: 'all 0.2s ease'
-                }}
-              />
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                <textarea
+                  data-field="description"
+                  value={value?.description || ''}
+                  onChange={(e) => updateField(step.field, { ...value, description: e.target.value })}
+                  style={{
+                    width: '400px',
+                    minHeight: '80px',
+                    padding: '12px 16px',
+                    fontSize: '16px',
+                    border: 'none',
+                    backgroundColor: 'transparent',
+                    color: '#ffffff',
+                    outline: 'none',
+                    resize: 'vertical',
+                    transition: 'all 0.2s ease'
+                  }}
+                />
+                <div style={{ display: 'flex', gap: '8px', alignSelf: 'flex-end' }}>
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      const randomDescription = generateRandomContent('description');
+                      updateField(step.field, { ...value, description: randomDescription });
+                    }}
+                    style={{
+                      width: '32px',
+                      height: '32px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      backgroundColor: 'transparent',
+                      border: 'none',
+                      cursor: 'pointer',
+                      color: '#666666',
+                      transition: 'color 0.2s ease'
+                    }}
+                    onMouseEnter={(e) => e.target.style.color = '#ffffff'}
+                    onMouseLeave={(e) => e.target.style.color = '#666666'}
+                  >
+                    <Wand2 style={{ width: '16px', height: '16px' }} />
+                  </button>
+                </div>
+              </div>
             </div>
           </div>
         );
@@ -2076,18 +2338,31 @@ export default function HomePage() {
               alignItems: 'center',
               justifyContent: 'center',
               height: '120px',
-              backgroundColor: '#1a1a1a',
+              backgroundColor: value?.backgroundColor || '#1a1a1a',
               border: '1px solid #333333',
               borderRadius: '8px',
-              marginBottom: '24px'
+              marginBottom: '24px',
+              gap: '16px'
             }}>
+              {value?.icon && (
+                <div style={{
+                  width: '64px',
+                  height: '64px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  color: value?.textColor || '#ffffff'
+                }}>
+                  {getIconComponent(value?.icon)}
+                </div>
+              )}
               <div style={{
                 fontSize: '24px',
                 fontWeight: '500',
-                color: '#ffffff',
+                color: value?.textColor || '#ffffff',
                 textAlign: 'center'
               }}>
-                {getFieldValue('brand.names')?.selectedName || 'Nombre de la marca'}
+                {getFieldValue('brand.names')?.selectedName || 'Marca'}
               </div>
             </div>
             
@@ -2135,7 +2410,7 @@ export default function HomePage() {
               </select>
             </div>
             
-            {/* Color de fondo */}
+            {/* Color */}
             <div style={{
               display: 'flex',
               alignItems: 'center',
@@ -2148,57 +2423,53 @@ export default function HomePage() {
                 color: '#ffffff', 
                 fontWeight: '500'
               }}>
-                Color de fondo
+                Color
               </label>
-              <input
-                type="color"
-                value={value?.backgroundColor || '#000000'}
-                onChange={(e) => updateField(step.field, { ...value, backgroundColor: e.target.value })}
-                style={{
-                  width: '40px',
-                  height: '32px',
-                  border: '1px solid #333333',
-                  borderRadius: '4px',
-                  backgroundColor: 'transparent',
-                  cursor: 'pointer',
-                  transition: 'all 0.2s ease'
-                }}
-                onMouseEnter={(e) => e.target.style.borderColor = '#ffffff'}
-                onMouseLeave={(e) => e.target.style.borderColor = '#333333'}
-              />
-            </div>
-            
-            {/* Color del texto */}
-            <div style={{
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'space-between',
-              padding: '16px 0',
-              borderBottom: '1px solid #333333'
-            }}>
-              <label style={{ 
-                fontSize: '16px', 
-                color: '#ffffff', 
-                fontWeight: '500'
-              }}>
-                Color del texto
-              </label>
-              <input
-                type="color"
-                value={value?.textColor || '#ffffff'}
-                onChange={(e) => updateField(step.field, { ...value, textColor: e.target.value })}
-                style={{
-                  width: '40px',
-                  height: '32px',
-                  border: '1px solid #333333',
-                  borderRadius: '4px',
-                  backgroundColor: 'transparent',
-                  cursor: 'pointer',
-                  transition: 'all 0.2s ease'
-                }}
-                onMouseEnter={(e) => e.target.style.borderColor = '#ffffff'}
-                onMouseLeave={(e) => e.target.style.borderColor = '#333333'}
-              />
+              <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <span style={{ fontSize: '14px', color: '#666666' }}>Fondo</span>
+                  <input
+                    type="color"
+                    value={value?.backgroundColor || '#000000'}
+                    onChange={(e) => updateField(step.field, { ...value, backgroundColor: e.target.value })}
+                    style={{
+                      width: '32px',
+                      height: '32px',
+                      border: '1px solid #333333',
+                      borderRadius: '50%',
+                      backgroundColor: 'transparent',
+                      cursor: 'pointer',
+                      transition: 'all 0.2s ease'
+                    }}
+                    onMouseEnter={(e) => e.target.style.borderColor = '#ffffff'}
+                    onMouseLeave={(e) => e.target.style.borderColor = '#333333'}
+                  />
+                </div>
+                <div style={{ 
+                  width: '1px', 
+                  height: '20px', 
+                  backgroundColor: '#333333' 
+                }} />
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <span style={{ fontSize: '14px', color: '#666666' }}>Texto</span>
+                  <input
+                    type="color"
+                    value={value?.textColor || '#ffffff'}
+                    onChange={(e) => updateField(step.field, { ...value, textColor: e.target.value })}
+                    style={{
+                      width: '32px',
+                      height: '32px',
+                      border: '1px solid #333333',
+                      borderRadius: '50%',
+                      backgroundColor: 'transparent',
+                      cursor: 'pointer',
+                      transition: 'all 0.2s ease'
+                    }}
+                    onMouseEnter={(e) => e.target.style.borderColor = '#ffffff'}
+                    onMouseLeave={(e) => e.target.style.borderColor = '#333333'}
+                  />
+                </div>
+              </div>
             </div>
             
             {/* Icono */}
@@ -2216,32 +2487,37 @@ export default function HomePage() {
                 Icono
               </label>
               <div style={{ display: 'flex', gap: '8px' }}>
-                {['⚡', '🚀', '💡', '🎯', '⭐', '🔥', '💎', '🌟'].map((icon, index) => (
+                {['zap', 'rocket', 'lightbulb', 'target', 'star', 'flame', 'gem', 'sparkles'].map((iconName, index) => (
                   <button
                     key={index}
-                    onClick={() => updateField(step.field, { ...value, icon })}
+                    onClick={() => updateField(step.field, { ...value, icon: iconName })}
                     style={{
                       width: '32px',
                       height: '32px',
-                      fontSize: '16px',
-                      border: value?.icon === icon ? '2px solid #ffffff' : '1px solid #333333',
-                      borderRadius: '4px',
-                      backgroundColor: value?.icon === icon ? '#2a2a2a' : 'transparent',
+                      border: value?.icon === iconName ? '2px solid #ffffff' : '1px solid #333333',
+                      borderRadius: '50%',
+                      backgroundColor: value?.icon === iconName ? '#2a2a2a' : 'transparent',
                       cursor: 'pointer',
-                      transition: 'all 0.2s ease'
+                      transition: 'all 0.2s ease',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      color: value?.icon === iconName ? '#ffffff' : '#666666'
                     }}
                     onMouseEnter={(e) => {
-                      if (value?.icon !== icon) {
+                      if (value?.icon !== iconName) {
                         e.target.style.borderColor = '#666666';
+                        e.target.style.color = '#ffffff';
                       }
                     }}
                     onMouseLeave={(e) => {
-                      if (value?.icon !== icon) {
+                      if (value?.icon !== iconName) {
                         e.target.style.borderColor = '#333333';
+                        e.target.style.color = '#666666';
                       }
                     }}
                   >
-                    {icon}
+                    {getIconComponent(iconName)}
                   </button>
                 ))}
               </div>
@@ -4658,6 +4934,17 @@ export default function HomePage() {
         return null;
     }
   };
+
+  // Si se debe mostrar la introducción, renderizar la secuencia de videos
+  if (showIntroduction) {
+    return (
+      <IntroductionVideoSequence
+        onComplete={handleIntroductionComplete}
+        onSkip={handleIntroductionSkip}
+        className="w-full h-screen"
+      />
+    );
+  }
 
       return (
     <>
