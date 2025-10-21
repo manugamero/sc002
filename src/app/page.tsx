@@ -654,13 +654,6 @@ export default function HomePage() {
                   value={value?.name || ''}
                   onChange={(e) => {
                     updateField(step.field, { ...value, name: e.target.value });
-                    // Auto-focus siguiente campo cuando se completa
-                    if (e.target.value.trim() && !value?.size) {
-                      setTimeout(() => {
-                        const nextInput = document.querySelector('input[placeholder="Tamaño de la empresa"]') as HTMLInputElement;
-                        nextInput?.focus();
-                      }, 100);
-                    }
                   }}
                   style={{
                     width: '200px',
@@ -712,6 +705,321 @@ export default function HomePage() {
                 </button>
               </div>
             </div>
+
+            {/* Tamaño de la empresa */}
+            <div style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              padding: '16px 0',
+              borderBottom: '1px solid #333333'
+            }}>
+              <label style={{ 
+                fontSize: '16px', 
+                color: '#ffffff', 
+                fontWeight: '500'
+              }}>
+                Tamaño de la empresa
+              </label>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                <div style={{ display: 'flex', alignItems: 'center' }}>
+                  <button
+                    onClick={() => {
+                      const currentSize = value?.size || '1-10';
+                      const sizes = ['1-10', '11-50', '51-200', '201-500', '500+'];
+                      const currentIndex = sizes.indexOf(currentSize);
+                      const newIndex = Math.max(0, currentIndex - 1);
+                      updateField(step.field, { ...value, size: sizes[newIndex] });
+                    }}
+                    style={{
+                      width: '32px',
+                      height: '48px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      backgroundColor: 'transparent',
+                      border: '1px solid #333333',
+                      borderRight: 'none',
+                      borderTopLeftRadius: '8px',
+                      borderBottomLeftRadius: '8px',
+                      cursor: 'pointer',
+                      color: '#666666',
+                      transition: 'color 0.2s ease'
+                    }}
+                    onMouseEnter={(e) => e.target.style.color = '#ffffff'}
+                    onMouseLeave={(e) => e.target.style.color = '#666666'}
+                  >
+                    -
+                  </button>
+                  <input
+                    type="text"
+                    value={value?.size || ''}
+                    readOnly
+                    style={{
+                      width: '120px',
+                      height: '48px',
+                      padding: '12px 16px',
+                      fontSize: '16px',
+                      border: '1px solid #333333',
+                      borderLeft: 'none',
+                      borderRight: 'none',
+                      backgroundColor: 'transparent',
+                      color: '#ffffff',
+                      outline: 'none',
+                      textAlign: 'center'
+                    }}
+                    placeholder="Tamaño de la empresa"
+                  />
+                  <button
+                    onClick={() => {
+                      const currentSize = value?.size || '1-10';
+                      const sizes = ['1-10', '11-50', '51-200', '201-500', '500+'];
+                      const currentIndex = sizes.indexOf(currentSize);
+                      const newIndex = Math.min(sizes.length - 1, currentIndex + 1);
+                      updateField(step.field, { ...value, size: sizes[newIndex] });
+                    }}
+                    style={{
+                      width: '32px',
+                      height: '48px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      backgroundColor: 'transparent',
+                      border: '1px solid #333333',
+                      borderLeft: 'none',
+                      borderTopRightRadius: '8px',
+                      borderBottomRightRadius: '8px',
+                      cursor: 'pointer',
+                      color: '#666666',
+                      transition: 'color 0.2s ease'
+                    }}
+                    onMouseEnter={(e) => e.target.style.color = '#ffffff'}
+                    onMouseLeave={(e) => e.target.style.color = '#666666'}
+                  >
+                    +
+                  </button>
+                </div>
+                <button
+                  onClick={() => startVoiceRecognition(`${step.field}.size`)}
+                  style={{
+                    width: '32px',
+                    height: '32px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    backgroundColor: 'transparent',
+                    border: 'none',
+                    cursor: 'pointer',
+                    color: isListening && activeVoiceField === `${step.field}.size` ? '#ffffff' : '#666666',
+                    transition: 'color 0.2s ease'
+                  }}
+                  onMouseEnter={(e) => {
+                    if (!isListening || activeVoiceField !== `${step.field}.size`) {
+                      e.target.style.color = '#ffffff';
+                    }
+                  }}
+                  onMouseLeave={(e) => {
+                    if (!isListening || activeVoiceField !== `${step.field}.size`) {
+                      e.target.style.color = '#666666';
+                    }
+                  }}
+                >
+                  {isListening && activeVoiceField === `${step.field}.size` ? (
+                    <MicOff style={{ width: '16px', height: '16px' }} />
+                  ) : (
+                    <Mic style={{ width: '16px', height: '16px' }} />
+                  )}
+                </button>
+              </div>
+            </div>
+
+            {/* Industria */}
+            <div style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              padding: '16px 0',
+              borderBottom: '1px solid #333333'
+            }}>
+              <label style={{ 
+                fontSize: '16px', 
+                color: '#ffffff', 
+                fontWeight: '500'
+              }}>
+                Industria
+              </label>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                <select
+                  value={value?.industry || ''}
+                  onChange={(e) => updateField(step.field, { ...value, industry: e.target.value })}
+                  style={{
+                    width: '200px',
+                    height: '48px',
+                    padding: '12px 16px',
+                    fontSize: '16px',
+                    border: '1px solid #333333',
+                    borderRadius: '8px',
+                    backgroundColor: 'transparent',
+                    color: '#ffffff',
+                    outline: 'none',
+                    transition: 'all 0.2s ease'
+                  }}
+                  onMouseEnter={(e) => e.target.style.borderColor = '#ffffff'}
+                  onMouseLeave={(e) => e.target.style.borderColor = '#333333'}
+                >
+                  <option value="" style={{ backgroundColor: '#1a1a1a', color: '#ffffff' }}>Seleccionar industria</option>
+                  <option value="Tecnología" style={{ backgroundColor: '#1a1a1a', color: '#ffffff' }}>Tecnología</option>
+                  <option value="Salud" style={{ backgroundColor: '#1a1a1a', color: '#ffffff' }}>Salud</option>
+                  <option value="Educación" style={{ backgroundColor: '#1a1a1a', color: '#ffffff' }}>Educación</option>
+                  <option value="Finanzas" style={{ backgroundColor: '#1a1a1a', color: '#ffffff' }}>Finanzas</option>
+                  <option value="Retail" style={{ backgroundColor: '#1a1a1a', color: '#ffffff' }}>Retail</option>
+                  <option value="Manufactura" style={{ backgroundColor: '#1a1a1a', color: '#ffffff' }}>Manufactura</option>
+                  <option value="Consultoría" style={{ backgroundColor: '#1a1a1a', color: '#ffffff' }}>Consultoría</option>
+                  <option value="Marketing" style={{ backgroundColor: '#1a1a1a', color: '#ffffff' }}>Marketing</option>
+                  <option value="Otro" style={{ backgroundColor: '#1a1a1a', color: '#ffffff' }}>Otro</option>
+                </select>
+                <button
+                  onClick={() => startVoiceRecognition(`${step.field}.industry`)}
+                  style={{
+                    width: '32px',
+                    height: '32px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    backgroundColor: 'transparent',
+                    border: 'none',
+                    cursor: 'pointer',
+                    color: isListening && activeVoiceField === `${step.field}.industry` ? '#ffffff' : '#666666',
+                    transition: 'color 0.2s ease'
+                  }}
+                  onMouseEnter={(e) => {
+                    if (!isListening || activeVoiceField !== `${step.field}.industry`) {
+                      e.target.style.color = '#ffffff';
+                    }
+                  }}
+                  onMouseLeave={(e) => {
+                    if (!isListening || activeVoiceField !== `${step.field}.industry`) {
+                      e.target.style.color = '#666666';
+                    }
+                  }}
+                >
+                  {isListening && activeVoiceField === `${step.field}.industry` ? (
+                    <MicOff style={{ width: '16px', height: '16px' }} />
+                  ) : (
+                    <Mic style={{ width: '16px', height: '16px' }} />
+                  )}
+                </button>
+              </div>
+            </div>
+
+            {/* Fundador */}
+            <div style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              padding: '16px 0',
+              borderBottom: '1px solid #333333'
+            }}>
+              <label style={{ 
+                fontSize: '16px', 
+                color: '#ffffff', 
+                fontWeight: '500'
+              }}>
+                Fundador
+              </label>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                <input
+                  type="text"
+                  value={value?.founder || ''}
+                  onChange={(e) => updateField(step.field, { ...value, founder: e.target.value })}
+                  style={{
+                    width: '200px',
+                    height: '48px',
+                    padding: '12px 16px',
+                    fontSize: '16px',
+                    border: '1px solid #333333',
+                    borderRadius: '8px',
+                    backgroundColor: 'transparent',
+                    color: '#ffffff',
+                    outline: 'none',
+                    transition: 'all 0.2s ease'
+                  }}
+                  onMouseEnter={(e) => e.target.style.borderColor = '#ffffff'}
+                  onMouseLeave={(e) => e.target.style.borderColor = '#333333'}
+                  placeholder="Nombre del fundador"
+                />
+                <button
+                  onClick={() => startVoiceRecognition(`${step.field}.founder`)}
+                  style={{
+                    width: '32px',
+                    height: '32px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    backgroundColor: 'transparent',
+                    border: 'none',
+                    cursor: 'pointer',
+                    color: isListening && activeVoiceField === `${step.field}.founder` ? '#ffffff' : '#666666',
+                    transition: 'color 0.2s ease'
+                  }}
+                  onMouseEnter={(e) => {
+                    if (!isListening || activeVoiceField !== `${step.field}.founder`) {
+                      e.target.style.color = '#ffffff';
+                    }
+                  }}
+                  onMouseLeave={(e) => {
+                    if (!isListening || activeVoiceField !== `${step.field}.founder`) {
+                      e.target.style.color = '#666666';
+                    }
+                  }}
+                >
+                  {isListening && activeVoiceField === `${step.field}.founder` ? (
+                    <MicOff style={{ width: '16px', height: '16px' }} />
+                  ) : (
+                    <Mic style={{ width: '16px', height: '16px' }} />
+                  )}
+                </button>
+              </div>
+            </div>
+
+            {/* Descripción */}
+            <div style={{
+              display: 'flex',
+              alignItems: 'flex-start',
+              justifyContent: 'space-between',
+              padding: '16px 0'
+            }}>
+              <label style={{ 
+                fontSize: '16px', 
+                color: '#ffffff', 
+                fontWeight: '500',
+                marginTop: '12px'
+              }}>
+                Descripción
+              </label>
+              <textarea
+                value={value?.description || ''}
+                onChange={(e) => updateField(step.field, { ...value, description: e.target.value })}
+                style={{
+                  width: '400px',
+                  minHeight: '80px',
+                  padding: '12px 16px',
+                  fontSize: '16px',
+                  border: '1px solid #333333',
+                  borderRadius: '8px',
+                  backgroundColor: 'transparent',
+                  color: '#ffffff',
+                  outline: 'none',
+                  resize: 'vertical',
+                  transition: 'all 0.2s ease'
+                }}
+                onMouseEnter={(e) => e.target.style.borderColor = '#ffffff'}
+                onMouseLeave={(e) => e.target.style.borderColor = '#333333'}
+                placeholder="Descripción de la empresa"
+              />
+            </div>
+          </div>
+        );
               <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
                 <button
                   onClick={() => {
