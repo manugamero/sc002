@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
-import { ArrowRight, ArrowLeft, Play, Pause, Plus, Trash2, RefreshCw } from 'lucide-react';
+import { ArrowRight, ArrowLeft, Play, Pause, Plus, Trash2, RefreshCw, Wand2 } from 'lucide-react';
 
 interface ProjectData {
   name: string;
@@ -181,26 +181,35 @@ export default function HomePage() {
     switch (step.type) {
       case 'text':
         return (
-          <input
-            type="text"
-            value={value || ''}
-            onChange={(e) => updateField(step.field, e.target.value)}
-            className="w-full px-4 py-3 text-lg border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-500 focus:border-transparent"
-            placeholder={step.title}
-            autoFocus
-          />
+          <div className="relative">
+            <input
+              type="text"
+              value={value || ''}
+              onChange={(e) => updateField(step.field, e.target.value)}
+              className="w-full h-12 px-4 pr-12 text-lg border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-500 focus:border-transparent"
+              placeholder={step.title}
+              autoFocus
+            />
+            <button className="absolute right-3 top-1/2 transform -translate-y-1/2 p-1 text-gray-400 hover:text-gray-600">
+              <Wand2 className="w-5 h-5" />
+            </button>
+          </div>
         );
 
       case 'textarea':
         return (
-          <textarea
-            value={value || ''}
-            onChange={(e) => updateField(step.field, e.target.value)}
-            className="w-full px-4 py-3 text-lg border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-500 focus:border-transparent"
-            rows={4}
-            placeholder={step.title}
-            autoFocus
-          />
+          <div className="relative">
+            <textarea
+              value={value || ''}
+              onChange={(e) => updateField(step.field, e.target.value)}
+              className="w-full h-32 px-4 pr-12 text-lg border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-500 focus:border-transparent resize-none"
+              placeholder={step.title}
+              autoFocus
+            />
+            <button className="absolute right-3 top-3 p-1 text-gray-400 hover:text-gray-600">
+              <Wand2 className="w-5 h-5" />
+            </button>
+          </div>
         );
 
       case 'competitors':
@@ -208,18 +217,23 @@ export default function HomePage() {
           <div className="space-y-3">
             {value.map((competitor: string, index: number) => (
               <div key={index} className="flex items-center gap-2">
-                <input
-                  type="text"
-                  value={competitor}
-                  onChange={(e) => {
-                    const newCompetitors = [...value];
-                    newCompetitors[index] = e.target.value;
-                    updateField(step.field, newCompetitors);
-                  }}
-                  className="flex-1 px-4 py-3 text-lg border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-500 focus:border-transparent"
-                  placeholder="Nombre del competidor"
-                  autoFocus={index === value.length - 1}
-                />
+                <div className="relative flex-1">
+                  <input
+                    type="text"
+                    value={competitor}
+                    onChange={(e) => {
+                      const newCompetitors = [...value];
+                      newCompetitors[index] = e.target.value;
+                      updateField(step.field, newCompetitors);
+                    }}
+                    className="w-full h-12 px-4 pr-12 text-lg border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-500 focus:border-transparent"
+                    placeholder="Nombre del competidor"
+                    autoFocus={index === value.length - 1}
+                  />
+                  <button className="absolute right-3 top-1/2 transform -translate-y-1/2 p-1 text-gray-400 hover:text-gray-600">
+                    <Wand2 className="w-5 h-5" />
+                  </button>
+                </div>
                 <button
                   onClick={() => {
                     const newCompetitors = value.filter((_: any, i: number) => i !== index);
@@ -233,7 +247,7 @@ export default function HomePage() {
             ))}
             <button
               onClick={() => updateField(step.field, [...value, ''])}
-              className="flex items-center gap-2 text-sm text-gray-600 hover:text-gray-900"
+              className="flex items-center gap-2 h-12 px-4 text-sm text-gray-600 hover:text-gray-900 border border-gray-300 rounded-lg hover:bg-gray-50"
             >
               <Plus className="w-4 h-4" />
               Añadir competidor
@@ -438,13 +452,13 @@ export default function HomePage() {
         </div>
       </header>
 
-      {/* Main content - Fullscreen */}
+      {/* Main content - 2 columnas */}
       <main className="pt-16">
         <div className="max-w-7xl mx-auto px-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 min-h-screen">
-            {/* Video column - 40% */}
-            <div className="md:sticky md:top-20 md:h-[calc(100vh-5rem)]">
-              <div className="relative w-full h-64 md:h-full bg-gray-100 rounded-lg overflow-hidden">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 min-h-screen">
+            {/* Video column - Izquierda */}
+            <div className="lg:sticky lg:top-20 lg:h-[calc(100vh-5rem)]">
+              <div className="relative w-full h-64 lg:h-full bg-gray-100 rounded-lg overflow-hidden">
                 <video
                   ref={videoRef}
                   key={currentStepIndex}
@@ -482,8 +496,8 @@ export default function HomePage() {
               </div>
             </div>
 
-            {/* Content column - 60% */}
-            <div className="md:h-[calc(100vh-5rem)] overflow-y-auto">
+            {/* Content column - Derecha */}
+            <div className="lg:h-[calc(100vh-5rem)] overflow-y-auto">
               <div className="p-6">
                 <motion.div
                   key={currentStepIndex}
@@ -493,10 +507,6 @@ export default function HomePage() {
                   transition={{ duration: 0.2 }}
                   className="space-y-6"
                 >
-                  <h1 className="text-2xl font-semibold text-gray-900">
-                    {steps[currentStepIndex].title}
-                  </h1>
-                  
                   {renderStep()}
                 </motion.div>
               </div>
@@ -510,7 +520,7 @@ export default function HomePage() {
         <button
           onClick={handlePrevious}
           disabled={currentStepIndex === 0}
-          className="flex items-center space-x-2 px-4 py-2 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+          className="flex items-center space-x-2 px-6 h-12 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
         >
           <ArrowLeft className="w-4 h-4" />
           <span>Anterior</span>
@@ -518,7 +528,7 @@ export default function HomePage() {
         
         <button
           onClick={handleDummyData}
-          className="px-4 py-2 text-sm text-gray-600 hover:text-gray-900"
+          className="px-6 h-12 text-sm text-gray-600 hover:text-gray-900 border border-gray-300 rounded-lg hover:bg-gray-50"
         >
           Ver ejemplo
         </button>
@@ -526,7 +536,7 @@ export default function HomePage() {
         <button
           onClick={handleNext}
           disabled={currentStepIndex === steps.length - 1}
-          className="flex items-center space-x-2 px-4 py-2 bg-gray-900 text-white rounded-lg hover:bg-gray-800 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+          className="flex items-center space-x-2 px-6 h-12 bg-gray-900 text-white rounded-lg hover:bg-gray-800 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
         >
           <span>Continuar</span>
           <ArrowRight className="w-4 h-4" />
