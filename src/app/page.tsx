@@ -1,7 +1,6 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
-import { motion } from 'framer-motion';
 import { ArrowRight, ArrowLeft, Play, Pause, Plus, Trash2, RefreshCw, Wand2 } from 'lucide-react';
 
 interface ProjectData {
@@ -500,16 +499,9 @@ export default function HomePage() {
             <div className="lg:h-[calc(100vh-5rem)] overflow-y-auto">
               <div className="flex items-center justify-center min-h-full p-6">
                 <div className="w-full max-w-md">
-                  <motion.div
-                    key={currentStepIndex}
-                    initial={{ opacity: 0, x: 20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    exit={{ opacity: 0, x: -20 }}
-                    transition={{ duration: 0.2 }}
-                    className="space-y-6"
-                  >
+                  <div className="space-y-6">
                     {renderStep()}
-                  </motion.div>
+                  </div>
                 </div>
               </div>
             </div>
