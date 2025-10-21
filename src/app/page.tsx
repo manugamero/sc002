@@ -1553,9 +1553,51 @@ export default function HomePage() {
             
             {/* Lista de competidores */}
             <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-              <h4 style={{ color: '#ffffff', fontSize: '16px', fontWeight: '500', marginBottom: '8px' }}>
-                Competidores
-              </h4>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '8px' }}>
+                <h4 style={{ color: '#ffffff', fontSize: '16px', fontWeight: '500' }}>
+                  Competidores
+                </h4>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                  <input
+                    type="text"
+                    value={value?.yAxis || 'Precio'}
+                    onChange={(e) => updateField(step.field, { ...value, yAxis: e.target.value })}
+                    style={{
+                      width: '80px',
+                      height: '32px',
+                      padding: '6px 8px',
+                      fontSize: '12px',
+                      border: 'none',
+                      borderBottom: '1px solid #333333',
+                      backgroundColor: 'transparent',
+                      color: '#ffffff',
+                      outline: 'none',
+                      transition: 'all 0.2s ease'
+                    }}
+                    onMouseEnter={(e) => e.target.style.borderBottomColor = '#ffffff'}
+                    onMouseLeave={(e) => e.target.style.borderBottomColor = '#333333'}
+                  />
+                  <input
+                    type="text"
+                    value={value?.xAxis || 'Calidad'}
+                    onChange={(e) => updateField(step.field, { ...value, xAxis: e.target.value })}
+                    style={{
+                      width: '80px',
+                      height: '32px',
+                      padding: '6px 8px',
+                      fontSize: '12px',
+                      border: 'none',
+                      borderBottom: '1px solid #333333',
+                      backgroundColor: 'transparent',
+                      color: '#ffffff',
+                      outline: 'none',
+                      transition: 'all 0.2s ease'
+                    }}
+                    onMouseEnter={(e) => e.target.style.borderBottomColor = '#ffffff'}
+                    onMouseLeave={(e) => e.target.style.borderBottomColor = '#333333'}
+                  />
+                </div>
+              </div>
               {(value?.competitors || []).map((competitor: any, index: number) => (
                 <div key={index} style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                   <div style={{
