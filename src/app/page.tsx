@@ -89,6 +89,7 @@ export default function HomePage() {
   const [projectData, setProjectData] = useState<ProjectData>(initialProjectData);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [selectedMode, setSelectedMode] = useState<'startup' | 'scaleup' | 'corporate'>('startup');
+  const [selectedVersion, setSelectedVersion] = useState<number>(1);
   const [isAnimating, setIsAnimating] = useState(false);
   const [showElements, setShowElements] = useState({
     video: false,
@@ -501,6 +502,12 @@ export default function HomePage() {
     return -1;
   };
 
+  // Función para verificar si estamos en un capítulo principal
+  const isMainChapter = (stepId: string) => {
+    const mainChapters = ['strategy-1', 'brand-1', 'product-1', 'messages-1'];
+    return mainChapters.includes(stepId);
+  };
+
   const getStepContent = (stepId: string) => {
     const contentMap: { [key: string]: string } = {
       'strategy-1': 'A todos nos ha pasado: tener una idea y no saber cómo aterrizarla. El primer paso no es diseñar ni planificar, sino escuchar. Las entrevistas con fundadores, equipo y usuarios nos permiten entender la historia desde dentro.',
@@ -549,7 +556,7 @@ export default function HomePage() {
               placeholder={step.title}
               autoFocus
               onFocus={(e) => {
-                e.target.style.borderColor = '#4a9eff';
+                e.target.style.borderColor = '#ffffff';
                 e.target.style.boxShadow = '0 0 0 2px rgba(74, 158, 255, 0.2)';
               }}
               onBlur={(e) => {
@@ -601,7 +608,7 @@ export default function HomePage() {
               placeholder={step.title}
               autoFocus
               onFocus={(e) => {
-                e.target.style.borderColor = '#4a9eff';
+                e.target.style.borderColor = '#ffffff';
                 e.target.style.boxShadow = '0 0 0 2px rgba(74, 158, 255, 0.2)';
               }}
               onBlur={(e) => {
@@ -1236,7 +1243,7 @@ export default function HomePage() {
                     backgroundColor: 'transparent',
                     border: 'none',
                     cursor: 'pointer',
-                    color: isListening && activeVoiceField === `${step.field}.founder` ? '#4a9eff' : '#666666',
+                    color: isListening && activeVoiceField === `${step.field}.founder` ? '#ffffff' : '#666666',
                     transition: 'color 0.2s ease'
                   }}
                   onMouseEnter={(e) => {
@@ -1367,27 +1374,7 @@ export default function HomePage() {
                 fontSize: '12px',
                 fontWeight: '500'
               }}>
-                {value?.yAxis || 'Precio'} Alto
-              </div>
-              <div style={{
-                position: 'absolute',
-                bottom: '20px',
-                left: '20px',
-                color: '#666666',
-                fontSize: '12px',
-                fontWeight: '500'
-              }}>
-                {value?.yAxis || 'Precio'} Bajo
-              </div>
-              <div style={{
-                position: 'absolute',
-                bottom: '20px',
-                left: '20px',
-                color: '#666666',
-                fontSize: '12px',
-                fontWeight: '500'
-              }}>
-                {value?.xAxis || 'Calidad'} Baja
+                {value?.yAxis || 'Precio'}
               </div>
               <div style={{
                 position: 'absolute',
@@ -1397,7 +1384,7 @@ export default function HomePage() {
                 fontSize: '12px',
                 fontWeight: '500'
               }}>
-                {value?.xAxis || 'Calidad'} Alta
+                {value?.xAxis || 'Calidad'}
               </div>
 
               {/* Competidores en la matriz */}
@@ -1441,19 +1428,25 @@ export default function HomePage() {
                       e.target.style.boxShadow = '0 2px 8px rgba(0,0,0,0.3)';
                     }}
                     draggable
+                    onDragStart={(e) => {
+                      e.dataTransfer.effectAllowed = 'move';
+                    }}
                     onDragEnd={(e) => {
-                      const rect = e.currentTarget.parentElement.getBoundingClientRect();
-                      const x = ((e.clientX - rect.left) / rect.width) * 100;
-                      const y = ((rect.bottom - e.clientY) / rect.height) * 100;
-                      
-                      const newCompetitors = [...(value?.competitors || [])];
-                      newCompetitors[index] = { 
-                        ...newCompetitors[index], 
-                        name: competitor.name || competitor,
-                        x: Math.max(10, Math.min(90, x)),
-                        y: Math.max(10, Math.min(90, y))
-                      };
-                      updateField(step.field, { ...value, competitors: newCompetitors });
+                      const matrixContainer = e.currentTarget.parentElement;
+                      if (matrixContainer) {
+                        const rect = matrixContainer.getBoundingClientRect();
+                        const x = ((e.clientX - rect.left) / rect.width) * 100;
+                        const y = ((rect.bottom - e.clientY) / rect.height) * 100;
+                        
+                        const newCompetitors = [...(value?.competitors || [])];
+                        newCompetitors[index] = { 
+                          ...newCompetitors[index], 
+                          name: competitor.name || competitor,
+                          x: Math.max(10, Math.min(90, x)),
+                          y: Math.max(10, Math.min(90, y))
+                        };
+                        updateField(step.field, { ...value, competitors: newCompetitors });
+                      }
                     }}
                   >
                     {competitor.name || competitor || `C${index + 1}`}
@@ -1687,7 +1680,7 @@ export default function HomePage() {
               }}
               onMouseEnter={(e) => {
                 e.target.style.color = '#ffffff';
-                e.target.style.borderColor = '#4a9eff';
+                e.target.style.borderColor = '#ffffff';
               }}
               onMouseLeave={(e) => {
                 e.target.style.color = '#666666';
@@ -1851,7 +1844,7 @@ export default function HomePage() {
               }}
               onMouseEnter={(e) => {
                 e.target.style.color = '#ffffff';
-                e.target.style.borderColor = '#4a9eff';
+                e.target.style.borderColor = '#ffffff';
               }}
               onMouseLeave={(e) => {
                 e.target.style.color = '#666666';
@@ -1889,7 +1882,7 @@ export default function HomePage() {
                 <div style={{
                   width: '60px',
                   height: '60px',
-                  backgroundColor: '#4a9eff',
+                  backgroundColor: '#ffffff',
                   borderRadius: '50%',
                   display: 'flex',
                   alignItems: 'center',
@@ -1927,7 +1920,7 @@ export default function HomePage() {
                   left: '0',
                   right: '0',
                   height: '80px',
-                  background: 'linear-gradient(135deg, #4a9eff 0%, #007AFF 100%)',
+                  background: 'linear-gradient(135deg, #ffffff 0%, #007AFF 100%)',
                   borderRadius: '12px 12px 0 0'
                 }}></div>
               </div>
@@ -2003,7 +1996,7 @@ export default function HomePage() {
                       fontSize: '12px',
                       border: 'none',
                       cursor: 'pointer',
-                      backgroundColor: q.answer === true ? '#4a9eff' : '#333333',
+                      backgroundColor: q.answer === true ? '#ffffff' : '#333333',
                       color: q.answer === true ? '#ffffff' : '#666666',
                       transition: 'all 0.2s ease'
                     }}
@@ -2022,7 +2015,7 @@ export default function HomePage() {
                       fontSize: '12px',
                       border: 'none',
                       cursor: 'pointer',
-                      backgroundColor: q.answer === false ? '#4a9eff' : '#333333',
+                      backgroundColor: q.answer === false ? '#ffffff' : '#333333',
                       color: q.answer === false ? '#ffffff' : '#666666',
                       transition: 'all 0.2s ease'
                     }}
@@ -2137,7 +2130,7 @@ export default function HomePage() {
               }}
               onMouseEnter={(e) => {
                 e.target.style.color = '#ffffff';
-                e.target.style.borderColor = '#4a9eff';
+                e.target.style.borderColor = '#ffffff';
               }}
               onMouseLeave={(e) => {
                 e.target.style.color = '#666666';
@@ -2265,7 +2258,7 @@ export default function HomePage() {
               }}
               onMouseEnter={(e) => {
                 e.target.style.color = '#ffffff';
-                e.target.style.borderColor = '#4a9eff';
+                e.target.style.borderColor = '#ffffff';
               }}
               onMouseLeave={(e) => {
                 e.target.style.color = '#666666';
@@ -2484,7 +2477,7 @@ export default function HomePage() {
                   style={{
                     padding: '20px',
                     backgroundColor: value?.name === archetype.name ? 'rgba(74, 158, 255, 0.1)' : '#1a1a1a',
-                    border: value?.name === archetype.name ? '2px solid #4a9eff' : '1px solid #333333',
+                    border: value?.name === archetype.name ? '2px solid #ffffff' : '1px solid #333333',
                     borderRadius: '8px',
                     cursor: 'pointer',
                     transition: 'all 0.2s ease',
@@ -2493,7 +2486,7 @@ export default function HomePage() {
                   onMouseEnter={(e) => {
                     if (value?.name !== archetype.name) {
                       e.target.style.backgroundColor = '#2a2a2a';
-                      e.target.style.borderColor = '#4a9eff';
+                      e.target.style.borderColor = '#ffffff';
                     }
                   }}
                   onMouseLeave={(e) => {
@@ -2639,7 +2632,7 @@ export default function HomePage() {
                   }}
                   onMouseEnter={(e) => {
                     e.target.style.backgroundColor = '#2a2a2a';
-                    e.target.style.borderColor = '#4a9eff';
+                    e.target.style.borderColor = '#ffffff';
                   }}
                   onMouseLeave={(e) => {
                     e.target.style.backgroundColor = '#1a1a1a';
@@ -2782,7 +2775,7 @@ export default function HomePage() {
                           fontSize: '12px',
                           border: 'none',
                           cursor: 'pointer',
-                          backgroundColor: (value || [])[index]?.answer === true ? '#4a9eff' : '#333333',
+                          backgroundColor: (value || [])[index]?.answer === true ? '#ffffff' : '#333333',
                           color: (value || [])[index]?.answer === true ? '#ffffff' : '#666666',
                           transition: 'all 0.2s ease'
                         }}
@@ -2801,7 +2794,7 @@ export default function HomePage() {
                           fontSize: '12px',
                           border: 'none',
                           cursor: 'pointer',
-                          backgroundColor: (value || [])[index]?.answer === false ? '#4a9eff' : '#333333',
+                          backgroundColor: (value || [])[index]?.answer === false ? '#ffffff' : '#333333',
                           color: (value || [])[index]?.answer === false ? '#ffffff' : '#666666',
                           transition: 'all 0.2s ease'
                         }}
@@ -3011,7 +3004,7 @@ export default function HomePage() {
                       }}
                       onMouseEnter={(e) => {
                         e.target.style.color = '#ffffff';
-                        e.target.style.borderColor = '#4a9eff';
+                        e.target.style.borderColor = '#ffffff';
                       }}
                       onMouseLeave={(e) => {
                         e.target.style.color = '#666666';
@@ -3055,7 +3048,7 @@ export default function HomePage() {
                     <div style={{
                       width: '32px',
                       height: '32px',
-                      backgroundColor: '#4a9eff',
+                      backgroundColor: '#ffffff',
                       borderRadius: '50%',
                       display: 'flex',
                       alignItems: 'center',
@@ -3151,7 +3144,7 @@ export default function HomePage() {
                   }}
                   onMouseEnter={(e) => {
                     e.target.style.color = '#ffffff';
-                    e.target.style.borderColor = '#4a9eff';
+                    e.target.style.borderColor = '#ffffff';
                   }}
                   onMouseLeave={(e) => {
                     e.target.style.color = '#666666';
@@ -3234,7 +3227,7 @@ export default function HomePage() {
                       onClick={() => window.open(value.figmaLink, '_blank')}
                       style={{
                         padding: '8px 16px',
-                        backgroundColor: '#4a9eff',
+                        backgroundColor: '#ffffff',
                         color: '#ffffff',
                         border: 'none',
                         borderRadius: '6px',
@@ -3243,7 +3236,7 @@ export default function HomePage() {
                         transition: 'all 0.2s ease'
                       }}
                       onMouseEnter={(e) => e.target.style.backgroundColor = '#3a8eef'}
-                      onMouseLeave={(e) => e.target.style.backgroundColor = '#4a9eff'}
+                      onMouseLeave={(e) => e.target.style.backgroundColor = '#ffffff'}
                     >
                       Abrir
                     </button>
@@ -3301,7 +3294,7 @@ export default function HomePage() {
                           fontSize: '12px',
                           border: 'none',
                           cursor: 'pointer',
-                          backgroundColor: (value || [])[index]?.answer === true ? '#4a9eff' : '#333333',
+                          backgroundColor: (value || [])[index]?.answer === true ? '#ffffff' : '#333333',
                           color: (value || [])[index]?.answer === true ? '#ffffff' : '#666666',
                           transition: 'all 0.2s ease'
                         }}
@@ -3320,7 +3313,7 @@ export default function HomePage() {
                           fontSize: '12px',
                           border: 'none',
                           cursor: 'pointer',
-                          backgroundColor: (value || [])[index]?.answer === false ? '#4a9eff' : '#333333',
+                          backgroundColor: (value || [])[index]?.answer === false ? '#ffffff' : '#333333',
                           color: (value || [])[index]?.answer === false ? '#ffffff' : '#666666',
                           transition: 'all 0.2s ease'
                         }}
@@ -3383,7 +3376,7 @@ export default function HomePage() {
                       <div style={{
                         width: '40px',
                         height: '40px',
-                        backgroundColor: '#4a9eff',
+                        backgroundColor: '#ffffff',
                         borderRadius: '8px',
                         display: 'flex',
                         alignItems: 'center',
@@ -3505,7 +3498,7 @@ export default function HomePage() {
                   }}
                   onMouseEnter={(e) => {
                     e.target.style.color = '#ffffff';
-                    e.target.style.borderColor = '#4a9eff';
+                    e.target.style.borderColor = '#ffffff';
                   }}
                   onMouseLeave={(e) => {
                     e.target.style.color = '#666666';
@@ -3657,7 +3650,7 @@ export default function HomePage() {
                   }}
                   onMouseEnter={(e) => {
                     e.target.style.color = '#ffffff';
-                    e.target.style.borderColor = '#4a9eff';
+                    e.target.style.borderColor = '#ffffff';
                   }}
                   onMouseLeave={(e) => {
                     e.target.style.color = '#666666';
@@ -3803,7 +3796,7 @@ export default function HomePage() {
                   }}
                   onMouseEnter={(e) => {
                     e.target.style.color = '#ffffff';
-                    e.target.style.borderColor = '#4a9eff';
+                    e.target.style.borderColor = '#ffffff';
                   }}
                   onMouseLeave={(e) => {
                     e.target.style.color = '#666666';
@@ -3976,7 +3969,7 @@ export default function HomePage() {
                       <div style={{
                         width: '40px',
                         height: '40px',
-                        backgroundColor: '#4a9eff',
+                        backgroundColor: '#ffffff',
                         borderRadius: '8px',
                         display: 'flex',
                         alignItems: 'center',
@@ -4024,7 +4017,7 @@ export default function HomePage() {
                           <div style={{
                             width: '24px',
                             height: '24px',
-                            backgroundColor: '#4a9eff',
+                            backgroundColor: '#ffffff',
                             borderRadius: '50%',
                             display: 'flex',
                             alignItems: 'center',
@@ -4123,7 +4116,7 @@ export default function HomePage() {
                         }}
                         onMouseEnter={(e) => {
                           e.target.style.color = '#ffffff';
-                          e.target.style.borderColor = '#4a9eff';
+                          e.target.style.borderColor = '#ffffff';
                         }}
                         onMouseLeave={(e) => {
                           e.target.style.color = '#666666';
@@ -4178,7 +4171,7 @@ export default function HomePage() {
                   }}
                   onMouseEnter={(e) => {
                     e.target.style.color = '#ffffff';
-                    e.target.style.borderColor = '#4a9eff';
+                    e.target.style.borderColor = '#ffffff';
                   }}
                   onMouseLeave={(e) => {
                     e.target.style.color = '#666666';
@@ -4218,7 +4211,7 @@ export default function HomePage() {
                       <div style={{
                         width: '40px',
                         height: '40px',
-                        backgroundColor: '#4a9eff',
+                        backgroundColor: '#ffffff',
                         borderRadius: '8px',
                         display: 'flex',
                         alignItems: 'center',
@@ -4361,7 +4354,7 @@ export default function HomePage() {
                   }}
                   onMouseEnter={(e) => {
                     e.target.style.color = '#ffffff';
-                    e.target.style.borderColor = '#4a9eff';
+                    e.target.style.borderColor = '#ffffff';
                   }}
                   onMouseLeave={(e) => {
                     e.target.style.color = '#666666';
@@ -4446,7 +4439,7 @@ export default function HomePage() {
                     transform: 'translateX(-50%)',
                     width: '60px',
                     height: '60px',
-                    backgroundColor: '#4a9eff',
+                    backgroundColor: '#ffffff',
                     borderRadius: '4px',
                     display: 'flex',
                     alignItems: 'center',
@@ -4493,7 +4486,7 @@ export default function HomePage() {
                       transform: 'translateX(-50%)',
                       width: '60px',
                       height: '60px',
-                      backgroundColor: '#4a9eff',
+                      backgroundColor: '#ffffff',
                       borderRadius: '4px',
                       display: 'flex',
                       alignItems: 'center',
@@ -4541,7 +4534,7 @@ export default function HomePage() {
                       transform: 'translateX(-50%)',
                       width: '60px',
                       height: '60px',
-                      backgroundColor: '#4a9eff',
+                      backgroundColor: '#ffffff',
                       borderRadius: '4px',
                       display: 'flex',
                       alignItems: 'center',
@@ -4590,7 +4583,7 @@ export default function HomePage() {
                         transform: 'translateX(-50%)',
                         width: '60px',
                         height: '60px',
-                        backgroundColor: '#4a9eff',
+                        backgroundColor: '#ffffff',
                         borderRadius: '4px',
                         display: 'flex',
                         alignItems: 'center',
@@ -4635,7 +4628,7 @@ export default function HomePage() {
                         transform: 'translateX(-50%)',
                         width: '60px',
                         height: '60px',
-                        backgroundColor: '#4a9eff',
+                        backgroundColor: '#ffffff',
                         borderRadius: '4px',
                         display: 'flex',
                         alignItems: 'center',
@@ -4680,7 +4673,7 @@ export default function HomePage() {
                         transform: 'translateX(-50%)',
                         width: '60px',
                         height: '60px',
-                        backgroundColor: '#4a9eff',
+                        backgroundColor: '#ffffff',
                         borderRadius: '4px',
                         display: 'flex',
                         alignItems: 'center',
@@ -4709,14 +4702,14 @@ export default function HomePage() {
                 padding: '0 16px',
                 fontSize: '14px',
                 color: '#ffffff',
-                backgroundColor: '#4a9eff',
+                backgroundColor: '#ffffff',
                 border: 'none',
                 borderRadius: '8px',
                 cursor: 'pointer',
                 transition: 'all 0.2s ease'
               }}
               onMouseEnter={(e) => e.target.style.backgroundColor = '#3a8eef'}
-              onMouseLeave={(e) => e.target.style.backgroundColor = '#4a9eff'}
+              onMouseLeave={(e) => e.target.style.backgroundColor = '#ffffff'}
             >
               <Wand2 style={{ width: '16px', height: '16px' }} />
               Generar mockups
@@ -5009,7 +5002,7 @@ export default function HomePage() {
                 backgroundColor: 'transparent', 
                 border: 'none', 
                 cursor: isListening ? 'not-allowed' : 'pointer',
-                color: isListening ? '#4a9eff' : '#666666',
+                color: isListening ? '#ffffff' : '#666666',
                 opacity: isListening ? 0.8 : 1,
                 transition: 'color 0.2s ease'
               }}
@@ -5072,7 +5065,7 @@ export default function HomePage() {
               <div style={{
                 width: '8px',
                 height: '8px',
-                backgroundColor: isListening ? '#4a9eff' : '#666666',
+                backgroundColor: isListening ? '#ffffff' : '#666666',
                 borderRadius: '50%',
                 animation: isListening ? 'pulse 1s infinite' : 'none'
               }} />
@@ -5120,7 +5113,7 @@ export default function HomePage() {
                 }}
                 onMouseEnter={(e) => {
                   e.target.style.color = '#ffffff';
-                  e.target.style.borderColor = '#4a9eff';
+                  e.target.style.borderColor = '#ffffff';
                 }}
                 onMouseLeave={(e) => {
                   e.target.style.color = '#666666';
@@ -5313,7 +5306,8 @@ export default function HomePage() {
                 </div>
               </div>
               
-              {/* Selector de modo */}
+              {/* Selector de modo - Solo en capítulos principales */}
+              {isMainChapter(steps[currentStepIndex].id) && (
               <div style={{ 
                 display: 'flex', 
                 gap: '8px', 
@@ -5330,7 +5324,7 @@ export default function HomePage() {
                     fontSize: '14px',
                     border: '1px solid #333333',
                     borderRadius: '20px',
-                    backgroundColor: selectedMode === 'startup' ? '#4a9eff' : 'transparent',
+                    backgroundColor: selectedMode === 'startup' ? '#ffffff' : 'transparent',
                     color: selectedMode === 'startup' ? '#ffffff' : '#666666',
                     cursor: 'pointer',
                     transition: 'all 0.2s ease'
@@ -5345,7 +5339,7 @@ export default function HomePage() {
                     fontSize: '14px',
                     border: '1px solid #333333',
                     borderRadius: '20px',
-                    backgroundColor: selectedMode === 'scaleup' ? '#4a9eff' : 'transparent',
+                    backgroundColor: selectedMode === 'scaleup' ? '#ffffff' : 'transparent',
                     color: selectedMode === 'scaleup' ? '#ffffff' : '#666666',
                     cursor: 'pointer',
                     transition: 'all 0.2s ease'
@@ -5360,7 +5354,7 @@ export default function HomePage() {
                     fontSize: '14px',
                     border: '1px solid #333333',
                     borderRadius: '20px',
-                    backgroundColor: selectedMode === 'corporate' ? '#4a9eff' : 'transparent',
+                    backgroundColor: selectedMode === 'corporate' ? '#ffffff' : 'transparent',
                     color: selectedMode === 'corporate' ? '#ffffff' : '#666666',
                     cursor: 'pointer',
                     transition: 'all 0.2s ease'
@@ -5369,6 +5363,7 @@ export default function HomePage() {
                   Corporate
                 </button>
               </div>
+              )}
               
               {/* Contenido narrativo */}
               {getStepContent(steps[currentStepIndex].id) && (
@@ -5380,9 +5375,58 @@ export default function HomePage() {
                   opacity: showElements.description ? 1 : 0,
                   transform: showElements.description ? 'translateY(0)' : 'translateY(20px)',
                   transition: 'opacity 0.6s ease-out, transform 0.6s ease-out',
-                  minHeight: '60px'
+                  minHeight: '60px',
+                  display: 'flex',
+                  alignItems: 'flex-start',
+                  gap: '12px'
                 }}>
-                {typewriterText}
+                  {/* Selector de versiones */}
+                  <div style={{ 
+                    display: 'flex', 
+                    gap: '4px',
+                    marginTop: '2px'
+                  }}>
+                    {[1, 2, 3].map((version) => (
+                      <button
+                        key={version}
+                        onClick={() => setSelectedVersion(version)}
+                        style={{
+                          width: '24px',
+                          height: '24px',
+                          borderRadius: '50%',
+                          border: '1px solid #333333',
+                          backgroundColor: selectedVersion === version ? '#ffffff' : 'transparent',
+                          color: selectedVersion === version ? '#ffffff' : '#666666',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          cursor: 'pointer',
+                          fontSize: '12px',
+                          fontWeight: '500',
+                          transition: 'all 0.2s ease'
+                        }}
+                        onMouseEnter={(e) => {
+                          if (selectedVersion !== version) {
+                            e.target.style.backgroundColor = '#333333';
+                            e.target.style.color = '#ffffff';
+                          }
+                        }}
+                        onMouseLeave={(e) => {
+                          if (selectedVersion !== version) {
+                            e.target.style.backgroundColor = 'transparent';
+                            e.target.style.color = '#666666';
+                          }
+                        }}
+                      >
+                        {version}
+                      </button>
+                    ))}
+                  </div>
+                  
+                  {/* Texto de descripción */}
+                  <div style={{ flex: 1 }}>
+                    {typewriterText}
+                  </div>
               </div>
               )}
               
@@ -5395,90 +5439,6 @@ export default function HomePage() {
                 {renderStep()}
               </div>
               
-              {/* Selector de versiones */}
-              <div style={{ 
-                display: 'flex', 
-                gap: '8px', 
-                marginTop: '24px',
-                justifyContent: 'center',
-                opacity: showElements.selectors ? 1 : 0,
-                transform: showElements.selectors ? 'translateY(0)' : 'translateY(20px)',
-                transition: 'opacity 0.6s ease-out, transform 0.6s ease-out'
-              }}>
-                <button
-                  style={{
-                    width: '32px',
-                    height: '32px',
-                    borderRadius: '50%',
-                    border: '1px solid #333333',
-                    backgroundColor: '#4a9eff',
-                    color: '#ffffff',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    cursor: 'pointer',
-                    fontSize: '14px',
-                    fontWeight: '500',
-                    transition: 'all 0.2s ease'
-                  }}
-                >
-                  1
-                </button>
-                <button
-                  style={{
-                    width: '32px',
-                    height: '32px',
-                    borderRadius: '50%',
-                    border: '1px solid #333333',
-                    backgroundColor: 'transparent',
-                    color: '#666666',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    cursor: 'pointer',
-                    fontSize: '14px',
-                    fontWeight: '500',
-                    transition: 'all 0.2s ease'
-                  }}
-                  onMouseEnter={(e) => {
-                    e.target.style.backgroundColor = '#333333';
-                    e.target.style.color = '#ffffff';
-                  }}
-                  onMouseLeave={(e) => {
-                    e.target.style.backgroundColor = 'transparent';
-                    e.target.style.color = '#666666';
-                  }}
-                >
-                  2
-                </button>
-                <button
-                  style={{
-                    width: '32px',
-                    height: '32px',
-                    borderRadius: '50%',
-                    border: '1px solid #333333',
-                    backgroundColor: 'transparent',
-                    color: '#666666',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    cursor: 'pointer',
-                    fontSize: '14px',
-                    fontWeight: '500',
-                    transition: 'all 0.2s ease'
-                  }}
-                  onMouseEnter={(e) => {
-                    e.target.style.backgroundColor = '#333333';
-                    e.target.style.color = '#ffffff';
-                  }}
-                  onMouseLeave={(e) => {
-                    e.target.style.backgroundColor = 'transparent';
-                    e.target.style.color = '#666666';
-                  }}
-                >
-                  3
-                </button>
-              </div>
             </div>
           </div>
         </div>
