@@ -4829,27 +4829,63 @@ export default function HomePage() {
         {isMenuOpen && (
           <div style={{ 
             position: 'absolute', 
-            top: '73px', 
-            left: '16px', 
-            right: '16px',
-            backgroundColor: '#1a1a1a', 
-            border: '1px solid #333333', 
-            borderRadius: '8px', 
-            boxShadow: '0 4px 12px rgba(0,0,0,0.5)', 
+            top: '0', 
+            left: '0', 
+            right: '0',
+            bottom: '0',
+            backgroundColor: 'rgba(0, 0, 0, 0.8)', 
             zIndex: 1000,
-            padding: '8px',
-            maxHeight: '400px',
-            overflowY: 'auto'
+            display: 'flex',
+            alignItems: 'flex-start',
+            justifyContent: 'center',
+            paddingTop: '100px'
           }}>
-            <div style={{ 
-              fontSize: '12px', 
-              fontWeight: '500', 
-              color: '#666666', 
-              textTransform: 'uppercase', 
-              letterSpacing: '0.05em', 
-              marginBottom: '8px' 
+            <div style={{
+              backgroundColor: '#1a1a1a', 
+              border: '1px solid #333333', 
+              borderRadius: '8px', 
+              boxShadow: '0 4px 12px rgba(0,0,0,0.5)', 
+              padding: '16px',
+              maxHeight: '500px',
+              overflowY: 'auto',
+              width: '320px',
+              maxWidth: '90vw'
             }}>
-              Navegación
+            <div style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              marginBottom: '16px'
+            }}>
+              <div style={{ 
+                fontSize: '12px', 
+                fontWeight: '500', 
+                color: '#666666', 
+                textTransform: 'uppercase', 
+                letterSpacing: '0.05em'
+              }}>
+                Navegación
+              </div>
+              <button
+                onClick={() => setIsMenuOpen(false)}
+                style={{
+                  width: '24px',
+                  height: '24px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  backgroundColor: 'transparent',
+                  border: 'none',
+                  cursor: 'pointer',
+                  color: '#666666',
+                  transition: 'color 0.2s ease',
+                  fontSize: '16px'
+                }}
+                onMouseEnter={(e) => e.target.style.color = '#ffffff'}
+                onMouseLeave={(e) => e.target.style.color = '#666666'}
+              >
+                ×
+              </button>
             </div>
             {steps.map((step, index) => (
               <button
@@ -4884,8 +4920,9 @@ export default function HomePage() {
                 {step.title}
               </button>
             ))}
-              </div>
-            )}
+            </div>
+          </div>
+        )}
 
         {/* Contenido */}
         <div style={{ 
