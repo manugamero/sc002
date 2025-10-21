@@ -778,7 +778,7 @@ export default function HomePage() {
             
             <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
               {/* Contenido narrativo */}
-              {content && (
+              {getStepContent(steps[currentStepIndex].id) && (
                 <div style={{
                   fontSize: '16px',
                   lineHeight: '1.6',
@@ -786,7 +786,7 @@ export default function HomePage() {
                   marginBottom: '32px',
                   fontStyle: 'italic'
                 }}>
-                  {content}
+                  {getStepContent(steps[currentStepIndex].id)}
                 </div>
               )}
               
