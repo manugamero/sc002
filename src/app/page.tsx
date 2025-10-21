@@ -151,23 +151,24 @@ export default function HomePage() {
     // Título después
     setTimeout(() => setShowElements(prev => ({ ...prev, title: true })), 600);
     
-    // Descripción con delay y typewriter
-    setTimeout(() => {
-      setShowElements(prev => ({ ...prev, description: true }));
-      const description = getStepContent(steps[currentStepIndex].id);
-      if (description) {
-        setTypewriterText('');
-        let i = 0;
-        const typewriterInterval = setInterval(() => {
-          if (i < description.length) {
-            setTypewriterText(description.slice(0, i + 1));
-            i++;
-          } else {
-            clearInterval(typewriterInterval);
-          }
-        }, 50);
-      }
-    }, 1000);
+            // Descripción con delay y fade-in por palabras
+            setTimeout(() => {
+              setShowElements(prev => ({ ...prev, description: true }));
+              const description = getStepContent(steps[currentStepIndex].id);
+              if (description) {
+                setTypewriterText('');
+                const words = description.split(' ');
+                let i = 0;
+                const wordInterval = setInterval(() => {
+                  if (i < words.length) {
+                    setTypewriterText(words.slice(0, i + 1).join(' '));
+                    i++;
+                  } else {
+                    clearInterval(wordInterval);
+                  }
+                }, 200); // Más rápido: 200ms por palabra
+              }
+            }, 1000);
     
     // Formulario después
     setTimeout(() => setShowElements(prev => ({ ...prev, form: true })), 1400);
@@ -655,25 +656,82 @@ export default function HomePage() {
                   )}
                 </button>
               </div>
-              <div style={{ position: 'relative' }}>
+              <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
+                <button
+                  onClick={() => {
+                    const currentSize = value?.size || '1-10';
+                    const sizes = ['1-10', '11-50', '51-200', '201-500', '500+'];
+                    const currentIndex = sizes.indexOf(currentSize);
+                    const newIndex = Math.max(0, currentIndex - 1);
+                    updateField(step.field, { ...value, size: sizes[newIndex] });
+                  }}
+                  style={{
+                    width: '32px',
+                    height: '48px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    backgroundColor: 'transparent',
+                    border: '1px solid #333333',
+                    borderRight: 'none',
+                    borderTopLeftRadius: '8px',
+                    borderBottomLeftRadius: '8px',
+                    cursor: 'pointer',
+                    color: '#666666',
+                    transition: 'color 0.2s ease'
+                  }}
+                  onMouseEnter={(e) => e.target.style.color = '#ffffff'}
+                  onMouseLeave={(e) => e.target.style.color = '#666666'}
+                >
+                  -
+                </button>
                 <input
                   type="text"
                   value={value?.size || ''}
                   onChange={(e) => updateField(step.field, { ...value, size: e.target.value })}
                   style={{
-                    width: '100%',
+                    flex: 1,
                     height: '48px',
-                    padding: '12px 48px 12px 16px',
+                    padding: '12px 16px',
                     fontSize: '16px',
                     border: '1px solid #333333',
-                    borderRadius: '8px',
+                    borderLeft: 'none',
+                    borderRight: 'none',
                     backgroundColor: 'transparent',
                     color: '#ffffff',
                     outline: 'none',
                     transition: 'all 0.2s ease'
                   }}
-                  placeholder="Tamaño de la empresa (ej: 1-10 empleados)"
+                  placeholder="Tamaño de la empresa"
                 />
+                <button
+                  onClick={() => {
+                    const currentSize = value?.size || '1-10';
+                    const sizes = ['1-10', '11-50', '51-200', '201-500', '500+'];
+                    const currentIndex = sizes.indexOf(currentSize);
+                    const newIndex = Math.min(sizes.length - 1, currentIndex + 1);
+                    updateField(step.field, { ...value, size: sizes[newIndex] });
+                  }}
+                  style={{
+                    width: '32px',
+                    height: '48px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    backgroundColor: 'transparent',
+                    border: '1px solid #333333',
+                    borderLeft: 'none',
+                    borderTopRightRadius: '8px',
+                    borderBottomRightRadius: '8px',
+                    cursor: 'pointer',
+                    color: '#666666',
+                    transition: 'color 0.2s ease'
+                  }}
+                  onMouseEnter={(e) => e.target.style.color = '#ffffff'}
+                  onMouseLeave={(e) => e.target.style.color = '#666666'}
+                >
+                  +
+                </button>
                 <button
                   onClick={() => startVoiceRecognition(`${step.field}.size`)}
                   style={{
@@ -689,7 +747,7 @@ export default function HomePage() {
                     backgroundColor: 'transparent',
                     border: 'none',
                     cursor: 'pointer',
-                    color: isListening && activeVoiceField === `${step.field}.size` ? '#4a9eff' : '#666666',
+                    color: isListening && activeVoiceField === `${step.field}.size` ? '#ffffff' : '#666666',
                     transition: 'color 0.2s ease'
                   }}
                   onMouseEnter={(e) => {
@@ -711,8 +769,7 @@ export default function HomePage() {
                 </button>
               </div>
               <div style={{ position: 'relative' }}>
-                <input
-                  type="text"
+                <select
                   value={value?.industry || ''}
                   onChange={(e) => updateField(step.field, { ...value, industry: e.target.value })}
                   style={{
@@ -725,10 +782,26 @@ export default function HomePage() {
                     backgroundColor: 'transparent',
                     color: '#ffffff',
                     outline: 'none',
-                    transition: 'all 0.2s ease'
+                    transition: 'all 0.2s ease',
+                    appearance: 'none',
+                    backgroundImage: `url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%23666' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3e%3c/svg%3e")`,
+                    backgroundPosition: 'right 12px center',
+                    backgroundRepeat: 'no-repeat',
+                    backgroundSize: '16px'
                   }}
-                  placeholder="Industria o sector"
-                />
+                >
+                  <option value="" style={{ backgroundColor: '#1a1a1a', color: '#ffffff' }}>Industria o sector</option>
+                  <option value="Tecnología" style={{ backgroundColor: '#1a1a1a', color: '#ffffff' }}>Tecnología</option>
+                  <option value="Fintech" style={{ backgroundColor: '#1a1a1a', color: '#ffffff' }}>Fintech</option>
+                  <option value="E-commerce" style={{ backgroundColor: '#1a1a1a', color: '#ffffff' }}>E-commerce</option>
+                  <option value="Salud" style={{ backgroundColor: '#1a1a1a', color: '#ffffff' }}>Salud</option>
+                  <option value="Educación" style={{ backgroundColor: '#1a1a1a', color: '#ffffff' }}>Educación</option>
+                  <option value="Marketing" style={{ backgroundColor: '#1a1a1a', color: '#ffffff' }}>Marketing</option>
+                  <option value="Consultoría" style={{ backgroundColor: '#1a1a1a', color: '#ffffff' }}>Consultoría</option>
+                  <option value="Inmobiliaria" style={{ backgroundColor: '#1a1a1a', color: '#ffffff' }}>Inmobiliaria</option>
+                  <option value="Alimentación" style={{ backgroundColor: '#1a1a1a', color: '#ffffff' }}>Alimentación</option>
+                  <option value="Otro" style={{ backgroundColor: '#1a1a1a', color: '#ffffff' }}>Otro</option>
+                </select>
                 <button
                   onClick={() => startVoiceRecognition(`${step.field}.industry`)}
                   style={{
@@ -744,7 +817,7 @@ export default function HomePage() {
                     backgroundColor: 'transparent',
                     border: 'none',
                     cursor: 'pointer',
-                    color: isListening && activeVoiceField === `${step.field}.industry` ? '#4a9eff' : '#666666',
+                    color: isListening && activeVoiceField === `${step.field}.industry` ? '#ffffff' : '#666666',
                     transition: 'color 0.2s ease'
                   }}
                   onMouseEnter={(e) => {
@@ -844,58 +917,213 @@ export default function HomePage() {
 
       case 'competitors':
         return (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
             {/* Ejes editables */}
             <div style={{ display: 'flex', gap: '16px', marginBottom: '16px' }}>
               <input
                 type="text"
-                value={value?.xAxis || 'X'}
+                value={value?.xAxis || 'Calidad'}
                 onChange={(e) => updateField(step.field, { ...value, xAxis: e.target.value })}
                 style={{
                   flex: 1,
-                  height: '40px',
-                  padding: '8px 12px',
-                  fontSize: '14px',
+                  height: '48px',
+                  padding: '12px 16px',
+                  fontSize: '16px',
                   border: '1px solid #333333',
-                  borderRadius: '6px',
+                  borderRadius: '8px',
                   backgroundColor: 'transparent',
                   color: '#ffffff',
                   outline: 'none',
-                  textAlign: 'center'
+                  textAlign: 'center',
+                  transition: 'all 0.2s ease'
                 }}
+                onMouseEnter={(e) => e.target.style.borderColor = '#ffffff'}
+                onMouseLeave={(e) => e.target.style.borderColor = '#333333'}
                 placeholder="Eje X"
               />
               <input
                 type="text"
-                value={value?.yAxis || 'Y'}
+                value={value?.yAxis || 'Precio'}
                 onChange={(e) => updateField(step.field, { ...value, yAxis: e.target.value })}
                 style={{
                   flex: 1,
-                  height: '40px',
-                  padding: '8px 12px',
-                  fontSize: '14px',
+                  height: '48px',
+                  padding: '12px 16px',
+                  fontSize: '16px',
                   border: '1px solid #333333',
-                  borderRadius: '6px',
+                  borderRadius: '8px',
                   backgroundColor: 'transparent',
                   color: '#ffffff',
                   outline: 'none',
-                  textAlign: 'center'
+                  textAlign: 'center',
+                  transition: 'all 0.2s ease'
                 }}
+                onMouseEnter={(e) => e.target.style.borderColor = '#ffffff'}
+                onMouseLeave={(e) => e.target.style.borderColor = '#333333'}
                 placeholder="Eje Y"
               />
             </div>
+
+            {/* Matriz de competidores */}
+            <div style={{
+              position: 'relative',
+              width: '100%',
+              height: '400px',
+              backgroundColor: '#1a1a1a',
+              border: '1px solid #333333',
+              borderRadius: '8px',
+              overflow: 'hidden'
+            }}>
+              {/* Líneas de la cuadrícula */}
+              <div style={{
+                position: 'absolute',
+                top: '50%',
+                left: '0',
+                right: '0',
+                height: '1px',
+                backgroundColor: '#333333',
+                zIndex: 1
+              }} />
+              <div style={{
+                position: 'absolute',
+                left: '50%',
+                top: '0',
+                bottom: '0',
+                width: '1px',
+                backgroundColor: '#333333',
+                zIndex: 1
+              }} />
+              
+              {/* Etiquetas de ejes */}
+              <div style={{
+                position: 'absolute',
+                top: '20px',
+                left: '20px',
+                color: '#666666',
+                fontSize: '12px',
+                fontWeight: '500'
+              }}>
+                {value?.yAxis || 'Precio'} Alto
+              </div>
+              <div style={{
+                position: 'absolute',
+                bottom: '20px',
+                left: '20px',
+                color: '#666666',
+                fontSize: '12px',
+                fontWeight: '500'
+              }}>
+                {value?.yAxis || 'Precio'} Bajo
+              </div>
+              <div style={{
+                position: 'absolute',
+                bottom: '20px',
+                left: '20px',
+                color: '#666666',
+                fontSize: '12px',
+                fontWeight: '500'
+              }}>
+                {value?.xAxis || 'Calidad'} Baja
+              </div>
+              <div style={{
+                position: 'absolute',
+                bottom: '20px',
+                right: '20px',
+                color: '#666666',
+                fontSize: '12px',
+                fontWeight: '500'
+              }}>
+                {value?.xAxis || 'Calidad'} Alta
+              </div>
+
+              {/* Competidores en la matriz */}
+              {(value?.competitors || []).map((competitor: any, index: number) => {
+                const x = competitor.x !== undefined ? competitor.x : 50 + (index * 20) % 60;
+                const y = competitor.y !== undefined ? competitor.y : 50 + (index * 15) % 40;
+                const colors = ['#ff6b6b', '#4ecdc4', '#45b7d1', '#f9ca24', '#f0932b', '#eb4d4b', '#6c5ce7', '#a29bfe'];
+                const color = colors[index % colors.length];
+                
+                return (
+                  <div
+                    key={index}
+                    style={{
+                      position: 'absolute',
+                      left: `${x}%`,
+                      top: `${100 - y}%`,
+                      transform: 'translate(-50%, -50%)',
+                      width: '60px',
+                      height: '60px',
+                      backgroundColor: color,
+                      borderRadius: '50%',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      cursor: 'move',
+                      border: '2px solid #ffffff',
+                      fontSize: '12px',
+                      fontWeight: '500',
+                      color: '#ffffff',
+                      textAlign: 'center',
+                      zIndex: 2,
+                      transition: 'all 0.2s ease',
+                      boxShadow: '0 2px 8px rgba(0,0,0,0.3)'
+                    }}
+                    onMouseEnter={(e) => {
+                      e.target.style.transform = 'translate(-50%, -50%) scale(1.1)';
+                      e.target.style.boxShadow = '0 4px 12px rgba(0,0,0,0.4)';
+                    }}
+                    onMouseLeave={(e) => {
+                      e.target.style.transform = 'translate(-50%, -50%) scale(1)';
+                      e.target.style.boxShadow = '0 2px 8px rgba(0,0,0,0.3)';
+                    }}
+                    draggable
+                    onDragEnd={(e) => {
+                      const rect = e.currentTarget.parentElement.getBoundingClientRect();
+                      const x = ((e.clientX - rect.left) / rect.width) * 100;
+                      const y = ((rect.bottom - e.clientY) / rect.height) * 100;
+                      
+                      const newCompetitors = [...(value?.competitors || [])];
+                      newCompetitors[index] = { 
+                        ...newCompetitors[index], 
+                        name: competitor.name || competitor,
+                        x: Math.max(10, Math.min(90, x)),
+                        y: Math.max(10, Math.min(90, y))
+                      };
+                      updateField(step.field, { ...value, competitors: newCompetitors });
+                    }}
+                  >
+                    {competitor.name || competitor || `C${index + 1}`}
+                  </div>
+                );
+              })}
+            </div>
             
-            {/* Lista de competidores */}
+            {/* Lista de competidores abajo */}
             <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-              {(value?.competitors || []).map((competitor: string, index: number) => (
-                <div key={index} style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <h4 style={{ color: '#ffffff', fontSize: '16px', fontWeight: '500', marginBottom: '8px' }}>
+                Gestionar competidores
+              </h4>
+              {(value?.competitors || []).map((competitor: any, index: number) => (
+                <div key={index} style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                  <div style={{
+                    width: '20px',
+                    height: '20px',
+                    backgroundColor: ['#ff6b6b', '#4ecdc4', '#45b7d1', '#f9ca24', '#f0932b', '#eb4d4b', '#6c5ce7', '#a29bfe'][index % 8],
+                    borderRadius: '50%',
+                    flexShrink: 0
+                  }} />
                   <div style={{ position: 'relative', flex: 1 }}>
                     <input
                       type="text"
-                      value={competitor}
+                      value={competitor.name || competitor || ''}
                       onChange={(e) => {
                         const newCompetitors = [...(value?.competitors || [])];
-                        newCompetitors[index] = e.target.value;
+                        newCompetitors[index] = { 
+                          ...newCompetitors[index], 
+                          name: e.target.value,
+                          x: newCompetitors[index].x !== undefined ? newCompetitors[index].x : 50 + (index * 20) % 60,
+                          y: newCompetitors[index].y !== undefined ? newCompetitors[index].y : 50 + (index * 15) % 40
+                        };
                         updateField(step.field, { ...value, competitors: newCompetitors });
                       }}
                       style={{
@@ -910,11 +1138,13 @@ export default function HomePage() {
                         outline: 'none',
                         transition: 'all 0.2s ease'
                       }}
+                      onMouseEnter={(e) => e.target.style.borderColor = '#ffffff'}
+                      onMouseLeave={(e) => e.target.style.borderColor = '#333333'}
                       placeholder="Nombre del competidor"
                       autoFocus={index === (value?.competitors || []).length - 1}
                     />
                     <button 
-                      onClick={() => handleAIGenerate(step.field, competitor || '')}
+                      onClick={() => handleAIGenerate(step.field, competitor.name || competitor || '')}
                       style={{
                         position: 'absolute',
                         right: '16px',
@@ -939,7 +1169,11 @@ export default function HomePage() {
                       updateField(step.field, { ...value, competitors: newCompetitors });
                     }}
                     style={{
-                      padding: '8px',
+                      width: '32px',
+                      height: '32px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
                       backgroundColor: 'transparent',
                       border: 'none',
                       cursor: 'pointer',
@@ -967,8 +1201,8 @@ export default function HomePage() {
                   updateField(step.field, { 
                     ...value, 
                     competitors: [...(value?.competitors || []), ''],
-                    xAxis: value?.xAxis || 'X',
-                    yAxis: value?.yAxis || 'Y'
+                    xAxis: value?.xAxis || 'Calidad',
+                    yAxis: value?.yAxis || 'Precio'
                   });
                 }}
                 style={{
@@ -987,7 +1221,7 @@ export default function HomePage() {
                 }}
                 onMouseEnter={(e) => {
                   e.target.style.color = '#ffffff';
-                  e.target.style.borderColor = '#4a9eff';
+                  e.target.style.borderColor = '#ffffff';
                 }}
                 onMouseLeave={(e) => {
                   e.target.style.color = '#666666';
@@ -1103,10 +1337,10 @@ export default function HomePage() {
         );
 
       case 'values':
-      return (
-          <div className="space-y-3">
+        return (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
             {value.map((item: any, index: number) => (
-              <div key={index} className="grid grid-cols-2 gap-3">
+              <div key={index} style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
                 <input
                   type="text"
                   value={item.value || ''}
@@ -1115,9 +1349,21 @@ export default function HomePage() {
                     newValues[index] = { ...newValues[index], value: e.target.value };
                     updateField(step.field, newValues);
                   }}
-                  className="px-4 py-3 text-lg border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-500 focus:border-transparent"
+                  style={{
+                    flex: 1,
+                    height: '48px',
+                    padding: '12px 16px',
+                    fontSize: '16px',
+                    border: '1px solid #333333',
+                    borderRadius: '8px',
+                    backgroundColor: 'transparent',
+                    color: '#ffffff',
+                    outline: 'none',
+                    transition: 'all 0.2s ease'
+                  }}
                   placeholder="Valor"
                 />
+                <div style={{ color: '#666666', fontSize: '16px', fontWeight: '500' }}>vs</div>
                 <input
                   type="text"
                   value={item.opposite || ''}
@@ -1126,9 +1372,42 @@ export default function HomePage() {
                     newValues[index] = { ...newValues[index], opposite: e.target.value };
                     updateField(step.field, newValues);
                   }}
-                  className="px-4 py-3 text-lg border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-500 focus:border-transparent"
+                  style={{
+                    flex: 1,
+                    height: '48px',
+                    padding: '12px 16px',
+                    fontSize: '16px',
+                    border: '1px solid #333333',
+                    borderRadius: '8px',
+                    backgroundColor: 'transparent',
+                    color: '#ffffff',
+                    outline: 'none',
+                    transition: 'all 0.2s ease'
+                  }}
                   placeholder="Contrario"
                 />
+                <button
+                  onClick={() => {
+                    const newValues = value.filter((_: any, i: number) => i !== index);
+                    updateField(step.field, newValues);
+                  }}
+                  style={{
+                    width: '32px',
+                    height: '32px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    backgroundColor: 'transparent',
+                    border: 'none',
+                    cursor: 'pointer',
+                    color: '#666666',
+                    transition: 'color 0.2s ease'
+                  }}
+                  onMouseEnter={(e) => e.target.style.color = '#ff4444'}
+                  onMouseLeave={(e) => e.target.style.color = '#666666'}
+                >
+                  <Trash2 style={{ width: '16px', height: '16px' }} />
+                </button>
               </div>
             ))}
             <button
@@ -1149,7 +1428,7 @@ export default function HomePage() {
               }}
               onMouseEnter={(e) => {
                 e.target.style.color = '#ffffff';
-                e.target.style.borderColor = '#4a9eff';
+                e.target.style.borderColor = '#ffffff';
               }}
               onMouseLeave={(e) => {
                 e.target.style.color = '#666666';
@@ -1159,7 +1438,7 @@ export default function HomePage() {
               <Plus style={{ width: '16px', height: '16px' }} />
               Añadir valor
             </button>
-            </div>
+          </div>
         );
 
       case 'features':
@@ -1393,16 +1672,14 @@ export default function HomePage() {
 
       case 'rollout':
         return (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '0' }}>
             {(value || []).map((item: any, index: number) => (
               <div key={index} style={{
                 display: 'flex',
                 alignItems: 'center',
                 gap: '12px',
-                padding: '16px',
-                backgroundColor: '#1a1a1a',
-                borderRadius: '8px',
-                border: '1px solid #333333'
+                padding: '16px 0',
+                borderBottom: index < (value || []).length - 1 ? '1px solid #333333' : 'none'
               }}>
                 <input
                   type="date"
@@ -1413,14 +1690,17 @@ export default function HomePage() {
                     updateField(step.field, newRollout);
                   }}
                   style={{
-                    padding: '8px 12px',
-                    fontSize: '14px',
+                    padding: '12px 16px',
+                    fontSize: '16px',
                     border: '1px solid #333333',
-                    borderRadius: '6px',
+                    borderRadius: '8px',
                     backgroundColor: 'transparent',
                     color: '#ffffff',
-                    outline: 'none'
+                    outline: 'none',
+                    transition: 'all 0.2s ease'
                   }}
+                  onMouseEnter={(e) => e.target.style.borderColor = '#ffffff'}
+                  onMouseLeave={(e) => e.target.style.borderColor = '#333333'}
                 />
                 <input
                   type="text"
@@ -1432,14 +1712,18 @@ export default function HomePage() {
                   }}
                   style={{
                     flex: 1,
-                    padding: '8px 12px',
-                    fontSize: '14px',
+                    height: '48px',
+                    padding: '12px 16px',
+                    fontSize: '16px',
                     border: '1px solid #333333',
-                    borderRadius: '6px',
+                    borderRadius: '8px',
                     backgroundColor: 'transparent',
                     color: '#ffffff',
-                    outline: 'none'
+                    outline: 'none',
+                    transition: 'all 0.2s ease'
                   }}
+                  onMouseEnter={(e) => e.target.style.borderColor = '#ffffff'}
+                  onMouseLeave={(e) => e.target.style.borderColor = '#333333'}
                   placeholder="Tarea del plan"
                 />
                 <button
@@ -1449,20 +1733,22 @@ export default function HomePage() {
                     updateField(step.field, newRollout);
                   }}
                   style={{
-                    width: '24px',
-                    height: '24px',
+                    width: '32px',
+                    height: '32px',
                     border: '2px solid #333333',
                     borderRadius: '4px',
-                    backgroundColor: item.completed ? '#4a9eff' : 'transparent',
+                    backgroundColor: item.completed ? '#ffffff' : 'transparent',
                     cursor: 'pointer',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
                     transition: 'all 0.2s ease'
                   }}
+                  onMouseEnter={(e) => e.target.style.borderColor = '#ffffff'}
+                  onMouseLeave={(e) => e.target.style.borderColor = '#333333'}
                 >
                   {item.completed && (
-                    <div style={{ color: '#ffffff', fontSize: '12px' }}>✓</div>
+                    <div style={{ color: '#000000', fontSize: '14px', fontWeight: 'bold' }}>✓</div>
                   )}
                 </button>
               </div>
@@ -1629,7 +1915,7 @@ export default function HomePage() {
 
       case 'logo':
         return (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '0' }}>
             {/* Logo Preview */}
             <div style={{
               display: 'flex',
@@ -1639,7 +1925,7 @@ export default function HomePage() {
               backgroundColor: '#1a1a1a',
               border: '1px solid #333333',
               borderRadius: '8px',
-              marginBottom: '16px'
+              marginBottom: '24px'
             }}>
               <div style={{
                 fontSize: '24px',
@@ -1652,12 +1938,17 @@ export default function HomePage() {
             </div>
             
             {/* Typography Selector */}
-            <div>
+            <div style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              padding: '16px 0',
+              borderBottom: '1px solid #333333'
+            }}>
               <label style={{ 
-                display: 'block', 
-                fontSize: '14px', 
-                color: '#666666', 
-                marginBottom: '8px' 
+                fontSize: '16px', 
+                color: '#ffffff', 
+                fontWeight: '500'
               }}>
                 Tipografía
               </label>
@@ -1665,18 +1956,21 @@ export default function HomePage() {
                 value={value?.typography || 'Inter'}
                 onChange={(e) => updateField(step.field, { ...value, typography: e.target.value })}
                 style={{
-                  width: '100%',
-                  height: '48px',
-                  padding: '12px 16px',
-                  fontSize: '16px',
+                  height: '32px',
+                  padding: '0 12px',
+                  fontSize: '14px',
                   border: '1px solid #333333',
-                  borderRadius: '8px',
+                  borderRadius: '4px',
                   backgroundColor: 'transparent',
                   color: '#ffffff',
-                  outline: 'none'
+                  outline: 'none',
+                  cursor: 'pointer',
+                  transition: 'all 0.2s ease'
                 }}
+                onMouseEnter={(e) => e.target.style.borderColor = '#ffffff'}
+                onMouseLeave={(e) => e.target.style.borderColor = '#333333'}
               >
-                <option value="Inter">Inter</option>
+                <option value="Inter" style={{ backgroundColor: '#1a1a1a', color: '#ffffff' }}>Inter</option>
                 <option value="Helvetica">Helvetica</option>
                 <option value="Arial">Arial</option>
                 <option value="Roboto">Roboto</option>
@@ -1687,13 +1981,18 @@ export default function HomePage() {
               </select>
             </div>
             
-            {/* Color Picker */}
-            <div>
+            {/* Color de fondo */}
+            <div style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              padding: '16px 0',
+              borderBottom: '1px solid #333333'
+            }}>
               <label style={{ 
-                display: 'block', 
-                fontSize: '14px', 
-                color: '#666666', 
-                marginBottom: '8px' 
+                fontSize: '16px', 
+                color: '#ffffff', 
+                fontWeight: '500'
               }}>
                 Color de fondo
               </label>
@@ -1702,22 +2001,31 @@ export default function HomePage() {
                 value={value?.backgroundColor || '#000000'}
                 onChange={(e) => updateField(step.field, { ...value, backgroundColor: e.target.value })}
                 style={{
-                  width: '100%',
-                  height: '48px',
+                  width: '40px',
+                  height: '32px',
                   border: '1px solid #333333',
-                  borderRadius: '8px',
+                  borderRadius: '4px',
                   backgroundColor: 'transparent',
-                  cursor: 'pointer'
+                  cursor: 'pointer',
+                  transition: 'all 0.2s ease'
                 }}
+                onMouseEnter={(e) => e.target.style.borderColor = '#ffffff'}
+                onMouseLeave={(e) => e.target.style.borderColor = '#333333'}
               />
             </div>
             
-            <div>
+            {/* Color del texto */}
+            <div style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              padding: '16px 0',
+              borderBottom: '1px solid #333333'
+            }}>
               <label style={{ 
-                display: 'block', 
-                fontSize: '14px', 
-                color: '#666666', 
-                marginBottom: '8px' 
+                fontSize: '16px', 
+                color: '#ffffff', 
+                fontWeight: '500'
               }}>
                 Color del texto
               </label>
@@ -1726,40 +2034,57 @@ export default function HomePage() {
                 value={value?.textColor || '#ffffff'}
                 onChange={(e) => updateField(step.field, { ...value, textColor: e.target.value })}
                 style={{
-                  width: '100%',
-                  height: '48px',
+                  width: '40px',
+                  height: '32px',
                   border: '1px solid #333333',
-                  borderRadius: '8px',
+                  borderRadius: '4px',
                   backgroundColor: 'transparent',
-                  cursor: 'pointer'
+                  cursor: 'pointer',
+                  transition: 'all 0.2s ease'
                 }}
+                onMouseEnter={(e) => e.target.style.borderColor = '#ffffff'}
+                onMouseLeave={(e) => e.target.style.borderColor = '#333333'}
               />
             </div>
             
-            {/* Icon Selector */}
-            <div>
+            {/* Icono */}
+            <div style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              padding: '16px 0'
+            }}>
               <label style={{ 
-                display: 'block', 
-                fontSize: '14px', 
-                color: '#666666', 
-                marginBottom: '8px' 
+                fontSize: '16px', 
+                color: '#ffffff', 
+                fontWeight: '500'
               }}>
                 Icono
               </label>
-              <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+              <div style={{ display: 'flex', gap: '8px' }}>
                 {['⚡', '🚀', '💡', '🎯', '⭐', '🔥', '💎', '🌟'].map((icon, index) => (
                   <button
                     key={index}
                     onClick={() => updateField(step.field, { ...value, icon })}
                     style={{
-                      width: '48px',
-                      height: '48px',
-                      fontSize: '20px',
-                      border: value?.icon === icon ? '2px solid #4a9eff' : '1px solid #333333',
-                      borderRadius: '8px',
-                      backgroundColor: value?.icon === icon ? 'rgba(74, 158, 255, 0.1)' : 'transparent',
+                      width: '32px',
+                      height: '32px',
+                      fontSize: '16px',
+                      border: value?.icon === icon ? '2px solid #ffffff' : '1px solid #333333',
+                      borderRadius: '4px',
+                      backgroundColor: value?.icon === icon ? '#2a2a2a' : 'transparent',
                       cursor: 'pointer',
                       transition: 'all 0.2s ease'
+                    }}
+                    onMouseEnter={(e) => {
+                      if (value?.icon !== icon) {
+                        e.target.style.borderColor = '#666666';
+                      }
+                    }}
+                    onMouseLeave={(e) => {
+                      if (value?.icon !== icon) {
+                        e.target.style.borderColor = '#333333';
+                      }
                     }}
                   >
                     {icon}
@@ -4034,8 +4359,149 @@ export default function HomePage() {
           </div>
         );
 
+      case 'names':
+        return (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+            {/* Input del nombre */}
+            <div>
+              <label style={{
+                display: 'block',
+                color: '#ffffff',
+                fontSize: '16px',
+                fontWeight: '500',
+                marginBottom: '12px'
+              }}>
+                Nombre de la marca
+              </label>
+              <input
+                type="text"
+                value={value?.selectedName || ''}
+                onChange={(e) => updateField(step.field, { ...value, selectedName: e.target.value })}
+                style={{
+                  width: '100%',
+                  height: '48px',
+                  padding: '12px 16px',
+                  fontSize: '16px',
+                  border: '1px solid #333333',
+                  borderRadius: '8px',
+                  backgroundColor: 'transparent',
+                  color: '#ffffff',
+                  outline: 'none',
+                  transition: 'all 0.2s ease'
+                }}
+                placeholder="Escribe el nombre de tu marca"
+              />
+            </div>
+
+            {/* Selector de tipo de nombre */}
+            <div>
+              <label style={{
+                display: 'block',
+                color: '#ffffff',
+                fontSize: '16px',
+                fontWeight: '500',
+                marginBottom: '16px'
+              }}>
+                Tipo de nombre
+              </label>
+              <div style={{
+                display: 'grid',
+                gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+                gap: '12px'
+              }}>
+                {[
+                  { 
+                    type: 'Fundador', 
+                    description: 'Nombre del creador o fundador', 
+                    examples: ['IKEA', 'Scrama', 'Ben & Jerry\'s'] 
+                  },
+                  { 
+                    type: 'Descriptivo', 
+                    description: 'Describe la función o beneficio', 
+                    examples: ['Spotify', 'Instagram', 'LinkedIn'] 
+                  },
+                  { 
+                    type: 'Abstracto', 
+                    description: 'Palabras inventadas o sin significado', 
+                    examples: ['Google', 'Kodak', 'Xerox'] 
+                  },
+                  { 
+                    type: 'Geográfico', 
+                    description: 'Ubicación o lugar específico', 
+                    examples: ['Amazon', 'Cisco', 'Adobe'] 
+                  },
+                  { 
+                    type: 'Acrónimo', 
+                    description: 'Iniciales de palabras clave', 
+                    examples: ['IBM', 'BMW', 'ASOS'] 
+                  },
+                  { 
+                    type: 'Metafórico', 
+                    description: 'Símbolo o concepto abstracto', 
+                    examples: ['Apple', 'Oracle', 'Phoenix'] 
+                  }
+                ].map((nameType, index) => (
+                  <div
+                    key={index}
+                    style={{
+                      padding: '16px',
+                      backgroundColor: value?.nameType?.type === nameType.type ? '#2a2a2a' : '#1a1a1a',
+                      borderRadius: '8px',
+                      border: value?.nameType?.type === nameType.type ? '1px solid #ffffff' : '1px solid #333333',
+                      cursor: 'pointer',
+                      transition: 'all 0.2s ease'
+                    }}
+                    onClick={() => updateField(step.field, { ...value, nameType })}
+                    onMouseEnter={(e) => {
+                      if (value?.nameType?.type !== nameType.type) {
+                        e.target.style.backgroundColor = '#2a2a2a';
+                        e.target.style.borderColor = '#666666';
+                      }
+                    }}
+                    onMouseLeave={(e) => {
+                      if (value?.nameType?.type !== nameType.type) {
+                        e.target.style.backgroundColor = '#1a1a1a';
+                        e.target.style.borderColor = '#333333';
+                      }
+                    }}
+                  >
+                    <h3 style={{ 
+                      color: '#ffffff', 
+                      fontSize: '14px', 
+                      fontWeight: '500', 
+                      marginBottom: '4px' 
+                    }}>
+                      {nameType.type}
+                    </h3>
+                    <p style={{ 
+                      color: '#cccccc', 
+                      fontSize: '12px', 
+                      marginBottom: '8px' 
+                    }}>
+                      {nameType.description}
+                    </p>
+                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '4px' }}>
+                      {nameType.examples.map((example, i) => (
+                        <span key={i} style={{ 
+                          color: '#666666', 
+                          fontSize: '10px',
+                          padding: '2px 6px',
+                          backgroundColor: '#333333',
+                          borderRadius: '4px'
+                        }}>
+                          {example}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        );
+
       default:
-        return <div>Tipo de paso no soportado</div>;
+        return null;
     }
   };
 
@@ -4502,11 +4968,7 @@ export default function HomePage() {
                   transition: 'opacity 0.6s ease-out, transform 0.6s ease-out',
                   minHeight: '60px'
                 }}>
-                  {typewriterText}
-                  <span style={{ 
-                    opacity: showElements.description ? 1 : 0,
-                    animation: 'blink 1s infinite'
-                  }}>|</span>
+                {typewriterText}
               </div>
               )}
               
