@@ -146,11 +146,12 @@ export default function HomePage() {
       selectors: false
     });
 
-    // Video aparece primero
-    setTimeout(() => setShowElements(prev => ({ ...prev, video: true })), 100);
-    
-    // Título después
-    setTimeout(() => setShowElements(prev => ({ ...prev, title: true })), 600);
+    // Todos los elementos aparecen juntos
+    setTimeout(() => setShowElements(prev => ({ 
+      ...prev, 
+      video: true, 
+      title: true 
+    })), 100);
     
             // Descripción con delay y fade-in por palabras
             setTimeout(() => {
@@ -641,13 +642,29 @@ export default function HomePage() {
         return (
           <div style={{ display: 'flex', flexDirection: 'column', gap: '0' }}>
             {/* Nombre de la empresa */}
-            <div style={{
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'space-between',
-              padding: '16px 0',
-              borderBottom: '1px solid #333333'
-            }}>
+            <div 
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                padding: '16px 0',
+                borderBottom: '1px solid #333333',
+                cursor: 'text',
+                transition: 'all 0.2s ease'
+              }}
+              onClick={() => {
+                const input = document.querySelector('input[data-field="name"]') as HTMLInputElement;
+                input?.focus();
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.borderBottomColor = '#ffffff';
+                e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.05)';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.borderBottomColor = '#333333';
+                e.currentTarget.style.backgroundColor = 'transparent';
+              }}
+            >
               <label style={{ 
                 fontSize: '16px', 
                 color: '#ffffff', 
@@ -657,6 +674,7 @@ export default function HomePage() {
               </label>
               <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                 <input
+                  data-field="name"
                   type="text"
                   value={value?.name || ''}
                   onChange={(e) => {
@@ -667,20 +685,19 @@ export default function HomePage() {
                     height: '48px',
                     padding: '12px 16px',
                     fontSize: '16px',
-                    border: '1px solid #333333',
-                    borderRadius: '8px',
+                    border: 'none',
                     backgroundColor: 'transparent',
                     color: '#ffffff',
                     outline: 'none',
                     transition: 'all 0.2s ease'
                   }}
-                  onMouseEnter={(e) => e.target.style.borderColor = '#ffffff'}
-                  onMouseLeave={(e) => e.target.style.borderColor = '#333333'}
-                  placeholder="Nombre de la empresa"
                   autoFocus
                 />
                 <button
-                  onClick={() => startVoiceRecognition(`${step.field}.name`)}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    startVoiceRecognition(`${step.field}.name`);
+                  }}
                   style={{
                     width: '32px',
                     height: '32px',
@@ -714,13 +731,28 @@ export default function HomePage() {
             </div>
 
             {/* Tamaño de la empresa */}
-            <div style={{
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'space-between',
-              padding: '16px 0',
-              borderBottom: '1px solid #333333'
-            }}>
+            <div 
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                padding: '16px 0',
+                borderBottom: '1px solid #333333',
+                cursor: 'text',
+                transition: 'all 0.2s ease'
+              }}
+              onClick={() => {
+                // Focus en el input de tamaño
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.borderBottomColor = '#ffffff';
+                e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.05)';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.borderBottomColor = '#333333';
+                e.currentTarget.style.backgroundColor = 'transparent';
+              }}
+            >
               <label style={{ 
                 fontSize: '16px', 
                 color: '#ffffff', 
@@ -731,7 +763,8 @@ export default function HomePage() {
               <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                 <div style={{ display: 'flex', alignItems: 'center' }}>
                   <button
-                    onClick={() => {
+                    onClick={(e) => {
+                      e.stopPropagation();
                       const currentSize = value?.size || '1-10';
                       const sizes = ['1-10', '11-50', '51-200', '201-500', '500+'];
                       const currentIndex = sizes.indexOf(currentSize);
@@ -745,10 +778,7 @@ export default function HomePage() {
                       alignItems: 'center',
                       justifyContent: 'center',
                       backgroundColor: 'transparent',
-                      border: '1px solid #333333',
-                      borderRight: 'none',
-                      borderTopLeftRadius: '8px',
-                      borderBottomLeftRadius: '8px',
+                      border: 'none',
                       cursor: 'pointer',
                       color: '#666666',
                       transition: 'color 0.2s ease'
@@ -767,18 +797,16 @@ export default function HomePage() {
                       height: '48px',
                       padding: '12px 16px',
                       fontSize: '16px',
-                      border: '1px solid #333333',
-                      borderLeft: 'none',
-                      borderRight: 'none',
+                      border: 'none',
                       backgroundColor: 'transparent',
                       color: '#ffffff',
                       outline: 'none',
                       textAlign: 'center'
                     }}
-                    placeholder="Tamaño de la empresa"
                   />
                   <button
-                    onClick={() => {
+                    onClick={(e) => {
+                      e.stopPropagation();
                       const currentSize = value?.size || '1-10';
                       const sizes = ['1-10', '11-50', '51-200', '201-500', '500+'];
                       const currentIndex = sizes.indexOf(currentSize);
@@ -792,10 +820,7 @@ export default function HomePage() {
                       alignItems: 'center',
                       justifyContent: 'center',
                       backgroundColor: 'transparent',
-                      border: '1px solid #333333',
-                      borderLeft: 'none',
-                      borderTopRightRadius: '8px',
-                      borderBottomRightRadius: '8px',
+                      border: 'none',
                       cursor: 'pointer',
                       color: '#666666',
                       transition: 'color 0.2s ease'
@@ -807,7 +832,10 @@ export default function HomePage() {
                   </button>
                 </div>
                 <button
-                  onClick={() => startVoiceRecognition(`${step.field}.size`)}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    startVoiceRecognition(`${step.field}.size`);
+                  }}
                   style={{
                     width: '32px',
                     height: '32px',
@@ -841,13 +869,30 @@ export default function HomePage() {
             </div>
 
             {/* Industria */}
-            <div style={{
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'space-between',
-              padding: '16px 0',
-              borderBottom: '1px solid #333333'
-            }}>
+            <div 
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                padding: '16px 0',
+                borderBottom: '1px solid #333333',
+                cursor: 'pointer',
+                transition: 'all 0.2s ease'
+              }}
+              onClick={() => {
+                const select = document.querySelector('select[data-field="industry"]') as HTMLSelectElement;
+                select?.focus();
+                select?.click();
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.borderBottomColor = '#ffffff';
+                e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.05)';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.borderBottomColor = '#333333';
+                e.currentTarget.style.backgroundColor = 'transparent';
+              }}
+            >
               <label style={{ 
                 fontSize: '16px', 
                 color: '#ffffff', 
@@ -857,22 +902,25 @@ export default function HomePage() {
               </label>
               <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                 <select
+                  data-field="industry"
                   value={value?.industry || ''}
                   onChange={(e) => updateField(step.field, { ...value, industry: e.target.value })}
                   style={{
                     width: '200px',
                     height: '48px',
-                    padding: '12px 16px',
+                    padding: '12px 48px 12px 16px',
                     fontSize: '16px',
-                    border: '1px solid #333333',
-                    borderRadius: '8px',
+                    border: 'none',
                     backgroundColor: 'transparent',
                     color: '#ffffff',
                     outline: 'none',
-                    transition: 'all 0.2s ease'
+                    transition: 'all 0.2s ease',
+                    appearance: 'none',
+                    backgroundImage: `url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%23666' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3e%3c/svg%3e")`,
+                    backgroundPosition: 'right 12px center',
+                    backgroundRepeat: 'no-repeat',
+                    backgroundSize: '16px'
                   }}
-                  onMouseEnter={(e) => e.target.style.borderColor = '#ffffff'}
-                  onMouseLeave={(e) => e.target.style.borderColor = '#333333'}
                 >
                   <option value="" style={{ backgroundColor: '#1a1a1a', color: '#ffffff' }}>Seleccionar industria</option>
                   <option value="Tecnología" style={{ backgroundColor: '#1a1a1a', color: '#ffffff' }}>Tecnología</option>
@@ -885,48 +933,33 @@ export default function HomePage() {
                   <option value="Marketing" style={{ backgroundColor: '#1a1a1a', color: '#ffffff' }}>Marketing</option>
                   <option value="Otro" style={{ backgroundColor: '#1a1a1a', color: '#ffffff' }}>Otro</option>
                 </select>
-                <button
-                  onClick={() => startVoiceRecognition(`${step.field}.industry`)}
-                  style={{
-                    width: '32px',
-                    height: '32px',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    backgroundColor: 'transparent',
-                    border: 'none',
-                    cursor: 'pointer',
-                    color: isListening && activeVoiceField === `${step.field}.industry` ? '#ffffff' : '#666666',
-                    transition: 'color 0.2s ease'
-                  }}
-                  onMouseEnter={(e) => {
-                    if (!isListening || activeVoiceField !== `${step.field}.industry`) {
-                      e.target.style.color = '#ffffff';
-                    }
-                  }}
-                  onMouseLeave={(e) => {
-                    if (!isListening || activeVoiceField !== `${step.field}.industry`) {
-                      e.target.style.color = '#666666';
-                    }
-                  }}
-                >
-                  {isListening && activeVoiceField === `${step.field}.industry` ? (
-                    <MicOff style={{ width: '16px', height: '16px' }} />
-                  ) : (
-                    <Mic style={{ width: '16px', height: '16px' }} />
-                  )}
-                </button>
               </div>
             </div>
 
             {/* Fundador */}
-            <div style={{
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'space-between',
-              padding: '16px 0',
-              borderBottom: '1px solid #333333'
-            }}>
+            <div 
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                padding: '16px 0',
+                borderBottom: '1px solid #333333',
+                cursor: 'text',
+                transition: 'all 0.2s ease'
+              }}
+              onClick={() => {
+                const input = document.querySelector('input[data-field="founder"]') as HTMLInputElement;
+                input?.focus();
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.borderBottomColor = '#ffffff';
+                e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.05)';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.borderBottomColor = '#333333';
+                e.currentTarget.style.backgroundColor = 'transparent';
+              }}
+            >
               <label style={{ 
                 fontSize: '16px', 
                 color: '#ffffff', 
@@ -936,6 +969,7 @@ export default function HomePage() {
               </label>
               <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                 <input
+                  data-field="founder"
                   type="text"
                   value={value?.founder || ''}
                   onChange={(e) => updateField(step.field, { ...value, founder: e.target.value })}
@@ -944,19 +978,18 @@ export default function HomePage() {
                     height: '48px',
                     padding: '12px 16px',
                     fontSize: '16px',
-                    border: '1px solid #333333',
-                    borderRadius: '8px',
+                    border: 'none',
                     backgroundColor: 'transparent',
                     color: '#ffffff',
                     outline: 'none',
                     transition: 'all 0.2s ease'
                   }}
-                  onMouseEnter={(e) => e.target.style.borderColor = '#ffffff'}
-                  onMouseLeave={(e) => e.target.style.borderColor = '#333333'}
-                  placeholder="Nombre del fundador"
                 />
                 <button
-                  onClick={() => startVoiceRecognition(`${step.field}.founder`)}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    startVoiceRecognition(`${step.field}.founder`);
+                  }}
                   style={{
                     width: '32px',
                     height: '32px',
@@ -990,12 +1023,26 @@ export default function HomePage() {
             </div>
 
             {/* Descripción */}
-            <div style={{
-              display: 'flex',
-              alignItems: 'flex-start',
-              justifyContent: 'space-between',
-              padding: '16px 0'
-            }}>
+            <div 
+              style={{
+                display: 'flex',
+                alignItems: 'flex-start',
+                justifyContent: 'space-between',
+                padding: '16px 0',
+                cursor: 'text',
+                transition: 'all 0.2s ease'
+              }}
+              onClick={() => {
+                const textarea = document.querySelector('textarea[data-field="description"]') as HTMLTextAreaElement;
+                textarea?.focus();
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.05)';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.backgroundColor = 'transparent';
+              }}
+            >
               <label style={{ 
                 fontSize: '16px', 
                 color: '#ffffff', 
@@ -1005,6 +1052,7 @@ export default function HomePage() {
                 Descripción
               </label>
               <textarea
+                data-field="description"
                 value={value?.description || ''}
                 onChange={(e) => updateField(step.field, { ...value, description: e.target.value })}
                 style={{
@@ -1012,17 +1060,13 @@ export default function HomePage() {
                   minHeight: '80px',
                   padding: '12px 16px',
                   fontSize: '16px',
-                  border: '1px solid #333333',
-                  borderRadius: '8px',
+                  border: 'none',
                   backgroundColor: 'transparent',
                   color: '#ffffff',
                   outline: 'none',
                   resize: 'vertical',
                   transition: 'all 0.2s ease'
                 }}
-                onMouseEnter={(e) => e.target.style.borderColor = '#ffffff'}
-                onMouseLeave={(e) => e.target.style.borderColor = '#333333'}
-                placeholder="Descripción de la empresa"
               />
             </div>
           </div>
@@ -1031,50 +1075,53 @@ export default function HomePage() {
       case 'competitors':
         return (
           <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
-            {/* Ejes editables */}
-            <div style={{ display: 'flex', gap: '16px', marginBottom: '16px' }}>
-              <input
-                type="text"
-                value={value?.xAxis || 'Calidad'}
-                onChange={(e) => updateField(step.field, { ...value, xAxis: e.target.value })}
-                style={{
-                  flex: 1,
-                  height: '48px',
-                  padding: '12px 16px',
-                  fontSize: '16px',
-                  border: '1px solid #333333',
-                  borderRadius: '8px',
-                  backgroundColor: 'transparent',
-                  color: '#ffffff',
-                  outline: 'none',
-                  textAlign: 'center',
-                  transition: 'all 0.2s ease'
-                }}
-                onMouseEnter={(e) => e.target.style.borderColor = '#ffffff'}
-                onMouseLeave={(e) => e.target.style.borderColor = '#333333'}
-                placeholder="Eje X"
-              />
-              <input
-                type="text"
-                value={value?.yAxis || 'Precio'}
-                onChange={(e) => updateField(step.field, { ...value, yAxis: e.target.value })}
-                style={{
-                  flex: 1,
-                  height: '48px',
-                  padding: '12px 16px',
-                  fontSize: '16px',
-                  border: '1px solid #333333',
-                  borderRadius: '8px',
-                  backgroundColor: 'transparent',
-                  color: '#ffffff',
-                  outline: 'none',
-                  textAlign: 'center',
-                  transition: 'all 0.2s ease'
-                }}
-                onMouseEnter={(e) => e.target.style.borderColor = '#ffffff'}
-                onMouseLeave={(e) => e.target.style.borderColor = '#333333'}
-                placeholder="Eje Y"
-              />
+            {/* Título y ejes editables en la misma línea */}
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '16px' }}>
+              <h4 style={{ color: '#ffffff', fontSize: '16px', fontWeight: '500', margin: 0 }}>
+                Competidores
+              </h4>
+              <div style={{ display: 'flex', gap: '8px' }}>
+                <input
+                  type="text"
+                  value={value?.xAxis || 'Calidad'}
+                  onChange={(e) => updateField(step.field, { ...value, xAxis: e.target.value })}
+                  style={{
+                    width: '80px',
+                    height: '32px',
+                    padding: '6px 8px',
+                    fontSize: '14px',
+                    border: '1px solid #333333',
+                    borderRadius: '4px',
+                    backgroundColor: 'transparent',
+                    color: '#ffffff',
+                    outline: 'none',
+                    transition: 'all 0.2s ease'
+                  }}
+                  onMouseEnter={(e) => e.target.style.borderColor = '#ffffff'}
+                  onMouseLeave={(e) => e.target.style.borderColor = '#333333'}
+                  placeholder="X"
+                />
+                <input
+                  type="text"
+                  value={value?.yAxis || 'Precio'}
+                  onChange={(e) => updateField(step.field, { ...value, yAxis: e.target.value })}
+                  style={{
+                    width: '80px',
+                    height: '32px',
+                    padding: '6px 8px',
+                    fontSize: '14px',
+                    border: '1px solid #333333',
+                    borderRadius: '4px',
+                    backgroundColor: 'transparent',
+                    color: '#ffffff',
+                    outline: 'none',
+                    transition: 'all 0.2s ease'
+                  }}
+                  onMouseEnter={(e) => e.target.style.borderColor = '#ffffff'}
+                  onMouseLeave={(e) => e.target.style.borderColor = '#333333'}
+                  placeholder="Y"
+                />
+              </div>
             </div>
 
             {/* Matriz de competidores */}
@@ -1172,18 +1219,25 @@ export default function HomePage() {
                     draggable
                     onDragStart={(e) => {
                       e.dataTransfer.effectAllowed = 'move';
+                      e.dataTransfer.setData('text/plain', index.toString());
                     }}
-                    onDragEnd={(e) => {
+                    onDragOver={(e) => {
+                      e.preventDefault();
+                      e.dataTransfer.dropEffect = 'move';
+                    }}
+                    onDrop={(e) => {
+                      e.preventDefault();
+                      const draggedIndex = parseInt(e.dataTransfer.getData('text/plain'));
                       const matrixContainer = e.currentTarget.parentElement;
-                      if (matrixContainer) {
+                      if (matrixContainer && draggedIndex !== undefined) {
                         const rect = matrixContainer.getBoundingClientRect();
                         const x = ((e.clientX - rect.left) / rect.width) * 100;
                         const y = ((rect.bottom - e.clientY) / rect.height) * 100;
                         
                         const newCompetitors = [...(value?.competitors || [])];
-                        newCompetitors[index] = { 
-                          ...newCompetitors[index], 
-                          name: competitor.name || competitor,
+                        newCompetitors[draggedIndex] = { 
+                          ...newCompetitors[draggedIndex], 
+                          name: newCompetitors[draggedIndex].name || newCompetitors[draggedIndex],
                           x: Math.max(10, Math.min(90, x)),
                           y: Math.max(10, Math.min(90, y))
                         };
@@ -4668,7 +4722,8 @@ export default function HomePage() {
         height: '100vh', 
         backgroundColor: '#000000', 
         display: 'flex', 
-        flexDirection: 'column' 
+        flexDirection: 'column',
+        overflow: 'hidden'
       }}>
         {/* Header */}
         <div style={{ 
@@ -4971,12 +5026,13 @@ export default function HomePage() {
         <div style={{ 
           flex: 1, 
           display: 'flex', 
-          alignItems: 'center', 
+          alignItems: 'flex-start', 
           justifyContent: 'center', 
           padding: '64px',
           opacity: isAnimating ? 0.3 : 1,
           transform: isAnimating ? 'translateX(20px)' : 'translateX(0)',
-          transition: 'opacity 0.3s ease-in-out, transform 0.3s ease-in-out'
+          transition: 'opacity 0.3s ease-in-out, transform 0.3s ease-in-out',
+          overflowY: 'auto'
         }}>
           <div style={{ width: '100%', maxWidth: '400px' }}>
             {/* Línea separadora */}
@@ -4997,7 +5053,7 @@ export default function HomePage() {
                 transition: 'opacity 0.6s ease-out, transform 0.6s ease-out'
               }}>
                 <div style={{ 
-                  fontSize: '14px', 
+                  fontSize: '24px', 
                   color: '#666666', 
                   marginBottom: '4px',
                   cursor: 'pointer',
@@ -5010,7 +5066,7 @@ export default function HomePage() {
                   S+C
                 </div>
                 <div style={{ 
-                  fontSize: '16px', 
+                  fontSize: '24px', 
                   color: '#ffffff', 
                   fontWeight: '500',
                   cursor: 'pointer',
@@ -5026,10 +5082,10 @@ export default function HomePage() {
                   }
                 }}
                 >
-                  {getSectionTitle(steps[currentStepIndex].id).split(' / ')[0]}
+                  {getSectionTitle(steps[currentStepIndex].id).split(' / ')[0].toUpperCase()}
                 </div>
                 <div style={{ 
-                  fontSize: '14px', 
+                  fontSize: '24px', 
                   color: '#cccccc',
                   cursor: 'pointer',
                   transition: 'color 0.2s ease'
@@ -5044,7 +5100,7 @@ export default function HomePage() {
                   }
                 }}
                 >
-                  {getSectionTitle(steps[currentStepIndex].id).split(' / ')[1]}
+                  {getSectionTitle(steps[currentStepIndex].id).split(' / ')[1].toUpperCase()}
                 </div>
               </div>
               
@@ -5067,7 +5123,7 @@ export default function HomePage() {
                     border: '1px solid #333333',
                     borderRadius: '20px',
                     backgroundColor: selectedMode === 'startup' ? '#ffffff' : 'transparent',
-                    color: selectedMode === 'startup' ? '#ffffff' : '#666666',
+                    color: selectedMode === 'startup' ? '#000000' : '#666666',
                     cursor: 'pointer',
                     transition: 'all 0.2s ease'
                   }}
@@ -5082,7 +5138,7 @@ export default function HomePage() {
                     border: '1px solid #333333',
                     borderRadius: '20px',
                     backgroundColor: selectedMode === 'scaleup' ? '#ffffff' : 'transparent',
-                    color: selectedMode === 'scaleup' ? '#ffffff' : '#666666',
+                    color: selectedMode === 'scaleup' ? '#000000' : '#666666',
                     cursor: 'pointer',
                     transition: 'all 0.2s ease'
                   }}
@@ -5097,7 +5153,7 @@ export default function HomePage() {
                     border: '1px solid #333333',
                     borderRadius: '20px',
                     backgroundColor: selectedMode === 'corporate' ? '#ffffff' : 'transparent',
-                    color: selectedMode === 'corporate' ? '#ffffff' : '#666666',
+                    color: selectedMode === 'corporate' ? '#000000' : '#666666',
                     cursor: 'pointer',
                     transition: 'all 0.2s ease'
                   }}
@@ -5109,24 +5165,26 @@ export default function HomePage() {
               
               {/* Contenido narrativo */}
               {getStepContent(steps[currentStepIndex].id) && (
+              <div style={{
+                fontSize: '16px',
+                lineHeight: '1.6',
+                color: '#cccccc',
+                marginBottom: '32px',
+                opacity: showElements.description ? 1 : 0,
+                transform: showElements.description ? 'translateY(0)' : 'translateY(20px)',
+                transition: 'opacity 0.6s ease-out, transform 0.6s ease-out',
+                minHeight: '60px'
+              }}>
+                {/* Selector de versiones integrado */}
                 <div style={{
-                  fontSize: '16px',
-                  lineHeight: '1.6',
-                  color: '#cccccc',
-                  marginBottom: '32px',
-                  opacity: showElements.description ? 1 : 0,
-                  transform: showElements.description ? 'translateY(0)' : 'translateY(20px)',
-                  transition: 'opacity 0.6s ease-out, transform 0.6s ease-out',
-                  minHeight: '60px',
                   display: 'flex',
                   alignItems: 'flex-start',
-                  gap: '12px'
+                  gap: '12px',
+                  marginBottom: '8px'
                 }}>
-                  {/* Selector de versiones */}
-                  <div style={{ 
-                    display: 'flex', 
-                    gap: '4px',
-                    marginTop: '2px'
+                  <div style={{
+                    display: 'flex',
+                    gap: '4px'
                   }}>
                     {[1, 2, 3].map((version) => (
                       <button
@@ -5138,7 +5196,7 @@ export default function HomePage() {
                           borderRadius: '50%',
                           border: '1px solid #333333',
                           backgroundColor: selectedVersion === version ? '#ffffff' : 'transparent',
-                          color: selectedVersion === version ? '#ffffff' : '#666666',
+                          color: selectedVersion === version ? '#000000' : '#666666',
                           display: 'flex',
                           alignItems: 'center',
                           justifyContent: 'center',
@@ -5164,12 +5222,14 @@ export default function HomePage() {
                       </button>
                     ))}
                   </div>
-                  
-                  {/* Texto de descripción */}
-                  <div style={{ flex: 1 }}>
-                    {typewriterText}
-                  </div>
-              </div>
+                  <span style={{ color: '#666666', fontSize: '14px' }}>A</span>
+                </div>
+
+                {/* Texto de descripción */}
+                <div>
+                  {typewriterText}
+                </div>
+            </div>
               )}
               
               {/* Formulario */}
