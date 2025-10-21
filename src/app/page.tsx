@@ -1514,6 +1514,7 @@ export default function HomePage() {
               borderRadius: '8px'
             }}>
               <div style={{
+                position: 'relative',
                 width: '300px',
                 backgroundColor: '#ffffff',
                 borderRadius: '12px',
