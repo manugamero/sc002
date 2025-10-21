@@ -314,6 +314,26 @@ export default function HomePage() {
     setTimeout(() => setShowElements(prev => ({ ...prev, selectors: true })), 1800);
   }, [currentStepIndex]);
 
+  // Efecto para actualizar el texto cuando cambie la versión seleccionada
+  useEffect(() => {
+    const description = getStepContent(steps[currentStepIndex].id);
+    if (description) {
+      setTypewriterText('');
+      const words = description.split(' ');
+      let i = 0;
+      const wordInterval = setInterval(() => {
+        if (i < words.length) {
+          setTypewriterText(words.slice(0, i + 1).join(' '));
+          i++;
+        } else {
+          clearInterval(wordInterval);
+        }
+      }, 80);
+      
+      return () => clearInterval(wordInterval);
+    }
+  }, [selectedVersion, currentStepIndex]);
+
   const handleNext = () => {
     if (currentStepIndex < steps.length - 1 && !isAnimating) {
       setIsAnimating(true);
