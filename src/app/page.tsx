@@ -186,7 +186,7 @@ export default function HomePage() {
               type="text"
               value={value || ''}
               onChange={(e) => updateField(step.field, e.target.value)}
-              className="w-full h-12 px-4 pr-12 text-lg border border-gray-300 rounded focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-transparent text-white placeholder-gray-400"
+              className="w-full h-12 px-4 pr-12 text-lg border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-transparent text-white placeholder-gray-400"
               placeholder={step.title}
               autoFocus
             />
@@ -202,7 +202,7 @@ export default function HomePage() {
             <textarea
               value={value || ''}
               onChange={(e) => updateField(step.field, e.target.value)}
-              className="w-full h-32 px-4 pr-12 text-lg border border-gray-300 rounded focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-transparent text-white placeholder-gray-400 resize-none"
+              className="w-full h-32 px-4 pr-12 text-lg border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-transparent text-white placeholder-gray-400 resize-none"
               placeholder={step.title}
               autoFocus
             />
@@ -487,7 +487,7 @@ export default function HomePage() {
               <div className="flex items-center space-x-3">
                 <button
                   onClick={() => setIsMenuOpen(!isMenuOpen)}
-                  className="w-8 h-8 flex items-center justify-center text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded transition-colors"
+                  className="w-8 h-8 flex items-center justify-center text-gray-400 hover:text-gray-600 transition-colors"
                 >
                   <Menu className="w-4 h-4" />
                 </button>
@@ -500,20 +500,20 @@ export default function HomePage() {
                 <button
                   onClick={handlePrevious}
                   disabled={currentStepIndex === 0}
-                  className="w-8 h-8 flex items-center justify-center text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                  className="w-8 h-8 flex items-center justify-center text-gray-400 hover:text-gray-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                 >
                   <ArrowLeft className="w-4 h-4" />
                 </button>
                 <button
                   onClick={handleDummyData}
-                  className="w-8 h-8 flex items-center justify-center text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded transition-colors"
+                  className="w-8 h-8 flex items-center justify-center text-gray-400 hover:text-gray-600 transition-colors"
                 >
                   <RefreshCw className="w-4 h-4" />
                 </button>
                 <button
                   onClick={handleNext}
                   disabled={currentStepIndex === steps.length - 1}
-                  className="w-8 h-8 flex items-center justify-center text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                  className="w-8 h-8 flex items-center justify-center text-gray-400 hover:text-gray-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                 >
                   <ArrowRight className="w-4 h-4" />
                 </button>
