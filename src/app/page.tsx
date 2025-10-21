@@ -1,47 +1,67 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
-import { ArrowRight, ArrowLeft, Plus, Trash2, RefreshCw, Wand2, Menu, SkipForward, Mic, MicOff, Zap, Rocket, Lightbulb, Target, Star, Flame, Gem, Sparkles } from 'lucide-react';
+import { ArrowRight, ArrowLeft, Plus, Trash2, RefreshCw, Wand2, Menu, SkipForward, Mic, MicOff, Zap, Rocket, Lightbulb, Target, Star, Flame, Gem, Sparkles, Calendar } from 'lucide-react';
+import Sidebar from '@/components/Sidebar';
+import HamburgerMenu from '@/components/HamburgerMenu';
 
 interface ProjectData {
   name: string;
   company: string;
+  size: string;
   strategy: {
+    mode: string;
     interviews: string;
     competitors: string[];
     plan: string[];
   };
   brand: {
+    mode: string;
     values: { value: string; opposite: string }[];
     names: string[];
     selectedName: string;
   };
   product: {
+    mode: string;
     features: string[];
     prototype: string;
+    shippingQuestions: { date: string; task: string; completed: boolean }[];
   };
   communication: {
+    mode: string;
     social: { name: string; bio: string };
     ads: string;
+    campaignText: string;
+    merchImages: string[];
   };
   launch: {
     questions: { question: string; answer: boolean }[];
+    brandbook: string;
   };
 }
 
 const initialProjectData: ProjectData = {
   name: '',
   company: '',
-  strategy: { interviews: '', competitors: [], plan: [] },
-  brand: { values: [], names: [], selectedName: '' },
-  product: { features: [], prototype: '' },
-  communication: { social: { name: '', bio: '' }, ads: '' },
-  launch: { questions: [] }
+  size: '1-10',
+  strategy: { mode: '', interviews: '', competitors: ['', '', ''], plan: [] },
+  brand: { mode: '', values: [{ value: '', opposite: '' }, { value: '', opposite: '' }, { value: '', opposite: '' }], names: [], selectedName: '' },
+  product: { mode: '', features: ['', '', ''], prototype: '', shippingQuestions: [] },
+  communication: { mode: '', social: { name: '', bio: '' }, ads: '', campaignText: '', merchImages: [] },
+  launch: { 
+    questions: [
+      { question: '¿Tienes un presupuesto definido para el lanzamiento?', answer: false },
+      { question: '¿Qué canales de marketing vas a usar?', answer: false },
+      { question: '¿Tienes una lista de usuarios beta?', answer: false }
+    ],
+    brandbook: ''
+  }
 };
 
 // Pasos individuales con contenido detallado
 const steps = [
   // Strategy
+  { id: 'intro', title: 'S+C Framework', type: 'intro', field: null },
   { id: 'strategy-0', title: '1.0 Strategy', type: 'mode-selector', field: 'strategy.mode' },
   { id: 'strategy-1', title: '1.1 Contexto / Entrevistas', type: 'interview', field: 'strategy.interviews' },
   { id: 'strategy-2', title: '1.2 Mercado / Competidores', type: 'competitors', field: 'strategy.competitors' },
@@ -55,15 +75,15 @@ const steps = [
   
   // Product
   { id: 'product-0', title: '3.0 Product', type: 'mode-selector', field: 'product.mode' },
-  { id: 'product-1', title: '3.1 Features / MVP', type: 'userflow', field: 'product.features' },
-  { id: 'product-2', title: '3.2 Iteración / Prototipo', type: 'prototype', field: 'product.prototypeLink' },
+  { id: 'product-1', title: '3.1 Features / MVP', type: 'features', field: 'product.features' },
+  { id: 'product-2', title: '3.2 Iteración / Prototipo', type: 'prototype', field: 'product.prototype' },
   { id: 'product-3', title: '3.3 Shipping / Lanzamiento', type: 'rollout', field: 'product.shippingQuestions' },
   
   // Messages
-  { id: 'messages-0', title: '4.0 Messages', type: 'mode-selector', field: 'messages.mode' },
-  { id: 'messages-1', title: '4.1 Social / Contenido', type: 'social', field: 'messages.social' },
-  { id: 'messages-2', title: '4.2 Ads / Campañas', type: 'campaign', field: 'messages.campaignText' },
-  { id: 'messages-3', title: '4.3 Merch / Merchandising', type: 'merch', field: 'messages.merchImages' },
+  { id: 'messages-0', title: '4.0 Messages', type: 'mode-selector', field: 'communication.mode' },
+  { id: 'messages-1', title: '4.1 Social / Contenido', type: 'social', field: 'communication.social' },
+  { id: 'messages-2', title: '4.2 Ads / Campañas', type: 'campaign', field: 'communication.campaignText' },
+  { id: 'messages-3', title: '4.3 Merch / Merchandising', type: 'merch', field: 'communication.merchImages' },
   
   // Launch
   { id: 'launch-1', title: '5.1 Validación Final', type: 'questions', field: 'launch.questions' },
@@ -96,7 +116,69 @@ export default function HomePage() {
   const [currentStepIndex, setCurrentStepIndex] = useState(0);
   const [projectData, setProjectData] = useState<ProjectData>(initialProjectData);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [currentSection, setCurrentSection] = useState('strategy');
   const [selectedMode, setSelectedMode] = useState<'startup' | 'scaleup' | 'corporate'>('startup');
+  
+  // Calcular progreso basado en los datos del proyecto
+  const calculateProgress = () => {
+    const strategy = projectData.strategy.interviews ? 100 : 0;
+    const brand = projectData.brand.values.length > 0 ? 100 : 0;
+    const product = projectData.product.features.length > 0 ? 100 : 0;
+    const messages = projectData.communication.social.name ? 100 : 0;
+    const launch = projectData.launch.questions.length > 0 ? 100 : 0;
+    
+    return { strategy, brand, product, messages, launch };
+  };
+
+  // Mapeo de videos por sección
+  const getVideoForSection = (section: string) => {
+    const sectionVideos: { [key: string]: string[] } = {
+      'strategy': ['video01.00.mp4', 'video01.01.mp4'],
+      'brand': ['video02.00.mp4', 'video02.01.mp4', 'video02.02.mp4'],
+      'product': ['video03.00.mp4', 'video03.01.mp4'],
+      'messages': ['video04.00.mp4', 'video04.01.mp4'],
+      'launch': ['video05.00.mp4', 'video11.mp4']
+    };
+    
+    return sectionVideos[section] || ['video00.00.mp4'];
+  };
+
+  // Función para obtener la sección principal
+  const getMainSection = (stepId: string) => {
+    if (stepId.startsWith('strategy-')) return 'strategy';
+    if (stepId.startsWith('brand-')) return 'brand';
+    if (stepId.startsWith('product-')) return 'product';
+    if (stepId.startsWith('messages-')) return 'messages';
+    if (stepId.startsWith('launch-')) return 'launch';
+    return 'intro';
+  };
+
+  // Función para obtener video, siempre devuelve uno
+  const getCurrentVideo = () => {
+    const stepId = steps[currentStepIndex].id;
+    
+    // Video especial para intro - secuencia de videos
+    if (stepId === 'intro') {
+      const videoIndex = Math.min(currentVideoIndex, introVideos.length - 1);
+      return introVideos[videoIndex] || 'video00.00.mp4';
+    }
+    
+    // Videos fijos por sección principal
+    if (stepId.startsWith('strategy-')) {
+      return 'video01.01.mp4';
+    } else if (stepId.startsWith('brand-')) {
+      return 'video02.01.mp4';
+    } else if (stepId.startsWith('product-')) {
+      return 'video03.01.mp4';
+    } else if (stepId.startsWith('messages-')) {
+      return 'video04.01.mp4';
+    } else if (stepId.startsWith('launch-')) {
+      return 'video05.00.mp4';
+    }
+    
+    // Fallback
+    return 'video00.00.mp4';
+  };
   const [selectedVersion, setSelectedVersion] = useState<number>(1);
   const [isAnimating, setIsAnimating] = useState(false);
   const [showElements, setShowElements] = useState({
@@ -106,6 +188,151 @@ export default function HomePage() {
     form: false,
     selectors: false
   });
+  
+  // Estados para la secuencia de videos en intro
+  const [currentVideoIndex, setCurrentVideoIndex] = useState(0);
+  const introVideos = ['video00.02.mp4', 'video00.03.mp4', 'video00.04.mp4', 'video00.05.mp4', 'video00.06.mp4', 'video00.07.mp4'];
+  
+  // Estados para animaciones
+  const [selectedAnimation, setSelectedAnimation] = useState('fade');
+  const [showAnimationDropdown, setShowAnimationDropdown] = useState(false);
+  
+  // Estados para el sistema de carrito/plan semanal
+  const [showPlanSlide, setShowPlanSlide] = useState(false);
+  const [weeklyPlan, setWeeklyPlan] = useState<{[key: string]: number}>({
+    'strategy-1': 1, // 1.1 Contexto
+    'strategy-2': 1, // 1.2 Mercado
+    'strategy-3': 1, // 1.3 Plan
+    'brand-1': 1,   // 2.1 Valores
+    'brand-2': 1,   // 2.2 Naming
+    'brand-3': 1,   // 2.3 Logo
+    'product-1': 1, // 3.1 Features
+    'product-2': 1, // 3.2 Prototipo
+    'product-3': 1, // 3.3 Lanzamiento
+    'messages-1': 1, // 4.1 Social
+    'messages-2': 1, // 4.2 Ads
+    'messages-3': 1, // 4.3 Merch
+    'launch-1': 1,  // 5.1 Validación
+    'launch-2': 1   // 5.2 Brandbook
+  });
+  
+  const animations = [
+    { id: 'version-1', name: 'Versión 1', description: 'Animación clásica suave' },
+    { id: 'version-2', name: 'Versión 2', description: 'Animación dinámica' },
+    { id: 'version-3', name: 'Versión 3', description: 'Animación elegante' },
+    { id: 'version-4', name: 'Versión 4', description: 'Animación moderna' },
+    { id: 'version-5', name: 'Versión 5', description: 'Animación fluida' },
+    { id: 'version-6', name: 'Versión 6', description: 'Animación premium' }
+  ];
+
+  // Función para calcular semanas según el modo
+  const getWeeksForMode = (baseWeeks: number) => {
+    switch (selectedMode) {
+      case 'startup':
+        return baseWeeks; // Sin iteraciones adicionales
+      case 'scaleup':
+        return baseWeeks + 1; // +1 iteración
+      case 'corporate':
+        return baseWeeks + 2; // +2 iteraciones
+      default:
+        return baseWeeks;
+    }
+  };
+
+  // Función para obtener el total de semanas
+  const getTotalWeeks = () => {
+    return Object.values(weeklyPlan).reduce((total, weeks) => total + weeks, 0);
+  };
+
+  // Función para actualizar semanas de un item
+  const updateItemWeeks = (itemId: string, newWeeks: number) => {
+    if (newWeeks < 1) return; // Mínimo 1 semana
+    setWeeklyPlan(prev => ({
+      ...prev,
+      [itemId]: newWeeks
+    }));
+  };
+
+  // Función para renderizar texto con círculos integrados
+  const renderTextWithCircles = (text: string) => {
+    if (!text) return '';
+    
+    // Dividir el texto en palabras y reemplazar números con círculos
+    const words = text.split(' ');
+    return words.map((word, index) => {
+      // Si la palabra es un número del 1-3, reemplazarla con un círculo
+      if (word === '1' || word === '2' || word === '3') {
+        return (
+          <span key={index} style={{
+            display: 'inline-flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            width: '20px',
+            height: '20px',
+            backgroundColor: '#ffffff',
+            color: '#000000',
+            borderRadius: '50%',
+            fontSize: '12px',
+            fontWeight: '600',
+            margin: '0 4px',
+            verticalAlign: 'middle'
+          }}>
+            {word}
+          </span>
+        );
+      }
+      return <span key={index}>{word} </span>;
+    });
+  };
+
+  // Función para obtener estilos de animación
+  const getAnimationStyles = (isVisible: boolean) => {
+    const baseStyles = {
+      opacity: isVisible ? 1 : 0,
+      transition: 'all 0.6s ease-out'
+    };
+
+    switch (selectedAnimation) {
+      case 'version-1':
+        return { 
+          ...baseStyles,
+          transform: isVisible ? 'translateY(0)' : 'translateY(20px)',
+          transition: 'all 0.8s ease-out'
+        };
+      case 'version-2':
+        return { 
+          ...baseStyles, 
+          transform: isVisible ? 'translateX(0) scale(1)' : 'translateX(-30px) scale(0.95)',
+          transition: 'all 0.7s cubic-bezier(0.4, 0, 0.2, 1)'
+        };
+      case 'version-3':
+        return { 
+          ...baseStyles, 
+          transform: isVisible ? 'translateY(0) rotate(0deg)' : 'translateY(15px) rotate(2deg)',
+          transition: 'all 0.9s ease-in-out'
+        };
+      case 'version-4':
+        return { 
+          ...baseStyles, 
+          transform: isVisible ? 'scale(1) translateY(0)' : 'scale(0.9) translateY(25px)',
+          transition: 'all 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94)'
+        };
+      case 'version-5':
+        return { 
+          ...baseStyles, 
+          transform: isVisible ? 'translateX(0) translateY(0)' : 'translateX(20px) translateY(10px)',
+          transition: 'all 0.5s ease-out'
+        };
+      case 'version-6':
+        return { 
+          ...baseStyles, 
+          transform: isVisible ? 'scale(1) rotate(0deg)' : 'scale(0.95) rotate(-1deg)',
+          transition: 'all 0.7s cubic-bezier(0.68, -0.55, 0.265, 1.55)'
+        };
+      default:
+        return baseStyles;
+    }
+  };
 
   // Función para generar contenido aleatorio
   const generateRandomContent = (fieldType: string) => {
@@ -260,8 +487,29 @@ export default function HomePage() {
 
   // Forzar autoplay cuando cambie el video y actualizar título
   useEffect(() => {
-    if (videoRef.current) {
-      videoRef.current.play().catch(console.error);
+    const videoElement = videoRef.current;
+    if (videoElement) {
+      // Asegurar que el video se cargue y reproduzca
+      videoElement.load();
+      
+      // Intentar reproducir inmediatamente
+      const playVideo = async () => {
+        try {
+          await videoElement.play();
+        } catch (error) {
+          console.log('Error playing video:', error);
+          // Si falla, intentar con interacción del usuario
+          const handleUserInteraction = () => {
+            videoElement.play().catch(console.error);
+            document.removeEventListener('click', handleUserInteraction);
+            document.removeEventListener('touchstart', handleUserInteraction);
+          };
+          document.addEventListener('click', handleUserInteraction);
+          document.addEventListener('touchstart', handleUserInteraction);
+        }
+      };
+      
+      playVideo();
     }
     // Forzar actualización del título para evitar caché del navegador
     document.title = "S+C 013";
@@ -290,9 +538,10 @@ export default function HomePage() {
     
             // Descripción con delay y fade-in por palabras
             setTimeout(() => {
-              setShowElements(prev => ({ ...prev, description: true }));
               const description = getStepContent(steps[currentStepIndex].id);
               if (description) {
+                // Activar descripción y typewriter al mismo tiempo
+                setShowElements(prev => ({ ...prev, description: true }));
                 setTypewriterText('');
                 const words = description.split(' ');
                 let i = 0;
@@ -302,13 +551,15 @@ export default function HomePage() {
                     i++;
                   } else {
                     clearInterval(wordInterval);
+                    // Mostrar formulario solo después de que termine la animación del texto
+                    setTimeout(() => setShowElements(prev => ({ ...prev, form: true })), 300);
                   }
-                }, 120); // Más sutil: 120ms por palabra
+                }, 80); // Más rápido y suave: 80ms por palabra
+              } else {
+                // Si no hay descripción, mostrar formulario inmediatamente
+                setShowElements(prev => ({ ...prev, description: true, form: true }));
               }
             }, 1000);
-    
-    // Formulario después
-    setTimeout(() => setShowElements(prev => ({ ...prev, form: true })), 1400);
     
     // Selectores al final
     setTimeout(() => setShowElements(prev => ({ ...prev, selectors: true })), 1800);
@@ -328,11 +579,31 @@ export default function HomePage() {
         } else {
           clearInterval(wordInterval);
         }
-      }, 120);
+      }, 80); // Más rápido y suave: 80ms por palabra
       
       return () => clearInterval(wordInterval);
     }
   }, [selectedVersion, currentStepIndex]);
+
+  // Efecto para manejar la secuencia de videos en la intro
+  useEffect(() => {
+    if (steps[currentStepIndex].id === 'intro') {
+      const videoElement = videoRef.current;
+      if (videoElement) {
+        const handleVideoEnd = () => {
+          if (currentVideoIndex < introVideos.length - 1) {
+            setCurrentVideoIndex(prev => prev + 1);
+          } else {
+            // Reiniciar la secuencia
+            setCurrentVideoIndex(0);
+          }
+        };
+        
+        videoElement.addEventListener('ended', handleVideoEnd);
+        return () => videoElement.removeEventListener('ended', handleVideoEnd);
+      }
+    }
+  }, [currentStepIndex, currentVideoIndex]);
 
   const handleNext = () => {
     if (currentStepIndex < steps.length - 1 && !isAnimating) {
@@ -419,7 +690,7 @@ export default function HomePage() {
       
       if (response.ok) {
         const data = await response.json();
-        const suggestions = data.text.split('\n').filter((line: string) => line.trim());
+        const suggestions = (data.text || '').split('\n').filter((line: string) => line.trim());
         if (suggestions.length > 0) {
           updateField(field, suggestions[0]);
         }
@@ -652,24 +923,25 @@ export default function HomePage() {
 
   const getSectionTitle = (stepId: string) => {
     const sectionMap: { [key: string]: string } = {
-      'strategy-0': '1 STRATEGY / 1.0 Strategy',
-      'strategy-1': '1 STRATEGY / 1.1 Context',
-      'strategy-2': '1 STRATEGY / 1.2 Market',
-      'strategy-3': '1 STRATEGY / 1.3 Plan',
-      'brand-0': '2 BRANDS / 2.0 Brand',
-      'brand-1': '2 BRANDS / 2.1 Values',
-      'brand-2': '2 BRANDS / 2.2 Verbal',
-      'brand-3': '2 BRANDS / 2.3 Visual',
-      'product-0': '3 PRODUCT / 3.0 Product',
-      'product-1': '3 PRODUCT / 3.1 Features',
-      'product-2': '3 PRODUCT / 3.2 Iteration',
-      'product-3': '3 PRODUCT / 3.3 Shipping',
-      'messages-0': '4 MESSAGES / 4.0 Messages',
-      'messages-1': '4 MESSAGES / 4.1 Social',
-      'messages-2': '4 MESSAGES / 4.2 Ads',
-      'messages-3': '4 MESSAGES / 4.3 Merch',
-      'launch-1': '5 LAUNCH / 5.1 Validation',
-      'launch-2': '5 LAUNCH / 5.2 Brandbook'
+      'intro': 'S+C / Framework',
+      'strategy-0': '1. Strategy / Intro',
+      'strategy-1': '1. Strategy / 1.1 Context',
+      'strategy-2': '1. Strategy / 1.2 Market',
+      'strategy-3': '1. Strategy / 1.3 Plan',
+      'brand-0': '2. Brands / Intro',
+      'brand-1': '2. Brands / 2.1 Values',
+      'brand-2': '2. Brands / 2.2 Verbal',
+      'brand-3': '2. Brands / 2.3 Visual',
+      'product-0': '3. Product / Intro',
+      'product-1': '3. Product / 3.1 Features',
+      'product-2': '3. Product / 3.2 Iteration',
+      'product-3': '3. Product / 3.3 Shipping',
+      'messages-0': '4. Messages / Intro',
+      'messages-1': '4. Messages / 4.1 Social',
+      'messages-2': '4. Messages / 4.2 Ads',
+      'messages-3': '4. Messages / 4.3 Merch',
+      'launch-1': '5. Launch / 5.1 Validation',
+      'launch-2': '5. Launch / 5.2 Brandbook'
     };
     return sectionMap[stepId] || '';
   };
@@ -677,10 +949,10 @@ export default function HomePage() {
   // Función para encontrar el índice de una sección principal
   const findSectionIndex = (sectionName: string) => {
     const sectionMap: { [key: string]: string } = {
-      'STRATEGY': 'strategy-1',
-      'BRANDS': 'brand-1', 
-      'PRODUCT': 'product-1',
-      'MESSAGES': 'messages-1',
+      'STRATEGY': 'strategy-0',
+      'BRANDS': 'brand-0', 
+      'PRODUCT': 'product-0',
+      'MESSAGES': 'messages-0',
       'LAUNCH': 'launch-1'
     };
     
@@ -725,6 +997,11 @@ export default function HomePage() {
 
   const getStepContent = (stepId: string) => {
     const contentMap: { [key: string]: string[] } = {
+      'intro': [
+        'Bienvenido al S+C Framework, una metodología completa para desarrollar tu marca y producto desde cero hasta el lanzamiento.',
+        'Este proceso te guiará a través de 5 fases fundamentales, cada una diseñada para construir una base sólida para tu proyecto.',
+        'Cada paso está pensado para llevarte desde la idea inicial hasta un lanzamiento exitoso, con herramientas y guías específicas.'
+      ],
       'strategy-0': [
         'La estrategia es el fundamento de todo proyecto exitoso. Comenzamos escuchando las voces que importan: fundadores, usuarios y stakeholders que dan vida a cada iniciativa.',
         'Cada gran proyecto nace de una comprensión profunda del contexto. Las entrevistas nos revelan la verdadera esencia y potencial de cada idea.',
@@ -817,7 +1094,8 @@ export default function HomePage() {
       ]
     };
     const alternatives = contentMap[stepId] || [''];
-    return alternatives[selectedVersion - 1] || alternatives[0];
+    const versionIndex = Math.max(0, selectedVersion - 1);
+    return alternatives[versionIndex] || alternatives[0] || '';
   };
 
   const renderStep = () => {
@@ -892,6 +1170,112 @@ export default function HomePage() {
           </div>
         );
 
+      case 'intro':
+        return (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '24px', padding: '24px' }}>
+            {/* Texto introductorio */}
+            <div style={{ 
+              fontSize: '18px', 
+              lineHeight: '1.6', 
+              color: '#ffffff',
+              textAlign: 'center',
+              maxWidth: '600px',
+              margin: '0 auto'
+            }}>
+              <p style={{ marginBottom: '24px' }}>
+                Bienvenido al <strong>S+C Framework</strong>, una metodología completa para desarrollar tu marca y producto desde cero hasta el lanzamiento.
+              </p>
+              <p style={{ marginBottom: '24px' }}>
+                Este proceso te guiará a través de 5 fases fundamentales, cada una diseñada para construir una base sólida para tu proyecto.
+              </p>
+            </div>
+
+            {/* Tabla de contenidos */}
+            <div style={{ 
+              backgroundColor: 'rgba(0, 0, 0, 0.3)', 
+              borderRadius: '8px', 
+              padding: '24px',
+              border: '1px solid rgba(255, 255, 255, 0.1)'
+            }}>
+              <h3 style={{ 
+                color: '#ffffff', 
+                fontSize: '20px', 
+                marginBottom: '20px',
+                textAlign: 'center'
+              }}>
+                Tabla de Contenidos
+              </h3>
+              
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '16px' }}>
+                {/* 1. Strategy */}
+                <div style={{ 
+                  padding: '16px', 
+                  backgroundColor: 'rgba(255, 255, 255, 0.05)', 
+                  borderRadius: '6px',
+                  border: '1px solid rgba(255, 255, 255, 0.1)'
+                }}>
+                  <h4 style={{ color: '#ffffff', fontSize: '16px', marginBottom: '8px' }}>1. Strategy</h4>
+                  <p style={{ color: '#cccccc', fontSize: '14px', margin: '0' }}>
+                    Análisis del mercado, competidores y definición de la estrategia base.
+                  </p>
+                </div>
+
+                {/* 2. Brand */}
+                <div style={{ 
+                  padding: '16px', 
+                  backgroundColor: 'rgba(255, 255, 255, 0.05)', 
+                  borderRadius: '6px',
+                  border: '1px solid rgba(255, 255, 255, 0.1)'
+                }}>
+                  <h4 style={{ color: '#ffffff', fontSize: '16px', marginBottom: '8px' }}>2. Brand</h4>
+                  <p style={{ color: '#cccccc', fontSize: '14px', margin: '0' }}>
+                    Desarrollo de valores, naming y identidad visual de la marca.
+                  </p>
+                </div>
+
+                {/* 3. Product */}
+                <div style={{ 
+                  padding: '16px', 
+                  backgroundColor: 'rgba(255, 255, 255, 0.05)', 
+                  borderRadius: '6px',
+                  border: '1px solid rgba(255, 255, 255, 0.1)'
+                }}>
+                  <h4 style={{ color: '#ffffff', fontSize: '16px', marginBottom: '8px' }}>3. Product</h4>
+                  <p style={{ color: '#cccccc', fontSize: '14px', margin: '0' }}>
+                    Definición de features, prototipo y plan de lanzamiento.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            {/* Botón para continuar */}
+            <div style={{ textAlign: 'center', marginTop: '24px' }}>
+              <button
+                onClick={handleNext}
+                style={{
+                  backgroundColor: '#ffffff',
+                  color: '#000000',
+                  border: 'none',
+                  padding: '12px 24px',
+                  borderRadius: '6px',
+                  fontSize: '16px',
+                  fontWeight: '600',
+                  cursor: 'pointer',
+                  transition: 'all 0.2s ease'
+                }}
+                onMouseEnter={(e) => {
+                  e.target.style.backgroundColor = '#f0f0f0';
+                }}
+                onMouseLeave={(e) => {
+                  e.target.style.backgroundColor = '#ffffff';
+                }}
+              >
+                Comenzar Framework
+              </button>
+            </div>
+          </div>
+        );
+
       case 'interview':
         return (
           <div style={{ display: 'flex', flexDirection: 'column', gap: '0' }}>
@@ -901,7 +1285,7 @@ export default function HomePage() {
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'space-between',
-                padding: '16px 0',
+                padding: '24px 0',
                 borderBottom: '1px solid #333333',
                 cursor: 'text',
                 transition: 'all 0.2s ease'
@@ -922,7 +1306,7 @@ export default function HomePage() {
               <label style={{ 
                 fontSize: '16px', 
                 color: '#ffffff', 
-                fontWeight: '500'
+                fontWeight: '600'
               }}>
                 Nombre
               </label>
@@ -947,42 +1331,6 @@ export default function HomePage() {
                   }}
                   autoFocus
                 />
-                <div style={{ display: 'flex', gap: '8px' }}>
-            <button 
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      startVoiceRecognition(`${step.field}.name`);
-                    }}
-              style={{
-                      width: '32px',
-                      height: '32px',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      backgroundColor: 'transparent',
-                      border: 'none',
-                      cursor: 'pointer',
-                      color: isListening && activeVoiceField === `${step.field}.name` ? '#ffffff' : '#666666',
-                      transition: 'color 0.2s ease'
-                    }}
-                    onMouseEnter={(e) => {
-                      if (!isListening || activeVoiceField !== `${step.field}.name`) {
-                        e.target.style.color = '#ffffff';
-                      }
-                    }}
-                    onMouseLeave={(e) => {
-                      if (!isListening || activeVoiceField !== `${step.field}.name`) {
-                        e.target.style.color = '#666666';
-                      }
-                    }}
-                  >
-                    {isListening && activeVoiceField === `${step.field}.name` ? (
-                      <MicOff style={{ width: '16px', height: '16px' }} />
-                    ) : (
-                      <Mic style={{ width: '16px', height: '16px' }} />
-                    )}
-                  </button>
-                </div>
               </div>
             </div>
 
@@ -992,7 +1340,7 @@ export default function HomePage() {
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'space-between',
-                padding: '16px 0',
+                padding: '24px 0',
                 borderBottom: '1px solid #333333',
                 cursor: 'text',
                 transition: 'all 0.2s ease'
@@ -1012,7 +1360,7 @@ export default function HomePage() {
               <label style={{ 
                 fontSize: '16px', 
                 color: '#ffffff', 
-                fontWeight: '500'
+                fontWeight: '600'
               }}>
                 Tamaño
               </label>
@@ -1087,42 +1435,6 @@ export default function HomePage() {
                     +
             </button>
           </div>
-                <div style={{ display: 'flex', gap: '8px' }}>
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      startVoiceRecognition(`${step.field}.size`);
-                    }}
-                    style={{
-                      width: '32px',
-                      height: '32px',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      backgroundColor: 'transparent',
-                      border: 'none',
-                      cursor: 'pointer',
-                      color: isListening && activeVoiceField === `${step.field}.size` ? '#ffffff' : '#666666',
-                      transition: 'color 0.2s ease'
-                    }}
-                    onMouseEnter={(e) => {
-                      if (!isListening || activeVoiceField !== `${step.field}.size`) {
-                        e.target.style.color = '#ffffff';
-                      }
-                    }}
-                    onMouseLeave={(e) => {
-                      if (!isListening || activeVoiceField !== `${step.field}.size`) {
-                        e.target.style.color = '#666666';
-                      }
-                    }}
-                  >
-                    {isListening && activeVoiceField === `${step.field}.size` ? (
-                      <MicOff style={{ width: '16px', height: '16px' }} />
-                    ) : (
-                      <Mic style={{ width: '16px', height: '16px' }} />
-                    )}
-                  </button>
-                </div>
               </div>
             </div>
 
@@ -1132,7 +1444,7 @@ export default function HomePage() {
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'space-between',
-                padding: '16px 0',
+                padding: '24px 0',
                 borderBottom: '1px solid #333333',
                 cursor: 'pointer',
                 transition: 'all 0.2s ease'
@@ -1154,7 +1466,7 @@ export default function HomePage() {
               <label style={{ 
                 fontSize: '16px', 
                 color: '#ffffff', 
-                fontWeight: '500'
+                fontWeight: '600'
               }}>
                 Industria
               </label>
@@ -1200,7 +1512,7 @@ export default function HomePage() {
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'space-between',
-                padding: '16px 0',
+                padding: '24px 0',
                 borderBottom: '1px solid #333333',
                 cursor: 'text',
                 transition: 'all 0.2s ease'
@@ -1221,7 +1533,7 @@ export default function HomePage() {
               <label style={{ 
                 fontSize: '16px', 
                 color: '#ffffff', 
-                fontWeight: '500'
+                fontWeight: '600'
               }}>
                 Fundador
               </label>
@@ -1243,42 +1555,6 @@ export default function HomePage() {
                     transition: 'all 0.2s ease'
                   }}
                 />
-                <div style={{ display: 'flex', gap: '8px' }}>
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      startVoiceRecognition(`${step.field}.founder`);
-                    }}
-                    style={{
-                      width: '32px',
-                      height: '32px',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      backgroundColor: 'transparent',
-                      border: 'none',
-                      cursor: 'pointer',
-                      color: isListening && activeVoiceField === `${step.field}.founder` ? '#ffffff' : '#666666',
-                      transition: 'color 0.2s ease'
-                    }}
-                    onMouseEnter={(e) => {
-                      if (!isListening || activeVoiceField !== `${step.field}.founder`) {
-                        e.target.style.color = '#ffffff';
-                      }
-                    }}
-                    onMouseLeave={(e) => {
-                      if (!isListening || activeVoiceField !== `${step.field}.founder`) {
-                        e.target.style.color = '#666666';
-                      }
-                    }}
-                  >
-                    {isListening && activeVoiceField === `${step.field}.founder` ? (
-                      <MicOff style={{ width: '16px', height: '16px' }} />
-                    ) : (
-                      <Mic style={{ width: '16px', height: '16px' }} />
-                    )}
-                  </button>
-                </div>
               </div>
             </div>
 
@@ -1288,7 +1564,7 @@ export default function HomePage() {
                 display: 'flex',
                 alignItems: 'flex-start',
                 justifyContent: 'space-between',
-                padding: '16px 0',
+                padding: '24px 0',
                 cursor: 'text',
                 transition: 'all 0.2s ease'
               }}
@@ -1306,7 +1582,7 @@ export default function HomePage() {
               <label style={{ 
                 fontSize: '16px', 
                 color: '#ffffff', 
-                fontWeight: '500',
+                fontWeight: '600',
                 marginTop: '12px'
               }}>
                 Descripción
@@ -1379,7 +1655,7 @@ export default function HomePage() {
                 fontSize: '12px',
                 fontWeight: '500'
               }}>
-                {value?.yAxis || 'Precio'}
+                {value?.yAxis || 'Eje Y'}
               </div>
               <div style={{
                 position: 'absolute',
@@ -1389,7 +1665,7 @@ export default function HomePage() {
                 fontSize: '12px',
                 fontWeight: '500'
               }}>
-                {value?.xAxis || 'Calidad'}
+                {value?.xAxis || 'Eje X'}
               </div>
 
               {/* Competidores en la matriz */}
@@ -1467,26 +1743,17 @@ export default function HomePage() {
               })}
             </div>
             
-            {/* Etiquetas de ejes abajo del gráfico */}
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '16px' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                <span style={{ color: '#ffffff', fontSize: '14px', fontWeight: '500' }}>{value?.yAxis || 'Precio'}</span>
-              </div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                <span style={{ color: '#ffffff', fontSize: '14px', fontWeight: '500' }}>{value?.xAxis || 'Calidad'}</span>
-              </div>
-            </div>
             
             {/* Lista de competidores */}
             <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '8px' }}>
-                <h4 style={{ color: '#ffffff', fontSize: '16px', fontWeight: '500' }}>
+                <h4 style={{ color: '#ffffff', fontSize: '16px', fontWeight: '600' }}>
                   Competidores
                 </h4>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                   <input
                     type="text"
-                    value={value?.yAxis || 'Precio'}
+                    value={value?.yAxis || ''}
                     onChange={(e) => updateField(step.field, { ...value, yAxis: e.target.value })}
                     style={{
                       width: '80px',
@@ -1505,7 +1772,7 @@ export default function HomePage() {
                   />
                   <input
                     type="text"
-                    value={value?.xAxis || 'Calidad'}
+                    value={value?.xAxis || ''}
                     onChange={(e) => updateField(step.field, { ...value, xAxis: e.target.value })}
                     style={{
                       width: '80px',
@@ -1525,7 +1792,13 @@ export default function HomePage() {
                 </div>
               </div>
               {(value?.competitors || []).map((competitor: any, index: number) => (
-                <div key={index} style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                <div key={index} style={{ 
+                  display: 'flex', 
+                  alignItems: 'center', 
+                  gap: '12px',
+                  padding: '24px 0',
+                  borderBottom: index < (value?.competitors || []).length - 1 ? '1px solid #333333' : 'none'
+                }}>
                   <div style={{
                     width: '20px',
                     height: '20px',
@@ -1534,10 +1807,10 @@ export default function HomePage() {
                     flexShrink: 0
                   }} />
                   <div style={{ position: 'relative', flex: 1 }}>
-                  <input
-                    type="text"
+                    <input
+                      type="text"
                       value={competitor.name || competitor || ''}
-                    onChange={(e) => {
+                      onChange={(e) => {
                         const newCompetitors = [...(value?.competitors || [])];
                         newCompetitors[index] = { 
                           ...newCompetitors[index], 
@@ -1552,21 +1825,21 @@ export default function HomePage() {
                         height: '48px',
                         padding: '12px 48px 12px 16px',
                         fontSize: '16px',
-                        border: '1px solid #333333',
-                        borderRadius: '8px',
+                        border: 'none',
+                        borderBottom: '1px solid #333333',
                         backgroundColor: 'transparent',
                         color: '#ffffff',
                         outline: 'none',
                         transition: 'all 0.2s ease'
                       }}
-                      onMouseEnter={(e) => e.target.style.borderColor = '#ffffff'}
-                      onMouseLeave={(e) => e.target.style.borderColor = '#333333'}
-                    placeholder="Nombre del competidor"
+                      onMouseEnter={(e) => e.target.style.borderBottomColor = '#ffffff'}
+                      onMouseLeave={(e) => e.target.style.borderBottomColor = '#333333'}
+                      placeholder="Nombre del competidor"
                       autoFocus={index === (value?.competitors || []).length - 1}
                     />
-                </div>
-                <button
-                  onClick={() => {
+                  </div>
+                  <button
+                    onClick={() => {
                       const newCompetitors = (value?.competitors || []).filter((_: any, i: number) => i !== index);
                       updateField(step.field, { ...value, competitors: newCompetitors });
                     }}
@@ -1586,9 +1859,9 @@ export default function HomePage() {
                     onMouseLeave={(e) => e.target.style.color = '#666666'}
                   >
                     <Trash2 style={{ width: '16px', height: '16px' }} />
-                </button>
-              </div>
-            ))}
+                  </button>
+                </div>
+              ))}
               
             <button
                 onClick={() => {
@@ -1603,8 +1876,8 @@ export default function HomePage() {
                   updateField(step.field, { 
                     ...value, 
                     competitors: [...(value?.competitors || []), ''],
-                    xAxis: value?.xAxis || 'Calidad',
-                    yAxis: value?.yAxis || 'Precio'
+                    xAxis: value?.xAxis || '',
+                    yAxis: value?.yAxis || ''
                   });
                 }}
                 style={{
@@ -1639,52 +1912,60 @@ export default function HomePage() {
 
       case 'plan':
         return (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+          <div style={{ display: 'flex', flexDirection: 'column' }}>
             {(value || ['', '', '']).map((item: string, index: number) => (
-              <div key={index} style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                <div style={{ position: 'relative', flex: 1 }}>
-                <input
-                  type="text"
-                  value={item}
-                  onChange={(e) => {
-                      const newPlan = [...(value || [])];
-                    newPlan[index] = e.target.value;
-                    updateField(step.field, newPlan);
-                  }}
-                    style={{
-                      width: '100%',
-                      height: '48px',
-                      padding: '12px 48px 12px 16px',
-                      fontSize: '16px',
-                      border: '1px solid #333333',
-                      borderRadius: '8px',
-                      backgroundColor: 'transparent',
-                      color: '#ffffff',
-                      outline: 'none',
-                      transition: 'all 0.2s ease'
+              <div key={index}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '24px 0' }}>
+                  <div style={{ position: 'relative', flex: 1 }}>
+                  <input
+                    type="text"
+                    value={item}
+                    onChange={(e) => {
+                        const newPlan = [...(value || [])];
+                      newPlan[index] = e.target.value;
+                      updateField(step.field, newPlan);
                     }}
-                    placeholder="Propuesta de valor"
-                    autoFocus={index === (value || []).length - 1}
-                  />
+                      style={{
+                        width: '100%',
+                        height: '48px',
+                        padding: '12px 48px 12px 16px',
+                        fontSize: '16px',
+                        border: 'none',
+                        backgroundColor: 'transparent',
+                        color: '#ffffff',
+                        outline: 'none',
+                        transition: 'all 0.2s ease'
+                      }}
+                      placeholder="Propuesta de valor"
+                      autoFocus={index === (value || []).length - 1}
+                    />
+                  </div>
+                  <button
+                    onClick={() => {
+                      const newPlan = (value || []).filter((_: any, i: number) => i !== index);
+                      updateField(step.field, newPlan);
+                    }}
+                    style={{
+                      padding: '8px',
+                      backgroundColor: 'transparent',
+                      border: 'none',
+                      cursor: 'pointer',
+                      color: '#666666',
+                      transition: 'color 0.2s ease'
+                    }}
+                    onMouseEnter={(e) => e.target.style.color = '#ff4444'}
+                    onMouseLeave={(e) => e.target.style.color = '#666666'}
+                  >
+                    <Trash2 style={{ width: '16px', height: '16px' }} />
+                  </button>
                 </div>
-                <button
-                  onClick={() => {
-                    const newPlan = (value || []).filter((_: any, i: number) => i !== index);
-                    updateField(step.field, newPlan);
-                  }}
-                  style={{
-                    padding: '8px',
-                    backgroundColor: 'transparent',
-                    border: 'none',
-                    cursor: 'pointer',
-                    color: '#666666',
-                    transition: 'color 0.2s ease'
-                  }}
-                  onMouseEnter={(e) => e.target.style.color = '#ff4444'}
-                  onMouseLeave={(e) => e.target.style.color = '#666666'}
-                >
-                  <Trash2 style={{ width: '16px', height: '16px' }} />
-                </button>
+                {index < (value || []).length - 1 && (
+                  <div style={{ 
+                    height: '1px', 
+                    backgroundColor: '#333333', 
+                    margin: '0 0 0 0' 
+                  }} />
+                )}
               </div>
             ))}
             
@@ -1699,18 +1980,16 @@ export default function HomePage() {
                 fontSize: '14px',
                 color: '#666666',
                 backgroundColor: 'transparent',
-                border: '1px solid #333333',
-                borderRadius: '8px',
+                border: 'none',
                 cursor: 'pointer',
-                transition: 'all 0.2s ease'
+                transition: 'all 0.2s ease',
+                marginTop: '16px'
               }}
               onMouseEnter={(e) => {
                 e.target.style.color = '#ffffff';
-                e.target.style.borderColor = '#ffffff';
               }}
               onMouseLeave={(e) => {
                 e.target.style.color = '#666666';
-                e.target.style.borderColor = '#333333';
               }}
             >
               <Plus style={{ width: '16px', height: '16px' }} />
@@ -1830,34 +2109,65 @@ export default function HomePage() {
 
       case 'features':
         return (
-          <div className="space-y-3">
-            {value.map((feature: string, index: number) => (
-              <div key={index} className="flex items-center gap-2">
-                <input
-                  type="text"
-                  value={feature}
-                  onChange={(e) => {
-                    const newFeatures = [...value];
-                    newFeatures[index] = e.target.value;
-                    updateField(step.field, newFeatures);
-                  }}
-                  className="flex-1 px-4 py-3 text-lg border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-500 focus:border-transparent"
-                  placeholder="Funcionalidad"
-                  autoFocus={index === value.length - 1}
-                />
-                <button
-                  onClick={() => {
-                    const newFeatures = value.filter((_: any, i: number) => i !== index);
-                    updateField(step.field, newFeatures);
-                  }}
-                  className="p-2 text-red-500 hover:text-red-700"
-                >
-                  <Trash2 className="w-4 h-4" />
-                </button>
+          <div style={{ display: 'flex', flexDirection: 'column' }}>
+            {(value || ['', '', '']).map((feature: string, index: number) => (
+              <div key={index}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '24px 0' }}>
+                  <div style={{ position: 'relative', flex: 1 }}>
+                    <input
+                      type="text"
+                      value={feature}
+                      onChange={(e) => {
+                        const newFeatures = [...(value || [])];
+                        newFeatures[index] = e.target.value;
+                        updateField(step.field, newFeatures);
+                      }}
+                      style={{
+                        width: '100%',
+                        height: '48px',
+                        padding: '12px 48px 12px 16px',
+                        fontSize: '16px',
+                        border: 'none',
+                        backgroundColor: 'transparent',
+                        color: '#ffffff',
+                        outline: 'none',
+                        transition: 'all 0.2s ease'
+                      }}
+                      placeholder="Funcionalidad"
+                      autoFocus={index === (value || []).length - 1}
+                    />
+                  </div>
+                  <button
+                    onClick={() => {
+                      const newFeatures = (value || []).filter((_: any, i: number) => i !== index);
+                      updateField(step.field, newFeatures);
+                    }}
+                    style={{
+                      padding: '8px',
+                      backgroundColor: 'transparent',
+                      border: 'none',
+                      cursor: 'pointer',
+                      color: '#666666',
+                      transition: 'color 0.2s ease'
+                    }}
+                    onMouseEnter={(e) => e.target.style.color = '#ff4444'}
+                    onMouseLeave={(e) => e.target.style.color = '#666666'}
+                  >
+                    <Trash2 style={{ width: '16px', height: '16px' }} />
+                  </button>
+                </div>
+                {index < (value || []).length - 1 && (
+                  <div style={{ 
+                    height: '1px', 
+                    backgroundColor: '#333333', 
+                    margin: '0 0 0 0' 
+                  }} />
+                )}
               </div>
             ))}
+            
             <button
-              onClick={() => updateField(step.field, [...value, ''])}
+              onClick={() => updateField(step.field, [...(value || []), ''])}
               style={{
                 display: 'flex',
                 alignItems: 'center',
@@ -1867,18 +2177,16 @@ export default function HomePage() {
                 fontSize: '14px',
                 color: '#666666',
                 backgroundColor: 'transparent',
-                border: '1px solid #333333',
-                borderRadius: '8px',
+                border: 'none',
                 cursor: 'pointer',
-                transition: 'all 0.2s ease'
+                transition: 'all 0.2s ease',
+                marginTop: '16px'
               }}
               onMouseEnter={(e) => {
                 e.target.style.color = '#ffffff';
-                e.target.style.borderColor = '#ffffff';
               }}
               onMouseLeave={(e) => {
                 e.target.style.color = '#666666';
-                e.target.style.borderColor = '#333333';
               }}
             >
               <Plus style={{ width: '16px', height: '16px' }} />
@@ -1924,15 +2232,25 @@ export default function HomePage() {
                   {(value?.name || 'Marca').charAt(0).toUpperCase()}
                 </div>
                 
-                {/* Name */}
-                <div style={{
-                  fontSize: '18px',
-                  fontWeight: '500',
-                  color: '#000000',
-                  marginBottom: '4px'
-                }}>
-                  {value?.name || 'Nombre de la marca'}
-                </div>
+                {/* Name - Editable */}
+                <input
+                  type="text"
+                  value={value?.name || ''}
+                  onChange={(e) => updateField(step.field, { ...value, name: e.target.value })}
+                  style={{
+                    fontSize: '18px',
+                    fontWeight: '500',
+                    color: '#000000',
+                    marginBottom: '4px',
+                    backgroundColor: 'transparent',
+                    border: 'none',
+                    outline: 'none',
+                    width: '100%',
+                    textAlign: 'center'
+                  }}
+                  placeholder="Nombre de la marca"
+                  autoFocus
+                />
                 
                 {/* Bio */}
                 <div style={{
@@ -1956,27 +2274,8 @@ export default function HomePage() {
               </div>
             </div>
             
-            {/* Input Fields */}
+            {/* Bio Field */}
             <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-            <input
-              type="text"
-                value={value?.name || ''}
-              onChange={(e) => updateField(step.field, { ...value, name: e.target.value })}
-                style={{
-                  width: '100%',
-                  height: '48px',
-                  padding: '12px 16px',
-                  fontSize: '16px',
-                  border: '1px solid #333333',
-                  borderRadius: '8px',
-                  backgroundColor: 'transparent',
-                  color: '#ffffff',
-                  outline: 'none',
-                  transition: 'all 0.2s ease'
-                }}
-                placeholder="Nombre de la marca"
-              autoFocus
-            />
             <textarea
                 value={value?.bio || ''}
               onChange={(e) => updateField(step.field, { ...value, bio: e.target.value })}
@@ -2070,7 +2369,7 @@ export default function HomePage() {
                 display: 'flex',
                 alignItems: 'center',
                 gap: '12px',
-                padding: '16px 0',
+                padding: '24px 0',
                 borderBottom: '1px solid #333333'
               }}>
                 <input
@@ -2090,14 +2389,11 @@ export default function HomePage() {
                     padding: '12px 16px',
                     fontSize: '16px',
                     border: 'none',
-                    borderBottom: '1px solid #333333',
                     backgroundColor: 'transparent',
                     color: '#ffffff',
                     outline: 'none',
                     transition: 'all 0.2s ease'
                   }}
-                  onMouseEnter={(e) => e.target.style.borderBottomColor = '#ffffff'}
-                  onMouseLeave={(e) => e.target.style.borderBottomColor = '#333333'}
                 />
                 <input
                   type="text"
@@ -2117,14 +2413,11 @@ export default function HomePage() {
                     padding: '12px 16px',
                     fontSize: '16px',
                     border: 'none',
-                    borderBottom: '1px solid #333333',
                     backgroundColor: 'transparent',
                     color: '#ffffff',
                     outline: 'none',
                     transition: 'all 0.2s ease'
                   }}
-                  onMouseEnter={(e) => e.target.style.borderBottomColor = '#ffffff'}
-                  onMouseLeave={(e) => e.target.style.borderBottomColor = '#333333'}
                   placeholder="Tarea del plan"
                 />
                 <button
@@ -2365,49 +2658,57 @@ export default function HomePage() {
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'space-between',
-              padding: '16px 0',
+              padding: '24px 0',
               borderBottom: '1px solid #333333'
             }}>
               <label style={{ 
                 fontSize: '16px', 
                 color: '#ffffff', 
-                fontWeight: '500'
+                fontWeight: '600'
               }}>
                 Tipografía
               </label>
-              <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', maxWidth: '400px' }}>
-                {['Inter', 'Helvetica', 'Arial', 'Roboto', 'Montserrat', 'Poppins', 'Open Sans', 'Lato'].map((font, index) => (
-                  <button
-                    key={index}
-                    onClick={() => updateField(step.field, { ...value, typography: font })}
-                    style={{
-                      padding: '6px 12px',
-                      border: value?.typography === font ? '2px solid #ffffff' : '1px solid #333333',
-                      borderRadius: '16px',
-                      backgroundColor: 'transparent',
-                      color: value?.typography === font ? '#ffffff' : '#666666',
-                      cursor: 'pointer',
-                      transition: 'all 0.2s ease',
-                      fontSize: '12px',
-                      fontWeight: '400',
-                      whiteSpace: 'nowrap'
-                    }}
-                    onMouseEnter={(e) => {
-                      if (value?.typography !== font) {
-                        e.target.style.borderColor = '#666666';
-                        e.target.style.color = '#ffffff';
-                      }
-                    }}
-                    onMouseLeave={(e) => {
-                      if (value?.typography !== font) {
-                        e.target.style.borderColor = '#333333';
-                        e.target.style.color = '#666666';
-                      }
-                    }}
-                  >
-                    {font}
-                  </button>
-                ))}
+              <div style={{ position: 'relative', minWidth: '200px' }}>
+                <select
+                  value={value?.typography || 'Inter'}
+                  onChange={(e) => updateField(step.field, { ...value, typography: e.target.value })}
+                  style={{
+                    width: '100%',
+                    height: '40px',
+                    padding: '8px 32px 8px 12px',
+                    fontSize: '14px',
+                    border: 'none',
+                    borderBottom: '1px solid #333333',
+                    backgroundColor: 'transparent',
+                    color: '#ffffff',
+                    outline: 'none',
+                    appearance: 'none',
+                    cursor: 'pointer',
+                    transition: 'all 0.2s ease',
+                    fontFamily: value?.typography || 'Inter'
+                  }}
+                  onMouseEnter={(e) => e.target.style.borderBottomColor = '#ffffff'}
+                  onMouseLeave={(e) => e.target.style.borderBottomColor = '#333333'}
+                  onFocus={(e) => e.target.style.borderBottomColor = '#ffffff'}
+                  onBlur={(e) => e.target.style.borderBottomColor = '#333333'}
+                >
+                  {['Inter', 'Helvetica', 'Arial', 'Roboto', 'Montserrat', 'Poppins', 'Open Sans', 'Lato'].map((font, index) => (
+                    <option key={index} value={font} style={{ backgroundColor: '#1a1a1a', color: '#ffffff' }}>
+                      {font}
+                    </option>
+                  ))}
+                </select>
+                <div style={{
+                  position: 'absolute',
+                  right: '8px',
+                  top: '50%',
+                  transform: 'translateY(-50%)',
+                  pointerEvents: 'none',
+                  color: '#666666',
+                  fontSize: '12px'
+                }}>
+                  ▼
+                </div>
               </div>
             </div>
             
@@ -2416,19 +2717,19 @@ export default function HomePage() {
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'space-between',
-              padding: '16px 0',
+              padding: '24px 0',
               borderBottom: '1px solid #333333'
             }}>
               <label style={{ 
                 fontSize: '16px', 
                 color: '#ffffff', 
-                fontWeight: '500'
+                fontWeight: '600'
               }}>
                 Color
               </label>
               <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                  <span style={{ fontSize: '14px', color: '#666666' }}>Fondo</span>
+                  <span style={{ fontSize: '14px', color: '#cccccc' }}>Fondo</span>
                   <input
                     type="color"
                     value={value?.backgroundColor || '#000000'}
@@ -2452,7 +2753,7 @@ export default function HomePage() {
                   backgroundColor: '#333333' 
                 }} />
                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                  <span style={{ fontSize: '14px', color: '#666666' }}>Texto</span>
+                  <span style={{ fontSize: '14px', color: '#cccccc' }}>Texto</span>
                   <input
                     type="color"
                     value={value?.textColor || '#ffffff'}
@@ -2483,7 +2784,7 @@ export default function HomePage() {
               <label style={{ 
                 fontSize: '16px', 
                 color: '#ffffff', 
-                fontWeight: '500'
+                fontWeight: '600'
               }}>
                 Icono
               </label>
@@ -3096,143 +3397,168 @@ export default function HomePage() {
 
       case 'userflow':
         return (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
-            <div style={{
-              padding: '20px',
-              backgroundColor: '#1a1a1a',
-              borderRadius: '8px',
-              border: '1px solid #333333'
-            }}>
-              <h3 style={{ color: '#ffffff', fontSize: '18px', marginBottom: '16px' }}>
-                MVP Userflow
-              </h3>
-              
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-                {(value?.steps || [
-                  { title: '', description: '' },
-                  { title: '', description: '' },
-                  { title: '', description: '' }
-                ]).map((step: any, index: number) => (
-                  <div key={index} style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '12px',
-                    padding: '16px',
-                    backgroundColor: '#2a2a2a',
-                    borderRadius: '8px',
-                    border: '1px solid #333333'
-                  }}>
-                    <div style={{
-                      width: '32px',
-                      height: '32px',
-                      backgroundColor: '#ffffff',
-                      borderRadius: '50%',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      fontSize: '14px',
-                      fontWeight: '500',
-                      color: '#ffffff',
-                      flexShrink: 0
-                    }}>
-                      {index + 1}
-                    </div>
-                    <input
-                      type="text"
-                      value={step.title || ''}
-                      onChange={(e) => {
-                        const newSteps = [...(value?.steps || [])];
-                        newSteps[index] = { ...newSteps[index], title: e.target.value };
-                        updateField(step.field, { ...value, steps: newSteps });
-                      }}
-                      style={{
-                        flex: 1,
-                        height: '40px',
-                        padding: '8px 12px',
-                        fontSize: '14px',
-                        border: '1px solid #333333',
-                        borderRadius: '6px',
-                        backgroundColor: 'transparent',
-                        color: '#ffffff',
-                        outline: 'none'
-                      }}
-                      placeholder="Paso del flujo"
-                    />
-                    <input
-                      type="text"
-                      value={step.description || ''}
-                      onChange={(e) => {
-                        const newSteps = [...(value?.steps || [])];
-                        newSteps[index] = { ...newSteps[index], description: e.target.value };
-                        updateField(step.field, { ...value, steps: newSteps });
-                      }}
-                      style={{
-                        flex: 2,
-                        height: '40px',
-                        padding: '8px 12px',
-                        fontSize: '14px',
-                        border: '1px solid #333333',
-                        borderRadius: '6px',
-                        backgroundColor: 'transparent',
-                        color: '#ffffff',
-                        outline: 'none'
-                      }}
-                      placeholder="Descripción del paso"
-                    />
-                    <button
-                      onClick={() => {
-                        const newSteps = (value?.steps || []).filter((_: any, i: number) => i !== index);
-                        updateField(step.field, { ...value, steps: newSteps });
-                      }}
-                      style={{
-                        padding: '8px',
-                        backgroundColor: 'transparent',
-                        border: 'none',
-                        cursor: 'pointer',
-                        color: '#666666',
-                        transition: 'color 0.2s ease'
-                      }}
-                      onMouseEnter={(e) => e.target.style.color = '#ff4444'}
-                      onMouseLeave={(e) => e.target.style.color = '#666666'}
-                    >
-                      <Trash2 style={{ width: '16px', height: '16px' }} />
-                    </button>
-                  </div>
-                ))}
-                
-                <button
-                  onClick={() => updateField(step.field, { 
-                    ...value, 
-                    steps: [...(value?.steps || []), { title: '', description: '' }] 
-                  })}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '0' }}>
+            {(value?.steps || [
+              { title: '', description: '' },
+              { title: '', description: '' },
+              { title: '', description: '' }
+            ]).map((step: any, index: number) => (
+              <div 
+                key={index} 
+                draggable
+                onDragStart={(e) => {
+                  e.dataTransfer.setData('text/plain', index.toString());
+                  e.dataTransfer.effectAllowed = 'move';
+                }}
+                onDragOver={(e) => {
+                  e.preventDefault();
+                  e.dataTransfer.dropEffect = 'move';
+                }}
+                onDrop={(e) => {
+                  e.preventDefault();
+                  const draggedIndex = parseInt(e.dataTransfer.getData('text/plain'));
+                  if (draggedIndex !== index) {
+                    const newSteps = [...(value?.steps || [])];
+                    const draggedStep = newSteps[draggedIndex];
+                    newSteps.splice(draggedIndex, 1);
+                    newSteps.splice(index, 0, draggedStep);
+                    updateField(step.field, { ...value, steps: newSteps });
+                  }
+                }}
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '12px',
+                  padding: '24px 0',
+                  borderBottom: index < (value?.steps || []).length - 1 ? '1px solid #333333' : 'none',
+                  cursor: 'move'
+                }}
+              >
+                <div style={{
+                  width: '32px',
+                  height: '32px',
+                  backgroundColor: '#ffffff',
+                  borderRadius: '50%',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  fontSize: '14px',
+                  fontWeight: '500',
+                  color: '#000000',
+                  flexShrink: 0,
+                  cursor: 'grab'
+                }}>
+                  {index + 1}
+                </div>
+                <input
+                  type="text"
+                  value={step.title || ''}
+                  onChange={(e) => {
+                    const newSteps = [...(value?.steps || [])];
+                    newSteps[index] = { ...newSteps[index], title: e.target.value };
+                    updateField(step.field, { ...value, steps: newSteps });
+                  }}
                   style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '8px',
-                    height: '48px',
-                    padding: '0 16px',
+                    flex: 1,
+                    height: '40px',
+                    padding: '8px 12px',
                     fontSize: '14px',
-                    color: '#666666',
+                    border: 'none',
+                    borderBottom: '1px solid #333333',
                     backgroundColor: 'transparent',
-                    border: '1px solid #333333',
-                    borderRadius: '8px',
-                    cursor: 'pointer',
+                    color: '#ffffff',
+                    outline: 'none',
                     transition: 'all 0.2s ease'
                   }}
-                  onMouseEnter={(e) => {
-                    e.target.style.color = '#ffffff';
-                    e.target.style.borderColor = '#ffffff';
+                  placeholder="Paso del flujo"
+                  onMouseEnter={(e) => e.target.style.borderBottomColor = '#666666'}
+                  onMouseLeave={(e) => e.target.style.borderBottomColor = '#333333'}
+                  onFocus={(e) => e.target.style.borderBottomColor = '#ffffff'}
+                  onBlur={(e) => e.target.style.borderBottomColor = '#333333'}
+                />
+                <input
+                  type="text"
+                  value={step.description || ''}
+                  onChange={(e) => {
+                    const newSteps = [...(value?.steps || [])];
+                    newSteps[index] = { ...newSteps[index], description: e.target.value };
+                    updateField(step.field, { ...value, steps: newSteps });
                   }}
-                  onMouseLeave={(e) => {
-                    e.target.style.color = '#666666';
-                    e.target.style.borderColor = '#333333';
+                  style={{
+                    flex: 2,
+                    height: '40px',
+                    padding: '8px 12px',
+                    fontSize: '14px',
+                    border: 'none',
+                    borderBottom: '1px solid #333333',
+                    backgroundColor: 'transparent',
+                    color: '#ffffff',
+                    outline: 'none',
+                    transition: 'all 0.2s ease'
                   }}
+                  placeholder="Descripción del paso"
+                  onMouseEnter={(e) => e.target.style.borderBottomColor = '#666666'}
+                  onMouseLeave={(e) => e.target.style.borderBottomColor = '#333333'}
+                  onFocus={(e) => e.target.style.borderBottomColor = '#ffffff'}
+                  onBlur={(e) => e.target.style.borderBottomColor = '#333333'}
+                />
+                <button
+                  onClick={() => {
+                    const newSteps = (value?.steps || []).filter((_: any, i: number) => i !== index);
+                    updateField(step.field, { ...value, steps: newSteps });
+                  }}
+                  style={{
+                    width: '32px',
+                    height: '32px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    backgroundColor: 'transparent',
+                    border: 'none',
+                    cursor: 'pointer',
+                    color: '#666666',
+                    transition: 'color 0.2s ease'
+                  }}
+                  onMouseEnter={(e) => e.target.style.color = '#ff4444'}
+                  onMouseLeave={(e) => e.target.style.color = '#666666'}
                 >
-                  <Plus style={{ width: '16px', height: '16px' }} />
-                  Añadir paso al flujo
+                  <Trash2 style={{ width: '16px', height: '16px' }} />
                 </button>
               </div>
-            </div>
+            ))}
+            
+            <button
+              onClick={() => updateField(step.field, { 
+                ...value, 
+                steps: [...(value?.steps || []), { title: '', description: '' }] 
+              })}
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '8px',
+                height: '48px',
+                padding: '0 16px',
+                fontSize: '14px',
+                color: '#666666',
+                backgroundColor: 'transparent',
+                border: '1px solid #333333',
+                borderRadius: '8px',
+                cursor: 'pointer',
+                transition: 'all 0.2s ease',
+                marginTop: '16px'
+              }}
+              onMouseEnter={(e) => {
+                e.target.style.color = '#ffffff';
+                e.target.style.borderColor = '#ffffff';
+              }}
+              onMouseLeave={(e) => {
+                e.target.style.color = '#666666';
+                e.target.style.borderColor = '#333333';
+              }}
+            >
+              <Plus style={{ width: '16px', height: '16px' }} />
+              Añadir paso al flujo
+            </button>
           </div>
         );
 
@@ -4769,7 +5095,11 @@ export default function HomePage() {
             
             {/* Generate Button */}
             <button
-              onClick={() => {/* TODO: Generate merchandise mockups */}}
+              onClick={() => {
+                // Generar mockups de merchandising
+                console.log('Generando mockups de merchandising...');
+                // Aquí se implementaría la lógica para generar mockups
+              }}
               style={{
                 display: 'flex',
                 alignItems: 'center',
@@ -4797,43 +5127,49 @@ export default function HomePage() {
       case 'names':
         return (
           <div style={{ display: 'flex', flexDirection: 'column', gap: '0' }}>
-            {/* Nombre de la marca */}
+            {/* Caja grande editable */}
             <div style={{
               display: 'flex',
               alignItems: 'center',
-              justifyContent: 'space-between',
-              padding: '16px 0',
-              borderBottom: '1px solid #333333'
+              justifyContent: 'center',
+              height: '200px',
+              backgroundColor: '#1a1a1a',
+              border: '1px solid #333333',
+              borderRadius: '8px',
+              marginBottom: '24px',
+              position: 'relative',
+              cursor: 'text'
             }}>
-              <label style={{
-                fontSize: '16px',
-                color: '#ffffff',
-                fontWeight: '500'
-              }}>
-                Nombre de la marca
-              </label>
               <input
                 type="text"
                 value={value?.selectedName || ''}
                 onChange={(e) => updateField(step.field, { ...value, selectedName: e.target.value })}
                 style={{
-                  flex: 1,
-                  maxWidth: '300px',
-                  height: '32px',
-                  padding: '8px 12px',
-                  fontSize: '14px',
-                  border: '1px solid #333333',
-                  borderRadius: '4px',
+                  width: '100%',
+                  height: '100%',
                   backgroundColor: 'transparent',
+                  border: 'none',
                   color: '#ffffff',
+                  fontSize: '24px',
+                  fontWeight: '500',
+                  textAlign: 'center',
+                  fontFamily: 'Inter',
                   outline: 'none',
-                  transition: 'all 0.2s ease'
+                  padding: '20px'
                 }}
                 placeholder="Nombre de la marca"
-                onMouseEnter={(e) => e.target.style.borderColor = '#666666'}
-                onMouseLeave={(e) => e.target.style.borderColor = '#333333'}
-                onFocus={(e) => e.target.style.borderColor = '#ffffff'}
-                onBlur={(e) => e.target.style.borderColor = '#333333'}
+                onMouseEnter={(e) => {
+                  e.target.parentElement.style.borderColor = '#666666';
+                }}
+                onMouseLeave={(e) => {
+                  e.target.parentElement.style.borderColor = '#333333';
+                }}
+                onFocus={(e) => {
+                  e.target.parentElement.style.borderColor = '#ffffff';
+                }}
+                onBlur={(e) => {
+                  e.target.parentElement.style.borderColor = '#333333';
+                }}
               />
             </div>
 
@@ -4870,7 +5206,7 @@ export default function HomePage() {
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'space-between',
-                  padding: '16px 0',
+                  padding: '24px 0',
                   borderBottom: index < 5 ? '1px solid #333333' : 'none',
                   cursor: 'pointer',
                   transition: 'all 0.2s ease'
@@ -4905,96 +5241,165 @@ export default function HomePage() {
         return (
           <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
             <div style={{
-              padding: '20px',
-              backgroundColor: '#1a1a1a',
-              borderRadius: '8px',
-              border: '1px solid #333333'
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              padding: '24px 0',
+              borderBottom: '1px solid #333333'
             }}>
-              <h3 style={{ color: '#ffffff', fontSize: '18px', marginBottom: '16px' }}>
-                Selecciona tu modo de trabajo
-              </h3>
-              <p style={{ color: '#cccccc', fontSize: '14px', marginBottom: '24px' }}>
-                Elige el modo que mejor se adapte a tu proyecto para personalizar la experiencia.
-              </p>
-              
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '0' }}>
-                {[
-                  {
-                    id: 'startup',
-                    title: 'Startup',
-                    description: 'Para proyectos en fase inicial con recursos limitados y enfoque en MVP.'
-                  },
-                  {
-                    id: 'scaleup',
-                    title: 'ScaleUp',
-                    description: 'Para proyectos en crecimiento que buscan escalar y optimizar procesos.'
-                  },
-                  {
-                    id: 'corporate',
-                    title: 'Corporate',
-                    description: 'Para proyectos empresariales con recursos completos y procesos establecidos.'
-                  }
-                ].map((mode, index) => (
-                  <div key={mode.id} style={{
+              <label style={{ 
+                fontSize: '16px', 
+                color: '#ffffff', 
+                fontWeight: '600'
+              }}>
+                Tipo de proyecto
+              </label>
+            </div>
+            
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+              {[
+                { 
+                  type: 'startup', 
+                  title: 'Startup', 
+                  description: 'Proyecto en fase inicial, MVP y validación',
+                  color: '#4a9eff'
+                },
+                { 
+                  type: 'scale', 
+                  title: 'Scale', 
+                  description: 'Crecimiento y expansión del negocio',
+                  color: '#ff6b35'
+                },
+                { 
+                  type: 'corporate', 
+                  title: 'Corporate', 
+                  description: 'Empresa establecida, optimización y eficiencia',
+                  color: '#00d4aa'
+                }
+              ].map((mode, index) => (
+                <button
+                  key={index}
+                  onClick={() => updateField(step.field, mode.type)}
+                  style={{
                     display: 'flex',
                     alignItems: 'center',
                     gap: '16px',
                     padding: '20px',
-                    borderBottom: index < 2 ? '1px solid #333333' : 'none',
+                    backgroundColor: value === mode.type ? 'rgba(74, 158, 255, 0.1)' : '#1a1a1a',
+                    border: value === mode.type ? '2px solid #ffffff' : '1px solid #333333',
+                    borderRadius: '8px',
                     cursor: 'pointer',
-                    backgroundColor: value === mode.id ? '#2a2a2a' : 'transparent',
-                    transition: 'background-color 0.2s ease'
+                    transition: 'all 0.2s ease',
+                    textAlign: 'left'
                   }}
-                  onClick={() => updateField(step.field, mode.id)}
                   onMouseEnter={(e) => {
-                    if (value !== mode.id) e.target.style.backgroundColor = '#1a1a1a';
+                    if (value !== mode.type) {
+                      e.target.style.backgroundColor = '#2a2a2a';
+                      e.target.style.borderColor = '#ffffff';
+                    }
                   }}
                   onMouseLeave={(e) => {
-                    if (value !== mode.id) e.target.style.backgroundColor = 'transparent';
-                  }}>
-                    <div style={{
-                      width: '24px',
-                      height: '24px',
-                      border: '2px solid #333333',
-                      borderRadius: '50%',
-                      backgroundColor: value === mode.id ? '#ffffff' : 'transparent',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      transition: 'all 0.2s ease'
+                    if (value !== mode.type) {
+                      e.target.style.backgroundColor = '#1a1a1a';
+                      e.target.style.borderColor = '#333333';
+                    }
+                  }}
+                >
+                  <div style={{
+                    width: '12px',
+                    height: '12px',
+                    borderRadius: '50%',
+                    backgroundColor: mode.color
+                  }} />
+                  <div style={{ flex: 1 }}>
+                    <h3 style={{ 
+                      color: '#ffffff', 
+                      fontSize: '16px', 
+                      fontWeight: '500', 
+                      marginBottom: '4px' 
                     }}>
-                      {value === mode.id && (
-                        <div style={{
-                          width: '8px',
-                          height: '8px',
-                          backgroundColor: '#000000',
-                          borderRadius: '50%'
-                        }} />
-                      )}
-                    </div>
-                    <div style={{ flex: 1 }}>
-                      <h4 style={{
-                        color: '#ffffff',
-                        fontSize: '16px',
-                        marginBottom: '4px',
-                        fontWeight: value === mode.id ? '600' : '400'
-                      }}>
-                        {mode.title}
-                      </h4>
-                      <p style={{
-                        color: '#cccccc',
-                        fontSize: '14px',
-                        margin: '0'
-                      }}>
-                        {mode.description}
-                      </p>
-                    </div>
+                      {mode.title}
+                    </h3>
+                    <p style={{ 
+                      color: '#cccccc', 
+                      fontSize: '14px',
+                      margin: 0
+                    }}>
+                      {mode.description}
+                    </p>
                   </div>
-                ))}
+                </button>
+              ))}
+            </div>
+          </div>
+        );
+
+      case 'brandbook':
+        return (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+            <div style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              padding: '24px 0',
+              borderBottom: '1px solid #333333'
+            }}>
+              <label style={{ 
+                fontSize: '16px', 
+                color: '#ffffff', 
+                fontWeight: '600'
+              }}>
+                Generar Brandbook
+              </label>
+            </div>
+            
+            <div style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              height: '200px',
+              backgroundColor: '#1a1a1a',
+              border: '2px dashed #333333',
+              borderRadius: '8px',
+              cursor: 'pointer',
+              transition: 'all 0.2s ease'
+            }}
+            onMouseEnter={(e) => {
+              e.target.style.borderColor = '#ffffff';
+              e.target.style.backgroundColor = '#2a2a2a';
+            }}
+            onMouseLeave={(e) => {
+              e.target.style.borderColor = '#333333';
+              e.target.style.backgroundColor = '#1a1a1a';
+            }}
+            >
+              <div style={{ textAlign: 'center' }}>
+                <div style={{
+                  fontSize: '48px',
+                  color: '#666666',
+                  marginBottom: '16px'
+                }}>
+                  📄
+                </div>
+                <h3 style={{ 
+                  color: '#ffffff', 
+                  fontSize: '18px', 
+                  fontWeight: '500', 
+                  marginBottom: '8px' 
+                }}>
+                  Generar Brandbook
+                </h3>
+                <p style={{ 
+                  color: '#cccccc', 
+                  fontSize: '14px',
+                  margin: 0
+                }}>
+                  Crea un documento completo con toda la información de tu marca
+                </p>
               </div>
             </div>
-        </div>
-      );
+          </div>
+        );
 
       default:
         return null;
@@ -5041,7 +5446,7 @@ export default function HomePage() {
         }}>
           <video
             ref={videoRef}
-            key={currentStepIndex}
+            key={`video-${getCurrentVideo()}-${currentStepIndex}`}
             style={{ 
               width: '100%', 
               height: '100%', 
@@ -5053,8 +5458,54 @@ export default function HomePage() {
             muted
             loop
             playsInline
+            preload="auto"
+            controls={false}
           >
-            <source src={`/${videos[currentStepIndex]}`} type="video/mp4" />
+            <source src={`/${getCurrentVideo()}`} type="video/mp4" />
+            <div style={{
+              position: 'absolute',
+              top: '50%',
+              left: '50%',
+              transform: 'translate(-50%, -50%)',
+              color: '#ffffff',
+              fontSize: '16px',
+              textAlign: 'center',
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              gap: '12px'
+            }}>
+              <button
+                onClick={() => {
+                  if (videoRef.current) {
+                    videoRef.current.play().catch(console.error);
+                  }
+                }}
+                style={{
+                  backgroundColor: 'rgba(255, 255, 255, 0.2)',
+                  border: '2px solid #ffffff',
+                  borderRadius: '50%',
+                  width: '60px',
+                  height: '60px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  cursor: 'pointer',
+                  color: '#ffffff',
+                  fontSize: '24px',
+                  transition: 'all 0.2s ease'
+                }}
+                onMouseEnter={(e) => {
+                  e.target.style.backgroundColor = 'rgba(255, 255, 255, 0.3)';
+                }}
+                onMouseLeave={(e) => {
+                  e.target.style.backgroundColor = 'rgba(255, 255, 255, 0.2)';
+                }}
+              >
+                ▶
+              </button>
+              <div>Haz clic para reproducir</div>
+            </div>
           </video>
         </div>
       </div>
@@ -5081,25 +5532,10 @@ export default function HomePage() {
         }}>
           {/* Left: Menu + Previous */}
           <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-            <button
+            <HamburgerMenu 
+              isOpen={isMenuOpen} 
               onClick={() => setIsMenuOpen(!isMenuOpen)}
-              style={{ 
-                width: '32px', 
-                height: '32px', 
-                display: 'flex', 
-                alignItems: 'center', 
-                justifyContent: 'center', 
-                backgroundColor: 'transparent', 
-                border: 'none', 
-                cursor: 'pointer',
-                color: '#666666',
-                transition: 'color 0.2s ease'
-              }}
-              onMouseEnter={(e) => e.target.style.color = '#ffffff'}
-              onMouseLeave={(e) => e.target.style.color = '#666666'}
-            >
-              <Menu style={{ width: '16px', height: '16px' }} />
-            </button>
+            />
             <button
               onClick={handlePrevious}
               disabled={currentStepIndex === 0}
@@ -5128,8 +5564,119 @@ export default function HomePage() {
           </div>
           
           
-          {/* Right: Voice + Next */}
+          {/* Right: Animation + Voice + Next */}
           <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+            {/* Dropdown de animaciones */}
+            <div style={{ position: 'relative' }}>
+              <button
+                onClick={() => setShowAnimationDropdown(!showAnimationDropdown)}
+                style={{ 
+                  width: '32px', 
+                  height: '32px', 
+                  display: 'flex', 
+                  alignItems: 'center', 
+                  justifyContent: 'center',
+                  backgroundColor: 'transparent', 
+                  border: 'none', 
+                  cursor: 'pointer',
+                  color: '#666666',
+                  transition: 'color 0.2s ease'
+                }}
+                onMouseEnter={(e) => {
+                  e.target.style.color = '#ffffff';
+                }}
+                onMouseLeave={(e) => {
+                  e.target.style.color = '#666666';
+                }}
+              >
+                <Wand2 style={{ width: '16px', height: '16px' }} />
+              </button>
+              
+              {/* Dropdown menu */}
+              {showAnimationDropdown && (
+                <div style={{
+                  position: 'absolute',
+                  top: '40px',
+                  right: '0',
+                  backgroundColor: '#1a1a1a',
+                  border: '1px solid #333333',
+                  borderRadius: '8px',
+                  padding: '8px',
+                  minWidth: '200px',
+                  zIndex: 1000
+                }}>
+                  <div style={{ 
+                    color: '#ffffff', 
+                    fontSize: '12px', 
+                    fontWeight: '600', 
+                    marginBottom: '8px',
+                    padding: '0 8px'
+                  }}>
+                    Animaciones
+                  </div>
+                  {animations.map((animation) => (
+                    <button
+                      key={animation.id}
+                      onClick={() => {
+                        setSelectedAnimation(animation.id);
+                        setShowAnimationDropdown(false);
+                      }}
+                      style={{
+                        width: '100%',
+                        padding: '8px',
+                        backgroundColor: selectedAnimation === animation.id ? '#333333' : 'transparent',
+                        color: '#ffffff',
+                        border: 'none',
+                        borderRadius: '4px',
+                        cursor: 'pointer',
+                        textAlign: 'left',
+                        fontSize: '14px',
+                        transition: 'background-color 0.2s ease'
+                      }}
+                      onMouseEnter={(e) => {
+                        if (selectedAnimation !== animation.id) {
+                          e.target.style.backgroundColor = '#333333';
+                        }
+                      }}
+                      onMouseLeave={(e) => {
+                        if (selectedAnimation !== animation.id) {
+                          e.target.style.backgroundColor = 'transparent';
+                        }
+                      }}
+                    >
+                      <div style={{ fontWeight: '500' }}>{animation.name}</div>
+                      <div style={{ fontSize: '12px', color: '#cccccc' }}>{animation.description}</div>
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
+            
+            {/* Botón del plan semanal */}
+            <button
+              onClick={() => setShowPlanSlide(!showPlanSlide)}
+              style={{ 
+                width: '32px', 
+                height: '32px', 
+                display: 'flex', 
+                alignItems: 'center', 
+                justifyContent: 'center',
+                backgroundColor: 'transparent', 
+                border: 'none', 
+                cursor: 'pointer',
+                color: showPlanSlide ? '#ffffff' : '#666666',
+                transition: 'color 0.2s ease'
+              }}
+              onMouseEnter={(e) => {
+                if (!showPlanSlide) e.target.style.color = '#ffffff';
+              }}
+              onMouseLeave={(e) => {
+                if (!showPlanSlide) e.target.style.color = '#666666';
+              }}
+            >
+              <Calendar style={{ width: '16px', height: '16px' }} />
+            </button>
+            
             <button
               onClick={startGlobalVoiceRecognition}
               disabled={isListening}
@@ -5285,104 +5832,26 @@ export default function HomePage() {
         </div>
         )}
         
-        {/* Menú desplegable */}
-        {isMenuOpen && (
-          <div style={{ 
-            position: 'absolute', 
-            top: '0', 
-            left: '0', 
-            right: '0',
-            bottom: '0',
-            backgroundColor: 'rgba(0, 0, 0, 0.8)', 
-            zIndex: 1000,
-            display: 'flex',
-            alignItems: 'flex-start',
-            justifyContent: 'center',
-            paddingTop: '100px'
-          }}>
-            <div style={{
-            backgroundColor: '#1a1a1a', 
-            border: '1px solid #333333', 
-            borderRadius: '8px', 
-              boxShadow: '0 4px 12px rgba(0,0,0,0.5)', 
-              padding: '16px',
-              maxHeight: '500px',
-              overflowY: 'auto',
-              width: '320px',
-              maxWidth: '90vw'
-            }}>
-            <div style={{
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'space-between',
-              marginBottom: '16px'
-          }}>
-            <div style={{ 
-              fontSize: '12px', 
-              fontWeight: '500', 
-              color: '#666666', 
-              textTransform: 'uppercase', 
-                letterSpacing: '0.05em'
-            }}>
-              Navegación
-              </div>
-              <button
-                onClick={() => setIsMenuOpen(false)}
-                style={{
-                  width: '24px',
-                  height: '24px',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  backgroundColor: 'transparent',
-                  border: 'none',
-                  cursor: 'pointer',
-                  color: '#666666',
-                  transition: 'color 0.2s ease',
-                  fontSize: '16px'
-                }}
-                onMouseEnter={(e) => e.target.style.color = '#ffffff'}
-                onMouseLeave={(e) => e.target.style.color = '#666666'}
-              >
-                ×
-              </button>
-            </div>
-            {steps.map((step, index) => (
-              <button
-                key={step.id}
-                onClick={() => {
-                  setCurrentStepIndex(index);
-                  setIsMenuOpen(false);
-                }}
-                style={{ 
-                  width: '100%', 
-                  textAlign: 'left', 
-                  padding: '8px 12px', 
-                  borderRadius: '6px', 
-                  fontSize: '14px', 
-                  backgroundColor: index === currentStepIndex ? '#1a1a1a' : 'transparent',
-                  color: index === currentStepIndex ? '#ffffff' : '#cccccc',
-                  border: 'none',
-                  cursor: 'pointer',
-                  transition: 'all 0.2s ease'
-                }}
-                onMouseEnter={(e) => {
-                  if (index !== currentStepIndex) {
-                    e.target.style.backgroundColor = '#333333';
-                  }
-                }}
-                onMouseLeave={(e) => {
-                  if (index !== currentStepIndex) {
-                    e.target.style.backgroundColor = 'transparent';
-                  }
-                }}
-              >
-                {step.title}
-              </button>
-            ))}
-            </div>
-              </div>
-            )}
+        {/* Sidebar Menu */}
+        <Sidebar
+          currentSection={currentSection}
+          onSectionChange={(section) => {
+            setCurrentSection(section);
+            // Mapear sección a step index
+            const sectionToStepMap: { [key: string]: number } = {
+              'strategy': 1,
+              'brand': 5,
+              'product': 9,
+              'messages': 13,
+              'launch': 16
+            };
+            const stepIndex = sectionToStepMap[section] || 0;
+            setCurrentStepIndex(stepIndex);
+          }}
+          progress={calculateProgress()}
+          isOpen={isMenuOpen}
+          onClose={() => setIsMenuOpen(false)}
+        />
 
         {/* Contenido */}
         <div style={{ 
@@ -5403,7 +5872,7 @@ export default function HomePage() {
               height: '1px', 
               backgroundColor: '#333333', 
               marginBottom: '32px',
-              opacity: 0.08
+              opacity: 0.06
             }}></div>
             
             <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
@@ -5423,28 +5892,38 @@ export default function HomePage() {
                 }}
                 onMouseEnter={(e) => e.target.style.color = '#ffffff'}
                 onMouseLeave={(e) => e.target.style.color = '#666666'}
-                onClick={() => {/* TODO: Navigate to home */}}
+                onClick={() => setCurrentStepIndex(0)}
                 >
                   S+C
                 </div>
                 <div style={{ 
                   fontSize: '24px', 
                   color: '#ffffff', 
-                  fontWeight: '500',
+                  fontWeight: '600',
                   cursor: 'pointer',
                   transition: 'color 0.2s ease'
                 }}
                 onMouseEnter={(e) => e.target.style.color = '#ffffff'}
                 onMouseLeave={(e) => e.target.style.color = '#ffffff'}
                 onClick={() => {
-                  const sectionName = getSectionTitle(steps[currentStepIndex].id).split(' / ')[0].split(' ')[1];
+                  const stepId = steps[currentStepIndex].id;
+                  let sectionName = 'STRATEGY';
+                  
+                  if (stepId.startsWith('strategy-')) sectionName = 'STRATEGY';
+                  else if (stepId.startsWith('brand-')) sectionName = 'BRANDS';
+                  else if (stepId.startsWith('product-')) sectionName = 'PRODUCT';
+                  else if (stepId.startsWith('messages-')) sectionName = 'MESSAGES';
+                  else if (stepId.startsWith('launch-')) sectionName = 'LAUNCH';
+                  
+                  console.log('Section name:', sectionName);
                   const targetIndex = findSectionIndex(sectionName);
+                  console.log('Target index:', targetIndex);
                   if (targetIndex !== -1) {
                     setCurrentStepIndex(targetIndex);
                   }
                 }}
                 >
-                  {getSectionTitle(steps[currentStepIndex].id).split(' / ')[0].toUpperCase()}
+                  {getSectionTitle(steps[currentStepIndex].id).split(' / ')[0]?.toUpperCase() || 'S+C'}
                 </div>
                 <div style={{ 
                   fontSize: '24px', 
@@ -5455,75 +5934,19 @@ export default function HomePage() {
                 onMouseEnter={(e) => e.target.style.color = '#ffffff'}
                 onMouseLeave={(e) => e.target.style.color = '#cccccc'}
                 onClick={() => {
-                  const subsectionName = getSectionTitle(steps[currentStepIndex].id).split(' / ')[1];
+                  const subsectionName = getSectionTitle(steps[currentStepIndex].id).split(' / ')[1] || 'Framework';
+                  console.log('Subsection name:', subsectionName);
                   const targetIndex = findSubsectionIndex(subsectionName);
+                  console.log('Target index:', targetIndex);
                   if (targetIndex !== -1) {
                     setCurrentStepIndex(targetIndex);
                   }
                 }}
                 >
-                  {getSectionTitle(steps[currentStepIndex].id).split(' / ')[1].toUpperCase()}
+                  {getSectionTitle(steps[currentStepIndex].id).split(' / ')[1]?.toUpperCase() || 'FRAMEWORK'}
                 </div>
               </div>
               
-              {/* Selector de modo - Solo en capítulos principales */}
-              {isMainChapter(steps[currentStepIndex].id) && (
-              <div style={{ 
-                display: 'flex', 
-                gap: '8px', 
-                marginBottom: '24px',
-                justifyContent: 'center',
-                opacity: showElements.title ? 1 : 0,
-                transform: showElements.title ? 'translateY(0)' : 'translateY(20px)',
-                transition: 'opacity 0.6s ease-out, transform 0.6s ease-out'
-              }}>
-                <button
-                  onClick={() => setSelectedMode('startup')}
-                  style={{
-                    padding: '8px 16px',
-                    fontSize: '14px',
-                    border: '1px solid #333333',
-                    borderRadius: '20px',
-                    backgroundColor: selectedMode === 'startup' ? '#ffffff' : 'transparent',
-                    color: selectedMode === 'startup' ? '#000000' : '#666666',
-                    cursor: 'pointer',
-                    transition: 'all 0.2s ease'
-                  }}
-                >
-                  Startup
-                </button>
-                <button
-                  onClick={() => setSelectedMode('scaleup')}
-                  style={{
-                    padding: '8px 16px',
-                    fontSize: '14px',
-                    border: '1px solid #333333',
-                    borderRadius: '20px',
-                    backgroundColor: selectedMode === 'scaleup' ? '#ffffff' : 'transparent',
-                    color: selectedMode === 'scaleup' ? '#000000' : '#666666',
-                    cursor: 'pointer',
-                    transition: 'all 0.2s ease'
-                  }}
-                >
-                  ScaleUp
-                </button>
-                <button
-                  onClick={() => setSelectedMode('corporate')}
-                  style={{
-                    padding: '8px 16px',
-                    fontSize: '14px',
-                    border: '1px solid #333333',
-                    borderRadius: '20px',
-                    backgroundColor: selectedMode === 'corporate' ? '#ffffff' : 'transparent',
-                    color: selectedMode === 'corporate' ? '#000000' : '#666666',
-                    cursor: 'pointer',
-                    transition: 'all 0.2s ease'
-                  }}
-                >
-                  Corporate
-                </button>
-              </div>
-              )}
               
               {/* Contenido narrativo */}
               {getStepContent(steps[currentStepIndex].id) && (
@@ -5587,8 +6010,15 @@ export default function HomePage() {
                 </div>
 
                 {/* Texto de descripción */}
-                <div>
-                  {typewriterText}
+                <div style={{
+                  opacity: showElements.description ? 1 : 0,
+                  transform: showElements.description ? 'translateY(0)' : 'translateY(20px)',
+                  transition: 'opacity 0.6s ease-out, transform 0.6s ease-out',
+                  minHeight: '120px', // Altura fija para evitar saltos
+                  display: 'flex',
+                  alignItems: 'flex-start'
+                }}>
+                  {renderTextWithCircles(typewriterText)}
                 </div>
               </div>
               )}

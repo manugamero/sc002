@@ -8,7 +8,7 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "S+C 012",
+  title: "S+C 014",
   description: "Proceso completo de desarrollo de marca y producto con IA",
 };
 

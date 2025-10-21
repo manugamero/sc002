@@ -386,7 +386,11 @@ export default function AdminPage() {
             <Settings style={{ width: '16px', height: '16px' }} />
           </button>
           <button
-            onClick={() => {/* TODO: Create new project */}}
+            onClick={() => {
+              // Crear nuevo proyecto
+              console.log('Creando nuevo proyecto...');
+              // Aquí se implementaría la lógica para crear un nuevo proyecto
+            }}
             style={{ 
               width: '32px', 
               height: '32px', 
