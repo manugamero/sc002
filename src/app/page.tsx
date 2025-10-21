@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { ArrowRight, ArrowLeft, Play, Pause } from 'lucide-react';
 
@@ -94,6 +94,15 @@ export default function HomePage() {
   const [projectData, setProjectData] = useState<ProjectData>(initialProjectData);
   const [isVideoPlaying, setIsVideoPlaying] = useState(true);
 
+  // Forzar autoplay cuando cambie el video
+  useEffect(() => {
+    const video = document.querySelector('video');
+    if (video) {
+      video.play().catch(console.error);
+      setIsVideoPlaying(true);
+    }
+  }, [currentStepIndex]);
+
   const handleNext = () => {
     if (currentStepIndex < steps.length - 1) {
       setCurrentStepIndex(currentStepIndex + 1);
@@ -177,7 +186,7 @@ export default function HomePage() {
             value={value || ''}
             onChange={(e) => updateField(step.field, e.target.value)}
             className="w-full px-4 py-3 text-lg border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-500 focus:border-transparent"
-            placeholder={`Escribe tu respuesta...`}
+            placeholder={step.title}
             autoFocus
           />
         );
@@ -398,23 +407,35 @@ export default function HomePage() {
       {/* Main content - Fullscreen */}
       <main className="pt-16">
         <div className="max-w-7xl mx-auto px-4">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 min-h-screen">
-            {/* Video column */}
-            <div className="lg:sticky lg:top-20 lg:h-[calc(100vh-5rem)]">
-              <div className="relative w-full h-64 lg:h-full bg-gray-100 rounded-lg overflow-hidden">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 min-h-screen">
+            {/* Video column - 40% */}
+            <div className="md:sticky md:top-20 md:h-[calc(100vh-5rem)]">
+              <div className="relative w-full h-64 md:h-full bg-gray-100 rounded-lg overflow-hidden">
                 <video
+                  key={currentStepIndex}
                   className="w-full h-full object-cover"
                   autoPlay
                   muted
                   loop
+                  playsInline
+                  onLoadedData={() => setIsVideoPlaying(true)}
                   onPlay={() => setIsVideoPlaying(true)}
                   onPause={() => setIsVideoPlaying(false)}
                 >
                   <source src={`/videos/${videos[currentStepIndex]}`} type="video/mp4" />
                 </video>
-                <div className="absolute inset-0 bg-black/20 flex items-center justify-center">
+                <div className="absolute inset-0 bg-black/10 flex items-center justify-center">
                   <button
-                    onClick={() => setIsVideoPlaying(!isVideoPlaying)}
+                    onClick={() => {
+                      const video = document.querySelector('video');
+                      if (video) {
+                        if (video.paused) {
+                          video.play();
+                        } else {
+                          video.pause();
+                        }
+                      }
+                    }}
                     className="w-12 h-12 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-white/30 transition-colors"
                   >
                     {isVideoPlaying ? (
@@ -427,8 +448,8 @@ export default function HomePage() {
               </div>
             </div>
 
-            {/* Content column */}
-            <div className="lg:h-[calc(100vh-5rem)] overflow-y-auto">
+            {/* Content column - 60% */}
+            <div className="md:h-[calc(100vh-5rem)] overflow-y-auto">
               <div className="p-6">
                 <motion.div
                   key={currentStepIndex}
