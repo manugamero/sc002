@@ -8,7 +8,7 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "S+C 008 - Studio Framework",
+  title: "S+C 009 - Studio Framework",
   description: "Proceso completo de desarrollo de marca y producto con IA",
 };
 

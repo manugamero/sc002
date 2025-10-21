@@ -181,17 +181,51 @@ export default function HomePage() {
     switch (step.type) {
       case 'text':
         return (
-          <div className="relative">
+          <div style={{ position: 'relative' }}>
             <input
               type="text"
               value={value || ''}
               onChange={(e) => updateField(step.field, e.target.value)}
-              className="w-full h-12 px-4 pr-12 text-lg border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-transparent text-white placeholder-gray-400"
+              style={{
+                width: '100%',
+                height: '48px',
+                padding: '12px 48px 12px 16px',
+                fontSize: '18px',
+                border: '1px solid #333333',
+                borderRadius: '8px',
+                backgroundColor: 'transparent',
+                color: '#ffffff',
+                outline: 'none',
+                transition: 'all 0.2s ease'
+              }}
               placeholder={step.title}
               autoFocus
+              onFocus={(e) => {
+                e.target.style.borderColor = '#4a9eff';
+                e.target.style.boxShadow = '0 0 0 2px rgba(74, 158, 255, 0.2)';
+              }}
+              onBlur={(e) => {
+                e.target.style.borderColor = '#333333';
+                e.target.style.boxShadow = 'none';
+              }}
             />
-            <button className="absolute right-3 top-1/2 transform -translate-y-1/2 p-1.5 text-gray-400 hover:text-white transition-colors">
-              <Wand2 className="w-4 h-4" />
+            <button 
+              style={{
+                position: 'absolute',
+                right: '12px',
+                top: '50%',
+                transform: 'translateY(-50%)',
+                padding: '6px',
+                backgroundColor: 'transparent',
+                border: 'none',
+                cursor: 'pointer',
+                color: '#666666',
+                transition: 'color 0.2s ease'
+              }}
+              onMouseEnter={(e) => e.target.style.color = '#ffffff'}
+              onMouseLeave={(e) => e.target.style.color = '#666666'}
+            >
+              <Wand2 style={{ width: '16px', height: '16px' }} />
             </button>
           </div>
         );
@@ -434,132 +468,293 @@ export default function HomePage() {
   };
 
   return (
-    <div className="min-h-screen bg-white">
-      {/* Header minimalista */}
+    <div style={{ 
+      minHeight: '100vh', 
+      backgroundColor: '#000000', 
+      display: 'flex', 
+      fontFamily: 'Inter, system-ui, sans-serif' 
+    }}>
+      {/* Video column - Izquierda */}
+      <div style={{ 
+        width: '50%', 
+        height: '100vh', 
+        display: 'flex', 
+        alignItems: 'center', 
+        justifyContent: 'center',
+        backgroundColor: '#1a1a1a'
+      }}>
+        <div style={{ 
+          position: 'relative', 
+          width: '100%', 
+          height: '100%', 
+          overflow: 'hidden' 
+        }}>
+          <video
+            ref={videoRef}
+            key={currentStepIndex}
+            style={{ 
+              width: '100%', 
+              height: '100%', 
+              objectFit: 'cover' 
+            }}
+            autoPlay
+            muted
+            loop
+            playsInline
+            onLoadedData={() => setIsVideoPlaying(true)}
+            onPlay={() => setIsVideoPlaying(true)}
+            onPause={() => setIsVideoPlaying(false)}
+          >
+            <source src={`/${videos[currentStepIndex]}`} type="video/mp4" />
+          </video>
+          <div style={{ 
+            position: 'absolute', 
+            top: 0, 
+            left: 0, 
+            right: 0, 
+            bottom: 0, 
+            backgroundColor: 'rgba(0,0,0,0.1)', 
+            display: 'flex', 
+            alignItems: 'center', 
+            justifyContent: 'center' 
+          }}>
+            <button
+              onClick={() => {
+                if (videoRef.current) {
+                  if (videoRef.current.paused) {
+                    videoRef.current.play();
+                  } else {
+                    videoRef.current.pause();
+                  }
+                }
+              }}
+              style={{ 
+                width: '48px', 
+                height: '48px', 
+                backgroundColor: 'rgba(255,255,255,0.2)', 
+                backdropFilter: 'blur(10px)', 
+                borderRadius: '50%', 
+                border: 'none', 
+                display: 'flex', 
+                alignItems: 'center', 
+                justifyContent: 'center', 
+                cursor: 'pointer',
+                transition: 'all 0.2s ease'
+              }}
+            >
+              {isVideoPlaying ? (
+                <Pause style={{ width: '24px', height: '24px', color: 'white' }} />
+              ) : (
+                <Play style={{ width: '24px', height: '24px', color: 'white', marginLeft: '2px' }} />
+              )}
+            </button>
+          </div>
+        </div>
+      </div>
 
-      {/* Main content - 2 columnas */}
-      <main className="h-screen flex">
-        {/* Video column - Izquierda */}
-        <div className="w-1/2 flex items-center justify-center">
-          <div className="relative w-full h-full bg-gray-100 overflow-hidden">
-                <video
-                  ref={videoRef}
-                  key={currentStepIndex}
-                  className="w-full h-full object-cover"
-                  autoPlay
-                  muted
-                  loop
-                  playsInline
-                  onLoadedData={() => setIsVideoPlaying(true)}
-                  onPlay={() => setIsVideoPlaying(true)}
-                  onPause={() => setIsVideoPlaying(false)}
-                >
-                  <source src={`/${videos[currentStepIndex]}`} type="video/mp4" />
-                </video>
-                <div className="absolute inset-0 bg-black/10 flex items-center justify-center">
-                  <button
-                    onClick={() => {
-                      if (videoRef.current) {
-                        if (videoRef.current.paused) {
-                          videoRef.current.play();
-                        } else {
-                          videoRef.current.pause();
-                        }
-                      }
-                    }}
-                    className="w-12 h-12 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-white/30 transition-colors"
-                  >
-                    {isVideoPlaying ? (
-                      <Pause className="w-6 h-6 text-white" />
-                    ) : (
-                      <Play className="w-6 h-6 text-white ml-0.5" />
-                    )}
-                  </button>
-                </div>
-              </div>
+      {/* Content column - Derecha */}
+      <div style={{ 
+        width: '50%', 
+        height: '100vh', 
+        backgroundColor: '#000000', 
+        display: 'flex', 
+        flexDirection: 'column' 
+      }}>
+        {/* Header */}
+        <div style={{ 
+          position: 'sticky', 
+          top: 0, 
+          backgroundColor: '#000000', 
+          borderBottom: '1px solid #333333', 
+          padding: '16px', 
+          zIndex: 10,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between'
+        }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+            <button
+              onClick={() => setIsMenuOpen(!isMenuOpen)}
+              style={{ 
+                width: '32px', 
+                height: '32px', 
+                display: 'flex', 
+                alignItems: 'center', 
+                justifyContent: 'center', 
+                backgroundColor: 'transparent', 
+                border: 'none', 
+                cursor: 'pointer',
+                color: '#666666',
+                transition: 'color 0.2s ease'
+              }}
+              onMouseEnter={(e) => e.target.style.color = '#ffffff'}
+              onMouseLeave={(e) => e.target.style.color = '#666666'}
+            >
+              <Menu style={{ width: '16px', height: '16px' }} />
+            </button>
+            <div style={{ fontSize: '14px', color: '#666666' }}>
+              {currentStepIndex + 1} de {steps.length}
             </div>
-
-        {/* Content column - Derecha */}
-        <div className="w-1/2 bg-white flex flex-col">
-          {/* Header con menú y navegación */}
-          <div className="sticky top-0 bg-white border-b border-gray-200 p-4 z-10">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center space-x-3">
-                <button
-                  onClick={() => setIsMenuOpen(!isMenuOpen)}
-                  className="w-8 h-8 flex items-center justify-center text-gray-400 hover:text-gray-600 transition-colors"
-                >
-                  <Menu className="w-4 h-4" />
-                </button>
-                <div className="text-sm text-gray-600">
-                  {currentStepIndex + 1} de {steps.length}
-                </div>
-              </div>
-              
-              <div className="flex items-center space-x-2">
-                <button
-                  onClick={handlePrevious}
-                  disabled={currentStepIndex === 0}
-                  className="w-8 h-8 flex items-center justify-center text-gray-400 hover:text-gray-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-                >
-                  <ArrowLeft className="w-4 h-4" />
-                </button>
-                <button
-                  onClick={handleDummyData}
-                  className="w-8 h-8 flex items-center justify-center text-gray-400 hover:text-gray-600 transition-colors"
-                >
-                  <RefreshCw className="w-4 h-4" />
-                </button>
-                <button
-                  onClick={handleNext}
-                  disabled={currentStepIndex === steps.length - 1}
-                  className="w-8 h-8 flex items-center justify-center text-gray-400 hover:text-gray-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-                >
-                  <ArrowRight className="w-4 h-4" />
-                </button>
-              </div>
-            </div>
-            
-            {/* Menú desplegable */}
-            {isMenuOpen && (
-              <div className="absolute top-full left-4 right-4 mt-2 bg-white border border-gray-200 rounded-lg shadow-lg z-20">
-                <div className="p-2">
-                  <div className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-2">Navegación</div>
-                  {steps.map((step, index) => (
-                    <button
-                      key={step.id}
-                      onClick={() => {
-                        setCurrentStepIndex(index);
-                        setIsMenuOpen(false);
-                      }}
-                      className={`w-full text-left px-3 py-2 rounded-lg text-sm transition-colors ${
-                        index === currentStepIndex
-                          ? 'bg-blue-100 text-blue-700'
-                          : 'text-gray-700 hover:bg-gray-100'
-                      }`}
-                    >
-                      {step.title}
-                    </button>
-                  ))}
-                </div>
-              </div>
-            )}
           </div>
           
-          {/* Contenido con margen de 64pt */}
-          <div className="flex-1 flex items-center justify-center p-16">
-            <div className="w-full max-w-md">
-              {/* Línea separadora */}
-              <div className="w-full h-px bg-gray-300 mb-8" style={{opacity: 0.08}}></div>
-              
-              <div className="space-y-6">
-                {renderStep()}
-              </div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <button
+              onClick={handlePrevious}
+              disabled={currentStepIndex === 0}
+              style={{ 
+                width: '32px', 
+                height: '32px', 
+                display: 'flex', 
+                alignItems: 'center', 
+                justifyContent: 'center', 
+                backgroundColor: 'transparent', 
+                border: 'none', 
+                cursor: currentStepIndex === 0 ? 'not-allowed' : 'pointer',
+                color: currentStepIndex === 0 ? '#333333' : '#666666',
+                opacity: currentStepIndex === 0 ? 0.5 : 1,
+                transition: 'color 0.2s ease'
+              }}
+              onMouseEnter={(e) => {
+                if (currentStepIndex > 0) e.target.style.color = '#ffffff';
+              }}
+              onMouseLeave={(e) => {
+                if (currentStepIndex > 0) e.target.style.color = '#666666';
+              }}
+            >
+              <ArrowLeft style={{ width: '16px', height: '16px' }} />
+            </button>
+            <button
+              onClick={handleDummyData}
+              style={{ 
+                width: '32px', 
+                height: '32px', 
+                display: 'flex', 
+                alignItems: 'center', 
+                justifyContent: 'center', 
+                backgroundColor: 'transparent', 
+                border: 'none', 
+                cursor: 'pointer',
+                color: '#666666',
+                transition: 'color 0.2s ease'
+              }}
+              onMouseEnter={(e) => e.target.style.color = '#ffffff'}
+              onMouseLeave={(e) => e.target.style.color = '#666666'}
+            >
+              <RefreshCw style={{ width: '16px', height: '16px' }} />
+            </button>
+            <button
+              onClick={handleNext}
+              disabled={currentStepIndex === steps.length - 1}
+              style={{ 
+                width: '32px', 
+                height: '32px', 
+                display: 'flex', 
+                alignItems: 'center', 
+                justifyContent: 'center', 
+                backgroundColor: 'transparent', 
+                border: 'none', 
+                cursor: currentStepIndex === steps.length - 1 ? 'not-allowed' : 'pointer',
+                color: currentStepIndex === steps.length - 1 ? '#333333' : '#666666',
+                opacity: currentStepIndex === steps.length - 1 ? 0.5 : 1,
+                transition: 'color 0.2s ease'
+              }}
+              onMouseEnter={(e) => {
+                if (currentStepIndex < steps.length - 1) e.target.style.color = '#ffffff';
+              }}
+              onMouseLeave={(e) => {
+                if (currentStepIndex < steps.length - 1) e.target.style.color = '#666666';
+              }}
+            >
+              <ArrowRight style={{ width: '16px', height: '16px' }} />
+            </button>
+          </div>
+        </div>
+        
+        {/* Menú desplegable */}
+        {isMenuOpen && (
+          <div style={{ 
+            position: 'absolute', 
+            top: '100%', 
+            left: '16px', 
+            right: '16px', 
+            marginTop: '8px', 
+            backgroundColor: '#1a1a1a', 
+            border: '1px solid #333333', 
+            borderRadius: '8px', 
+            boxShadow: '0 4px 12px rgba(0,0,0,0.3)', 
+            zIndex: 20,
+            padding: '8px'
+          }}>
+            <div style={{ 
+              fontSize: '12px', 
+              fontWeight: '500', 
+              color: '#666666', 
+              textTransform: 'uppercase', 
+              letterSpacing: '0.05em', 
+              marginBottom: '8px' 
+            }}>
+              Navegación
+            </div>
+            {steps.map((step, index) => (
+              <button
+                key={step.id}
+                onClick={() => {
+                  setCurrentStepIndex(index);
+                  setIsMenuOpen(false);
+                }}
+                style={{ 
+                  width: '100%', 
+                  textAlign: 'left', 
+                  padding: '8px 12px', 
+                  borderRadius: '6px', 
+                  fontSize: '14px', 
+                  backgroundColor: index === currentStepIndex ? '#1a1a1a' : 'transparent',
+                  color: index === currentStepIndex ? '#ffffff' : '#cccccc',
+                  border: 'none',
+                  cursor: 'pointer',
+                  transition: 'all 0.2s ease'
+                }}
+                onMouseEnter={(e) => {
+                  if (index !== currentStepIndex) {
+                    e.target.style.backgroundColor = '#333333';
+                  }
+                }}
+                onMouseLeave={(e) => {
+                  if (index !== currentStepIndex) {
+                    e.target.style.backgroundColor = 'transparent';
+                  }
+                }}
+              >
+                {step.title}
+              </button>
+            ))}
+          </div>
+        )}
+        
+        {/* Contenido */}
+        <div style={{ 
+          flex: 1, 
+          display: 'flex', 
+          alignItems: 'center', 
+          justifyContent: 'center', 
+          padding: '64px' 
+        }}>
+          <div style={{ width: '100%', maxWidth: '400px' }}>
+            {/* Línea separadora */}
+            <div style={{ 
+              width: '100%', 
+              height: '1px', 
+              backgroundColor: '#333333', 
+              marginBottom: '32px',
+              opacity: 0.08
+            }}></div>
+            
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+              {renderStep()}
             </div>
           </div>
         </div>
-      </main>
-
+      </div>
     </div>
   );
 }
