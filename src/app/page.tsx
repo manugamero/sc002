@@ -2376,33 +2376,40 @@ export default function HomePage() {
               }}>
                 Tipografía
               </label>
-              <select
-                value={value?.typography || 'Inter'}
-                onChange={(e) => updateField(step.field, { ...value, typography: e.target.value })}
-                style={{
-                  height: '32px',
-                  padding: '0 12px',
-                  fontSize: '14px',
-                  border: '1px solid #333333',
-                  borderRadius: '4px',
-                  backgroundColor: 'transparent',
-                  color: '#ffffff',
-                  outline: 'none',
-                  cursor: 'pointer',
-                  transition: 'all 0.2s ease'
-                }}
-                onMouseEnter={(e) => e.target.style.borderColor = '#ffffff'}
-                onMouseLeave={(e) => e.target.style.borderColor = '#333333'}
-              >
-                <option value="Inter" style={{ backgroundColor: '#1a1a1a', color: '#ffffff' }}>Inter</option>
-                <option value="Helvetica">Helvetica</option>
-                <option value="Arial">Arial</option>
-                <option value="Roboto">Roboto</option>
-                <option value="Montserrat">Montserrat</option>
-                <option value="Poppins">Poppins</option>
-                <option value="Open Sans">Open Sans</option>
-                <option value="Lato">Lato</option>
-              </select>
+              <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', maxWidth: '400px' }}>
+                {['Inter', 'Helvetica', 'Arial', 'Roboto', 'Montserrat', 'Poppins', 'Open Sans', 'Lato'].map((font, index) => (
+                  <button
+                    key={index}
+                    onClick={() => updateField(step.field, { ...value, typography: font })}
+                    style={{
+                      padding: '6px 12px',
+                      border: value?.typography === font ? '2px solid #ffffff' : '1px solid #333333',
+                      borderRadius: '16px',
+                      backgroundColor: 'transparent',
+                      color: value?.typography === font ? '#ffffff' : '#666666',
+                      cursor: 'pointer',
+                      transition: 'all 0.2s ease',
+                      fontSize: '12px',
+                      fontWeight: '400',
+                      whiteSpace: 'nowrap'
+                    }}
+                    onMouseEnter={(e) => {
+                      if (value?.typography !== font) {
+                        e.target.style.borderColor = '#666666';
+                        e.target.style.color = '#ffffff';
+                      }
+                    }}
+                    onMouseLeave={(e) => {
+                      if (value?.typography !== font) {
+                        e.target.style.borderColor = '#333333';
+                        e.target.style.color = '#666666';
+                      }
+                    }}
+                  >
+                    {font}
+                  </button>
+                ))}
+              </div>
             </div>
             
             {/* Color */}
@@ -4786,15 +4793,19 @@ export default function HomePage() {
 
       case 'names':
         return (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
-            {/* Input del nombre */}
-            <div>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '0' }}>
+            {/* Nombre de la marca */}
+            <div style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              padding: '16px 0',
+              borderBottom: '1px solid #333333'
+            }}>
               <label style={{
-                display: 'block',
-                color: '#ffffff',
                 fontSize: '16px',
-                fontWeight: '500',
-                marginBottom: '12px'
+                color: '#ffffff',
+                fontWeight: '500'
               }}>
                 Nombre de la marca
               </label>
@@ -4803,125 +4814,87 @@ export default function HomePage() {
                 value={value?.selectedName || ''}
                 onChange={(e) => updateField(step.field, { ...value, selectedName: e.target.value })}
                 style={{
-                  width: '100%',
-                  height: '48px',
-                  padding: '12px 16px',
-                  fontSize: '16px',
+                  flex: 1,
+                  maxWidth: '300px',
+                  height: '32px',
+                  padding: '8px 12px',
+                  fontSize: '14px',
                   border: '1px solid #333333',
-                  borderRadius: '8px',
+                  borderRadius: '4px',
                   backgroundColor: 'transparent',
                   color: '#ffffff',
                   outline: 'none',
                   transition: 'all 0.2s ease'
                 }}
-                placeholder="Escribe el nombre de tu marca"
+                placeholder="Nombre de la marca"
+                onMouseEnter={(e) => e.target.style.borderColor = '#666666'}
+                onMouseLeave={(e) => e.target.style.borderColor = '#333333'}
+                onFocus={(e) => e.target.style.borderColor = '#ffffff'}
+                onBlur={(e) => e.target.style.borderColor = '#333333'}
               />
             </div>
 
-            {/* Selector de tipo de nombre */}
-            <div>
-              <label style={{
-                display: 'block',
-                color: '#ffffff',
-                fontSize: '16px',
-                fontWeight: '500',
-                marginBottom: '16px'
-              }}>
-                Tipo de nombre
-              </label>
-              <div style={{
-                display: 'grid',
-                gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
-                gap: '12px'
-              }}>
-                {[
-                  { 
-                    type: 'Fundador', 
-                    description: 'Nombre del creador o fundador', 
-                    examples: ['IKEA', 'Scrama', 'Ben & Jerry\'s'] 
-                  },
-                  { 
-                    type: 'Descriptivo', 
-                    description: 'Describe la función o beneficio', 
-                    examples: ['Spotify', 'Instagram', 'LinkedIn'] 
-                  },
-                  { 
-                    type: 'Abstracto', 
-                    description: 'Palabras inventadas o sin significado', 
-                    examples: ['Google', 'Kodak', 'Xerox'] 
-                  },
-                  { 
-                    type: 'Geográfico', 
-                    description: 'Ubicación o lugar específico', 
-                    examples: ['Amazon', 'Cisco', 'Adobe'] 
-                  },
-                  { 
-                    type: 'Acrónimo', 
-                    description: 'Iniciales de palabras clave', 
-                    examples: ['IBM', 'BMW', 'ASOS'] 
-                  },
-                  { 
-                    type: 'Metafórico', 
-                    description: 'Símbolo o concepto abstracto', 
-                    examples: ['Apple', 'Oracle', 'Phoenix'] 
-                  }
-                ].map((nameType, index) => (
-                  <div
-                    key={index}
-                    style={{
-                      padding: '16px',
-                      backgroundColor: value?.nameType?.type === nameType.type ? '#2a2a2a' : '#1a1a1a',
-                      borderRadius: '8px',
-                      border: value?.nameType?.type === nameType.type ? '1px solid #ffffff' : '1px solid #333333',
-                      cursor: 'pointer',
-                      transition: 'all 0.2s ease'
-                    }}
-                    onClick={() => updateField(step.field, { ...value, nameType })}
-                    onMouseEnter={(e) => {
-                      if (value?.nameType?.type !== nameType.type) {
-                        e.target.style.backgroundColor = '#2a2a2a';
-                        e.target.style.borderColor = '#666666';
-                      }
-                    }}
-                    onMouseLeave={(e) => {
-                      if (value?.nameType?.type !== nameType.type) {
-                        e.target.style.backgroundColor = '#1a1a1a';
-                        e.target.style.borderColor = '#333333';
-                      }
-                    }}
-                  >
-                    <h3 style={{ 
-                      color: '#ffffff', 
-                      fontSize: '14px', 
-                      fontWeight: '500', 
-                      marginBottom: '4px' 
-                    }}>
-                      {nameType.type}
-                    </h3>
-                    <p style={{ 
-                      color: '#cccccc', 
-                      fontSize: '12px', 
-                      marginBottom: '8px' 
-                    }}>
-                      {nameType.description}
-                    </p>
-                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '4px' }}>
-                      {nameType.examples.map((example, i) => (
-                        <span key={i} style={{ 
-                          color: '#666666', 
-                          fontSize: '10px',
-                          padding: '2px 6px',
-                          backgroundColor: '#333333',
-                          borderRadius: '4px'
-                        }}>
-                          {example}
-                        </span>
-                      ))}
-                    </div>
-                  </div>
-                ))}
+            {/* Tipos de nombre separados por líneas */}
+            {[
+              { 
+                type: 'Fundador', 
+                examples: ['IKEA', 'Scrama', 'Ben & Jerry\'s'] 
+              },
+              { 
+                type: 'Descriptivo', 
+                examples: ['Spotify', 'Instagram', 'LinkedIn'] 
+              },
+              { 
+                type: 'Abstracto', 
+                examples: ['Google', 'Kodak', 'Xerox'] 
+              },
+              { 
+                type: 'Geográfico', 
+                examples: ['Amazon', 'Cisco', 'Adobe'] 
+              },
+              { 
+                type: 'Acrónimo', 
+                examples: ['IBM', 'BMW', 'ASOS'] 
+              },
+              { 
+                type: 'Metafórico', 
+                examples: ['Apple', 'Oracle', 'Phoenix'] 
+              }
+            ].map((nameType, index) => (
+              <div
+                key={index}
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  padding: '16px 0',
+                  borderBottom: index < 5 ? '1px solid #333333' : 'none',
+                  cursor: 'pointer',
+                  transition: 'all 0.2s ease'
+                }}
+                onClick={() => updateField(step.field, { ...value, nameType })}
+                onMouseEnter={(e) => {
+                  e.target.style.backgroundColor = 'rgba(255, 255, 255, 0.05)';
+                }}
+                onMouseLeave={(e) => {
+                  e.target.style.backgroundColor = 'transparent';
+                }}
+              >
+                <span style={{
+                  fontSize: '16px',
+                  color: value?.nameType?.type === nameType.type ? '#ffffff' : '#cccccc',
+                  fontWeight: value?.nameType?.type === nameType.type ? '500' : '400'
+                }}>
+                  {nameType.type}
+                </span>
+                <span style={{
+                  fontSize: '14px',
+                  color: '#666666'
+                }}>
+                  {nameType.examples.join(' · ')}
+                </span>
               </div>
-            </div>
+            ))}
           </div>
         );
 
@@ -5494,7 +5467,6 @@ export default function HomePage() {
                       </button>
                     ))}
                   </div>
-                  <span style={{ color: '#666666', fontSize: '14px' }}>A</span>
                 </div>
 
                 {/* Texto de descripción */}
