@@ -180,16 +180,16 @@ export default function HomePage() {
     switch (step.type) {
       case 'text':
         return (
-          <div className="relative">
+          <div className="relative bg-red-200 border-4 border-red-600 p-2">
             <input
               type="text"
               value={value || ''}
               onChange={(e) => updateField(step.field, e.target.value)}
-              className="w-full h-12 px-4 pr-12 text-lg border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-500 focus:border-transparent"
+              className="w-full h-12 px-4 pr-12 text-lg border-4 border-blue-600 rounded-lg focus:ring-2 focus:ring-gray-500 focus:border-transparent bg-yellow-100"
               placeholder={step.title}
               autoFocus
             />
-            <button className="absolute right-3 top-1/2 transform -translate-y-1/2 p-1 text-gray-400 hover:text-gray-600">
+            <button className="absolute right-3 top-1/2 transform -translate-y-1/2 p-1 text-gray-400 hover:text-gray-600 bg-green-200 border-2 border-green-600">
               <Wand2 className="w-5 h-5" />
             </button>
           </div>
@@ -452,12 +452,12 @@ export default function HomePage() {
       </header>
 
       {/* Main content - 2 columnas */}
-      <main className="pt-16 bg-white">
-        <div className="max-w-7xl mx-auto px-4">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 min-h-screen">
+      <main className="pt-16 bg-red-100 border-4 border-red-500">
+        <div className="max-w-7xl mx-auto px-4 bg-blue-100 border-2 border-blue-500">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 min-h-screen bg-green-100 border-2 border-green-500">
             {/* Video column - Izquierda */}
-            <div className="lg:sticky lg:top-20 lg:h-[calc(100vh-5rem)]">
-              <div className="relative w-full h-64 lg:h-full bg-gray-100 rounded-lg overflow-hidden">
+            <div className="lg:sticky lg:top-20 lg:h-[calc(100vh-5rem)] bg-yellow-100 border-2 border-yellow-500">
+              <div className="relative w-full h-64 lg:h-full bg-gray-100 rounded-lg overflow-hidden border-2 border-purple-500">
                 <video
                   ref={videoRef}
                   key={currentStepIndex}
@@ -496,10 +496,10 @@ export default function HomePage() {
             </div>
 
             {/* Content column - Derecha */}
-            <div className="lg:h-[calc(100vh-5rem)] overflow-y-auto">
-              <div className="flex items-center justify-center min-h-full p-6">
-                <div className="w-full max-w-md">
-                  <div className="space-y-6">
+            <div className="lg:h-[calc(100vh-5rem)] overflow-y-auto bg-orange-100 border-2 border-orange-500">
+              <div className="flex items-center justify-center min-h-full p-6 bg-pink-100 border-2 border-pink-500">
+                <div className="w-full max-w-md bg-cyan-100 border-2 border-cyan-500 p-4">
+                  <div className="space-y-6 bg-lime-100 border-2 border-lime-500 p-4">
                     {renderStep()}
                   </div>
                 </div>
@@ -510,11 +510,11 @@ export default function HomePage() {
       </main>
 
       {/* Navigation - Siempre visible */}
-      <div className="fixed bottom-8 left-1/2 transform -translate-x-1/2 flex items-center space-x-4">
+      <div className="fixed bottom-8 left-1/2 transform -translate-x-1/2 flex items-center space-x-4 bg-purple-200 border-4 border-purple-600 p-4">
         <button
           onClick={handlePrevious}
           disabled={currentStepIndex === 0}
-          className="flex items-center space-x-2 px-6 h-12 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+          className="flex items-center space-x-2 px-6 h-12 bg-red-200 border-4 border-red-600 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
         >
           <ArrowLeft className="w-4 h-4" />
           <span>Anterior</span>
@@ -522,7 +522,7 @@ export default function HomePage() {
         
         <button
           onClick={handleDummyData}
-          className="px-6 h-12 text-sm text-gray-600 hover:text-gray-900 border border-gray-300 rounded-lg hover:bg-gray-50"
+          className="px-6 h-12 text-sm text-gray-600 hover:text-gray-900 border-4 border-blue-600 rounded-lg hover:bg-gray-50 bg-blue-200"
         >
           Ver ejemplo
         </button>
@@ -530,7 +530,7 @@ export default function HomePage() {
         <button
           onClick={handleNext}
           disabled={currentStepIndex === steps.length - 1}
-          className="flex items-center space-x-2 px-6 h-12 bg-gray-900 text-white rounded-lg hover:bg-gray-800 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+          className="flex items-center space-x-2 px-6 h-12 bg-green-200 border-4 border-green-600 text-black rounded-lg hover:bg-gray-800 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
         >
           <span>Continuar</span>
           <ArrowRight className="w-4 h-4" />
