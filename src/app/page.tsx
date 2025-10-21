@@ -107,15 +107,15 @@ export default function HomePage() {
 
   // Actualizar título al cargar la página
   useEffect(() => {
-    document.title = "S+C 012";
+    document.title = "S+C 013";
     // Forzar actualización del título con un pequeño delay
     setTimeout(() => {
-      document.title = "S+C 012";
+      document.title = "S+C 013";
     }, 100);
 
     // Actualizar título cuando la ventana vuelva a estar activa
     const handleFocus = () => {
-      document.title = "S+C 012";
+      document.title = "S+C 013";
     };
 
     window.addEventListener('focus', handleFocus);
@@ -128,9 +128,9 @@ export default function HomePage() {
       videoRef.current.play().catch(console.error);
     }
     // Forzar actualización del título para evitar caché del navegador
-    document.title = "S+C 012";
+    document.title = "S+C 013";
     setTimeout(() => {
-      document.title = "S+C 012";
+      document.title = "S+C 013";
     }, 50);
   }, [currentStepIndex]);
 
@@ -458,6 +458,49 @@ export default function HomePage() {
     return sectionMap[stepId] || '';
   };
 
+  // Función para encontrar el índice de una sección principal
+  const findSectionIndex = (sectionName: string) => {
+    const sectionMap: { [key: string]: string } = {
+      'STRATEGY': 'strategy-1',
+      'BRANDS': 'brand-1', 
+      'PRODUCT': 'product-1',
+      'MESSAGES': 'messages-1',
+      'LAUNCH': 'launch-1'
+    };
+    
+    const stepId = sectionMap[sectionName];
+    if (stepId) {
+      return steps.findIndex(step => step.id === stepId);
+    }
+    return -1;
+  };
+
+  // Función para encontrar el índice de una subsección específica
+  const findSubsectionIndex = (subsectionName: string) => {
+    const subsectionMap: { [key: string]: string } = {
+      '1.1 Context': 'strategy-1',
+      '1.2 Market': 'strategy-2',
+      '1.3 Plan': 'strategy-3',
+      '2.1 Values': 'brand-1',
+      '2.2 Verbal': 'brand-2',
+      '2.3 Visual': 'brand-3',
+      '3.1 Features': 'product-1',
+      '3.2 Iteration': 'product-2',
+      '3.3 Shipping': 'product-3',
+      '4.1 Social': 'messages-1',
+      '4.2 Ads': 'messages-2',
+      '4.3 Merch': 'messages-3',
+      '5.1 Validation': 'launch-1',
+      '5.2 Brandbook': 'launch-2'
+    };
+    
+    const stepId = subsectionMap[subsectionName];
+    if (stepId) {
+      return steps.findIndex(step => step.id === stepId);
+    }
+    return -1;
+  };
+
   const getStepContent = (stepId: string) => {
     const contentMap: { [key: string]: string } = {
       'strategy-1': 'A todos nos ha pasado: tener una idea y no saber cómo aterrizarla. El primer paso no es diseñar ni planificar, sino escuchar. Las entrevistas con fundadores, equipo y usuarios nos permiten entender la historia desde dentro.',
@@ -589,9 +632,23 @@ export default function HomePage() {
 
       case 'interview':
         return (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-              <div style={{ position: 'relative' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '0' }}>
+            {/* Nombre de la empresa */}
+            <div style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              padding: '16px 0',
+              borderBottom: '1px solid #333333'
+            }}>
+              <label style={{ 
+                fontSize: '16px', 
+                color: '#ffffff', 
+                fontWeight: '500'
+              }}>
+                Nombre de la empresa
+              </label>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                 <input
                   type="text"
                   value={value?.name || ''}
@@ -600,15 +657,15 @@ export default function HomePage() {
                     // Auto-focus siguiente campo cuando se completa
                     if (e.target.value.trim() && !value?.size) {
                       setTimeout(() => {
-                        const nextInput = document.querySelector('input[placeholder="Tamaño de la empresa (ej: 1-10 empleados)"]') as HTMLInputElement;
+                        const nextInput = document.querySelector('input[placeholder="Tamaño de la empresa"]') as HTMLInputElement;
                         nextInput?.focus();
                       }, 100);
                     }
                   }}
                   style={{
-                    width: '100%',
+                    width: '200px',
                     height: '48px',
-                    padding: '12px 48px 12px 16px',
+                    padding: '12px 16px',
                     fontSize: '16px',
                     border: '1px solid #333333',
                     borderRadius: '8px',
@@ -617,25 +674,23 @@ export default function HomePage() {
                     outline: 'none',
                     transition: 'all 0.2s ease'
                   }}
+                  onMouseEnter={(e) => e.target.style.borderColor = '#ffffff'}
+                  onMouseLeave={(e) => e.target.style.borderColor = '#333333'}
                   placeholder="Nombre de la empresa"
                   autoFocus
                 />
                 <button
                   onClick={() => startVoiceRecognition(`${step.field}.name`)}
                   style={{
-                    position: 'absolute',
-                    right: '12px',
-                    top: '50%',
-                    transform: 'translateY(-50%)',
-                    width: '24px',
-                    height: '24px',
+                    width: '32px',
+                    height: '32px',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
                     backgroundColor: 'transparent',
                     border: 'none',
                     cursor: 'pointer',
-                    color: isListening && activeVoiceField === `${step.field}.name` ? '#4a9eff' : '#666666',
+                    color: isListening && activeVoiceField === `${step.field}.name` ? '#ffffff' : '#666666',
                     transition: 'color 0.2s ease'
                   }}
                   onMouseEnter={(e) => {
@@ -656,6 +711,7 @@ export default function HomePage() {
                   )}
                 </button>
               </div>
+            </div>
               <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
                 <button
                   onClick={() => {
@@ -4880,9 +4936,15 @@ export default function HomePage() {
                   cursor: 'pointer',
                   transition: 'color 0.2s ease'
                 }}
-                onMouseEnter={(e) => e.target.style.color = '#4a9eff'}
+                onMouseEnter={(e) => e.target.style.color = '#ffffff'}
                 onMouseLeave={(e) => e.target.style.color = '#ffffff'}
-                onClick={() => {/* TODO: Navigate to section */}}
+                onClick={() => {
+                  const sectionName = getSectionTitle(steps[currentStepIndex].id).split(' / ')[0].split(' ')[1];
+                  const targetIndex = findSectionIndex(sectionName);
+                  if (targetIndex !== -1) {
+                    setCurrentStepIndex(targetIndex);
+                  }
+                }}
                 >
                   {getSectionTitle(steps[currentStepIndex].id).split(' / ')[0]}
                 </div>
@@ -4892,9 +4954,15 @@ export default function HomePage() {
                   cursor: 'pointer',
                   transition: 'color 0.2s ease'
                 }}
-                onMouseEnter={(e) => e.target.style.color = '#4a9eff'}
+                onMouseEnter={(e) => e.target.style.color = '#ffffff'}
                 onMouseLeave={(e) => e.target.style.color = '#cccccc'}
-                onClick={() => {/* TODO: Navigate to subsection */}}
+                onClick={() => {
+                  const subsectionName = getSectionTitle(steps[currentStepIndex].id).split(' / ')[1];
+                  const targetIndex = findSubsectionIndex(subsectionName);
+                  if (targetIndex !== -1) {
+                    setCurrentStepIndex(targetIndex);
+                  }
+                }}
                 >
                   {getSectionTitle(steps[currentStepIndex].id).split(' / ')[1]}
                 </div>
