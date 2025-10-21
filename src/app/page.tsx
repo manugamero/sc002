@@ -68,25 +68,25 @@ const steps = [
 ];
 
 const videos = [
-  'S+C 01-title.mp4',
-  'S+C 02 plaza.mp4',
-  'S+C 03 cafe.mp4',
-  'S+C 04 cat.mp4',
-  'S+C 05 vinyl.mp4',
-  'S+C 06 radio.mp4',
-  'S+C 07 móvil.mp4',
-  'S+C 08 flashback.mp4',
-  'S+C 09 demo.mp4',
-  'S+C 10 Strategy.mp4',
-  'S+C 11 Coco.mp4',
-  'S+C 12 Ferrari taller.mp4',
-  'S+C 13 brand.mp4',
-  'S+C 14 Ferrari race.mp4',
-  'S+C 15 Nintendo .mp4',
-  'S+C 16 products.mp4',
-  'S+C 17 Jobs.mp4',
-  'S+C 18 messages.mp4',
-  'S+C 19 bike.mp4'
+  'video01.mp4',
+  'video02.mp4',
+  'video03.mp4',
+  'video04.mp4',
+  'video05.mp4',
+  'video06.mp4',
+  'video07.mp4',
+  'video08.mp4',
+  'video09.mp4',
+  'video10.mp4',
+  'video11.mp4',
+  'video12.mp4',
+  'video13.mp4',
+  'video14.mp4',
+  'video15.mp4',
+  'video16.mp4',
+  'video17.mp4',
+  'video18.mp4',
+  'video19.mp4'
 ];
 
 export default function HomePage() {
@@ -457,7 +457,7 @@ export default function HomePage() {
                   onPlay={() => setIsVideoPlaying(true)}
                   onPause={() => setIsVideoPlaying(false)}
                 >
-                  <source src={`/videos/${videos[currentStepIndex]}`} type="video/mp4" />
+                  <source src={`/${videos[currentStepIndex]}`} type="video/mp4" />
                 </video>
                 <div className="absolute inset-0 bg-black/10 flex items-center justify-center">
                   <button
