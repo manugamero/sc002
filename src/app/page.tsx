@@ -314,7 +314,7 @@ export default function HomePage() {
     if (currentStepIndex < steps.length - 1 && !isAnimating) {
       setIsAnimating(true);
       setTimeout(() => {
-        setCurrentStepIndex(currentStepIndex + 1);
+      setCurrentStepIndex(currentStepIndex + 1);
         setIsAnimating(false);
       }, 300);
     }
@@ -324,7 +324,7 @@ export default function HomePage() {
     if (currentStepIndex > 0 && !isAnimating) {
       setIsAnimating(true);
       setTimeout(() => {
-        setCurrentStepIndex(currentStepIndex - 1);
+      setCurrentStepIndex(currentStepIndex - 1);
         setIsAnimating(false);
       }, 300);
     }
@@ -642,23 +642,80 @@ export default function HomePage() {
   };
 
   const getStepContent = (stepId: string) => {
-    const contentMap: { [key: string]: string } = {
-      'strategy-1': 'A todos nos ha pasado: tener una idea y no saber cómo aterrizarla. El primer paso no es diseñar ni planificar, sino escuchar. Las entrevistas con fundadores, equipo y usuarios nos permiten entender la historia desde dentro.',
-      'strategy-2': 'Mirar hacia fuera es tan importante como escuchar dentro. El mercado no es una amenaza: es el terreno donde la idea se pone a prueba. Analizamos competidores directos e indirectos, categorías, tendencias y comportamientos.',
-      'strategy-3': 'Una vez entendido el contexto y el entorno, llega el momento de elegir una dirección. El plan une la visión con los recursos: define prioridades, metas y tiempos.',
-      'brand-1': 'Cuando todo cambia, los valores son lo único que permanece. Aquí se define el propósito, la esencia que da coherencia al resto. No son palabras bonitas para un manifiesto: son decisiones que marcarán cada elección futura.',
-      'brand-2': 'Cuando le ponemos nombre a algo, lo volvemos real. El lenguaje convierte la idea en presencia. Aquí trabajamos cómo suena la marca cuando habla: su nombre, su tono, su narrativa.',
-      'brand-3': 'El logo es la síntesis más clara de una idea. Una combinación de forma, nombre y símbolo que se vuelve reconocible. Pero el sistema visual va más allá: es el conjunto de decisiones que hacen coherente todo lo que la marca toca.',
-      'product-1': 'Definir las funcionalidades es definir el alma del producto. Aquí se decide qué debe hacer, cómo y para quién. El MVP no es una versión reducida: es la esencia funcional.',
-      'product-2': 'Iterar no es corregir, es aprender. Los prototipos se diseñan para descubrir lo que aún no sabemos. Se prueban hipótesis, se recogen datos, se afinan detalles.',
-      'product-3': 'Llega el momento de ponerlo en marcha. Shipping no es el cierre, es la apertura al mundo real. Lo que antes eran hipótesis se convierte en hechos.',
-      'messages-1': 'Las redes no son escaparates, son conversaciones. Aquí se define cómo la marca se presenta, cómo responde, cómo escucha. La presencia digital es ritmo, tono y continuidad.',
-      'messages-2': 'Los anuncios son momentos breves de atención. Cada uno debe decir lo máximo en lo mínimo. Aquí se traduce la estrategia en piezas concretas: campañas, clips, titulares.',
-      'messages-3': 'El merchandising es la parte tangible del mensaje. Cuando se diseña con intención, se convierte en una extensión emocional de la marca. Una camiseta, un cartel o un cuaderno son recordatorios de pertenencia.',
-      'launch-1': 'El lanzamiento no es un final feliz: es el principio del cambio. Lo importante no es llegar, sino escuchar lo que ocurre después. Cada release enseña algo nuevo sobre el producto.',
-      'launch-2': 'Todo el proceso se compila en un Brandbook completo. Una síntesis de la estrategia, la identidad, el producto y los mensajes. El documento que cuenta la historia completa de la marca.'
+    const contentMap: { [key: string]: string[] } = {
+      'strategy-1': [
+        'A todos nos ha pasado: tener una idea y no saber cómo aterrizarla. El primer paso no es diseñar ni planificar, sino escuchar. Las entrevistas con fundadores, equipo y usuarios nos permiten entender la historia desde dentro.',
+        'La estrategia es el fundamento de todo proyecto exitoso. Comenzamos escuchando las voces que importan: fundadores, usuarios y stakeholders que dan vida a cada iniciativa.',
+        'Cada gran proyecto nace de una comprensión profunda del contexto. Las entrevistas nos revelan la verdadera esencia y potencial de cada idea.'
+      ],
+      'strategy-2': [
+        'Mirar hacia fuera es tan importante como escuchar dentro. El mercado no es una amenaza: es el terreno donde la idea se pone a prueba. Analizamos competidores directos e indirectos, categorías, tendencias y comportamientos.',
+        'El análisis competitivo revela oportunidades ocultas. Entendemos el panorama completo para posicionar la propuesta de valor de manera única.',
+        'El mercado es nuestro laboratorio. Cada competidor nos enseña algo sobre lo que funciona y lo que podemos mejorar.'
+      ],
+      'strategy-3': [
+        'Una vez entendido el contexto y el entorno, llega el momento de elegir una dirección. El plan une la visión con los recursos: define prioridades, metas y tiempos.',
+        'La planificación estratégica transforma ideas en acciones concretas. Definimos el camino más efectivo hacia nuestros objetivos.',
+        'Un plan sólido es la brújula que guía cada decisión. Establecemos prioridades claras y tiempos realistas.'
+      ],
+      'brand-1': [
+        'Cuando todo cambia, los valores son lo único que permanece. Aquí se define el propósito, la esencia que da coherencia al resto. No son palabras bonitas para un manifiesto: son decisiones que marcarán cada elección futura.',
+        'Una marca fuerte es el alma de cualquier proyecto. Definimos su esencia, valores y personalidad para crear conexiones auténticas con tu audiencia.',
+        'Los valores son la columna vertebral de la marca. Establecen los principios que guían cada interacción y decisión.'
+      ],
+      'brand-2': [
+        'Cuando le ponemos nombre a algo, lo volvemos real. El lenguaje convierte la idea en presencia. Aquí trabajamos cómo suena la marca cuando habla: su nombre, su tono, su narrativa.',
+        'El lenguaje da vida a la marca. Desarrollamos un sistema verbal coherente que resuena con la audiencia objetivo.',
+        'Las palabras tienen poder. Creamos un universo lingüístico que conecta emocionalmente con las personas.'
+      ],
+      'brand-3': [
+        'El logo es la síntesis más clara de una idea. Una combinación de forma, nombre y símbolo que se vuelve reconocible. Pero el sistema visual va más allá: es el conjunto de decisiones que hacen coherente todo lo que la marca toca.',
+        'El sistema visual es la expresión tangible de la marca. Diseñamos elementos que comunican la personalidad y valores de forma consistente.',
+        'La identidad visual trasciende lo estético. Cada elemento está pensado para reforzar la narrativa de la marca.'
+      ],
+      'product-1': [
+        'Definir las funcionalidades es definir el alma del producto. Aquí se decide qué debe hacer, cómo y para quién. El MVP no es una versión reducida: es la esencia funcional.',
+        'Un gran producto resuelve problemas reales de forma elegante. Diseñamos funcionalidades que importan y experiencias que enamoran.',
+        'El producto es el puente entre la visión y la realidad. Cada función, cada interacción, cada detalle está pensado para crear valor genuino.'
+      ],
+      'product-2': [
+        'Iterar no es corregir, es aprender. Los prototipos se diseñan para descubrir lo que aún no sabemos. Se prueban hipótesis, se recogen datos, se afinan detalles.',
+        'La iteración es el camino hacia la excelencia. Cada prototipo nos acerca más a la solución perfecta.',
+        'Los prototipos son experimentos controlados. Nos permiten validar ideas antes de comprometer recursos importantes.'
+      ],
+      'product-3': [
+        'Llega el momento de ponerlo en marcha. Shipping no es el cierre, es la apertura al mundo real. Lo que antes eran hipótesis se convierte en hechos.',
+        'El lanzamiento es el inicio de una nueva fase. Preparamos todo para que el producto encuentre su lugar en el mercado.',
+        'Shipping marca el comienzo del aprendizaje real. El producto finalmente se enfrenta a sus usuarios verdaderos.'
+      ],
+      'messages-1': [
+        'Las redes no son escaparates, son conversaciones. Aquí se define cómo la marca se presenta, cómo responde, cómo escucha. La presencia digital es ritmo, tono y continuidad.',
+        'Una comunicación efectiva transforma ideas en conexiones. Desarrollamos mensajes que resuenan y estrategias que impactan.',
+        'Los mensajes dan vida a la marca. Cada contenido, cada campaña, cada palabra está diseñada para crear conversaciones significativas.'
+      ],
+      'messages-2': [
+        'Los anuncios son momentos breves de atención. Cada uno debe decir lo máximo en lo mínimo. Aquí se traduce la estrategia en piezas concretas: campañas, clips, titulares.',
+        'La publicidad eficaz comunica valor en segundos. Creamos mensajes que capturan la atención y generan acción.',
+        'Cada anuncio es una oportunidad de conexión. Diseñamos piezas que no solo venden, sino que construyen relaciones.'
+      ],
+      'messages-3': [
+        'El merchandising es la parte tangible del mensaje. Cuando se diseña con intención, se convierte en una extensión emocional de la marca. Una camiseta, un cartel o un cuaderno son recordatorios de pertenencia.',
+        'El merchandising amplifica el mensaje de marca. Cada objeto se convierte en un embajador silencioso de los valores.',
+        'Los objetos cuentan historias. Diseñamos merchandising que refuerza la conexión emocional con la marca.'
+      ],
+      'launch-1': [
+        'El lanzamiento no es un final feliz: es el principio del cambio. Lo importante no es llegar, sino escuchar lo que ocurre después. Cada release enseña algo nuevo sobre el producto.',
+        'El lanzamiento marca el inicio de una nueva era. Preparamos todo para que el producto encuentre su audiencia.',
+        'Cada lanzamiento es una oportunidad de aprendizaje. El feedback real nos guía hacia la mejora continua.'
+      ],
+      'launch-2': [
+        'Todo el proceso se compila en un Brandbook completo. Una síntesis de la estrategia, la identidad, el producto y los mensajes. El documento que cuenta la historia completa de la marca.',
+        'El Brandbook es la biblia de la marca. Recopila todas las decisiones y directrices para mantener la coherencia.',
+        'Un Brandbook bien estructurado es la guía definitiva. Documenta cada aspecto de la identidad para uso futuro.'
+      ]
     };
-    return contentMap[stepId] || '';
+    const alternatives = contentMap[stepId] || [''];
+    return alternatives[selectedVersion - 1] || alternatives[0];
   };
 
   const renderStep = () => {
@@ -802,7 +859,7 @@ export default function HomePage() {
                 color: '#ffffff', 
                 fontWeight: '500'
               }}>
-                Nombre de la empresa
+                Nombre
               </label>
               <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                 <input
@@ -915,7 +972,7 @@ export default function HomePage() {
                 color: '#ffffff', 
                 fontWeight: '500'
               }}>
-                Tamaño de la empresa
+                Tamaño
               </label>
               <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                 <div style={{ display: 'flex', alignItems: 'center' }}>
@@ -1332,54 +1389,6 @@ export default function HomePage() {
       case 'competitors':
         return (
           <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
-            {/* Título y ejes editables en la misma línea */}
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '16px' }}>
-              <h4 style={{ color: '#ffffff', fontSize: '16px', fontWeight: '500', margin: 0 }}>
-                Competidores
-              </h4>
-              <div style={{ display: 'flex', gap: '8px' }}>
-                <input
-                  type="text"
-                  value={value?.xAxis || 'Calidad'}
-                  onChange={(e) => updateField(step.field, { ...value, xAxis: e.target.value })}
-                  style={{
-                    width: '80px',
-                    height: '32px',
-                    padding: '6px 8px',
-                    fontSize: '14px',
-                    border: '1px solid #333333',
-                    borderRadius: '4px',
-                    backgroundColor: 'transparent',
-                    color: '#ffffff',
-                    outline: 'none',
-                    transition: 'all 0.2s ease'
-                  }}
-                  onMouseEnter={(e) => e.target.style.borderColor = '#ffffff'}
-                  onMouseLeave={(e) => e.target.style.borderColor = '#333333'}
-                  placeholder="X"
-                />
-                <input
-                  type="text"
-                  value={value?.yAxis || 'Precio'}
-                  onChange={(e) => updateField(step.field, { ...value, yAxis: e.target.value })}
-                  style={{
-                    width: '80px',
-                    height: '32px',
-                    padding: '6px 8px',
-                    fontSize: '14px',
-                    border: '1px solid #333333',
-                    borderRadius: '4px',
-                    backgroundColor: 'transparent',
-                    color: '#ffffff',
-                    outline: 'none',
-                    transition: 'all 0.2s ease'
-                  }}
-                  onMouseEnter={(e) => e.target.style.borderColor = '#ffffff'}
-                  onMouseLeave={(e) => e.target.style.borderColor = '#333333'}
-                  placeholder="Y"
-                />
-              </div>
-            </div>
 
             {/* Matriz de competidores */}
             <div style={{
@@ -1535,10 +1544,10 @@ export default function HomePage() {
                     flexShrink: 0
                   }} />
                   <div style={{ position: 'relative', flex: 1 }}>
-                    <input
-                      type="text"
+                  <input
+                    type="text"
                       value={competitor.name || competitor || ''}
-                      onChange={(e) => {
+                    onChange={(e) => {
                         const newCompetitors = [...(value?.competitors || [])];
                         newCompetitors[index] = { 
                           ...newCompetitors[index], 
@@ -1562,7 +1571,7 @@ export default function HomePage() {
                       }}
                       onMouseEnter={(e) => e.target.style.borderColor = '#ffffff'}
                       onMouseLeave={(e) => e.target.style.borderColor = '#333333'}
-                      placeholder="Nombre del competidor"
+                    placeholder="Nombre del competidor"
                       autoFocus={index === (value?.competitors || []).length - 1}
                     />
                     <button 
@@ -1583,10 +1592,10 @@ export default function HomePage() {
                       onMouseLeave={(e) => e.target.style.color = '#666666'}
                     >
                       <Wand2 style={{ width: '16px', height: '16px' }} />
-                    </button>
-                  </div>
-                  <button
-                    onClick={() => {
+                  </button>
+                </div>
+                <button
+                  onClick={() => {
                       const newCompetitors = (value?.competitors || []).filter((_: any, i: number) => i !== index);
                       updateField(step.field, { ...value, competitors: newCompetitors });
                     }}
@@ -1606,11 +1615,11 @@ export default function HomePage() {
                     onMouseLeave={(e) => e.target.style.color = '#666666'}
                   >
                     <Trash2 style={{ width: '16px', height: '16px' }} />
-                  </button>
-                </div>
-              ))}
+                </button>
+              </div>
+            ))}
               
-              <button
+            <button
                 onClick={() => {
                   const currentCount = (value?.competitors || []).length;
                   const maxCompetitors = selectedMode === 'startup' ? 3 : selectedMode === 'scaleup' ? 6 : 10;
@@ -1652,7 +1661,7 @@ export default function HomePage() {
               >
                 <Plus style={{ width: '16px', height: '16px' }} />
                 Añadir competidor ({(value?.competitors || []).length}/{selectedMode === 'startup' ? 3 : selectedMode === 'scaleup' ? 6 : 10})
-              </button>
+            </button>
             </div>
           </div>
         );
@@ -1663,14 +1672,14 @@ export default function HomePage() {
             {(value || ['', '', '']).map((item: string, index: number) => (
               <div key={index} style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                 <div style={{ position: 'relative', flex: 1 }}>
-                  <input
-                    type="text"
-                    value={item}
-                    onChange={(e) => {
+                <input
+                  type="text"
+                  value={item}
+                  onChange={(e) => {
                       const newPlan = [...(value || [])];
-                      newPlan[index] = e.target.value;
-                      updateField(step.field, newPlan);
-                    }}
+                    newPlan[index] = e.target.value;
+                    updateField(step.field, newPlan);
+                  }}
                     style={{
                       width: '100%',
                       height: '48px',
@@ -1759,9 +1768,13 @@ export default function HomePage() {
         );
 
       case 'values':
-        return (
+      return (
           <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-            {value.map((item: any, index: number) => (
+            {(value || [
+              { value: '', opposite: '' },
+              { value: '', opposite: '' },
+              { value: '', opposite: '' }
+            ]).map((item: any, index: number) => (
               <div key={index} style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
                 <input
                   type="text"
@@ -1860,7 +1873,7 @@ export default function HomePage() {
               <Plus style={{ width: '16px', height: '16px' }} />
               Añadir valor
             </button>
-          </div>
+            </div>
         );
 
       case 'features':
@@ -1993,10 +2006,10 @@ export default function HomePage() {
             
             {/* Input Fields */}
             <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-              <input
-                type="text"
+            <input
+              type="text"
                 value={value?.name || ''}
-                onChange={(e) => updateField(step.field, { ...value, name: e.target.value })}
+              onChange={(e) => updateField(step.field, { ...value, name: e.target.value })}
                 style={{
                   width: '100%',
                   height: '48px',
@@ -2010,11 +2023,11 @@ export default function HomePage() {
                   transition: 'all 0.2s ease'
                 }}
                 placeholder="Nombre de la marca"
-                autoFocus
-              />
-              <textarea
+              autoFocus
+            />
+            <textarea
                 value={value?.bio || ''}
-                onChange={(e) => updateField(step.field, { ...value, bio: e.target.value })}
+              onChange={(e) => updateField(step.field, { ...value, bio: e.target.value })}
                 style={{
                   width: '100%',
                   height: '80px',
@@ -2090,8 +2103,8 @@ export default function HomePage() {
                 </div>
               </div>
             ))}
-          </div>
-        );
+        </div>
+      );
 
       case 'rollout':
         return (
@@ -4937,12 +4950,12 @@ export default function HomePage() {
             50% { opacity: 0.3; }
           }
         `}</style>
-      <div style={{ 
-        minHeight: '100vh', 
-        backgroundColor: '#000000', 
-        display: 'flex', 
-        fontFamily: 'Inter, system-ui, sans-serif' 
-      }}>
+    <div style={{ 
+      minHeight: '100vh', 
+      backgroundColor: '#000000', 
+      display: 'flex', 
+      fontFamily: 'Inter, system-ui, sans-serif' 
+    }}>
       {/* Video column - Izquierda */}
       <div style={{ 
         width: '50%', 
@@ -5150,7 +5163,7 @@ export default function HomePage() {
             )}
             
             <div style={{ display: 'flex', gap: '8px' }}>
-              <button
+            <button
                 onClick={() => {
                   setShowVoicePanel(false);
                   setVoiceTranscript('');
@@ -5158,16 +5171,16 @@ export default function HomePage() {
                     recognitionRef.current.stop();
                   }
                 }}
-                style={{
+              style={{ 
                   flex: 1,
-                  height: '32px',
+                height: '32px', 
                   padding: '0 12px',
                   fontSize: '12px',
                   color: '#666666',
-                  backgroundColor: 'transparent',
+                backgroundColor: 'transparent', 
                   border: '1px solid #333333',
                   borderRadius: '4px',
-                  cursor: 'pointer',
+                cursor: 'pointer',
                   transition: 'all 0.2s ease'
                 }}
                 onMouseEnter={(e) => {
@@ -5180,9 +5193,9 @@ export default function HomePage() {
                 }}
               >
                 Cerrar
-              </button>
-            </div>
+            </button>
           </div>
+        </div>
         )}
         
         {/* Menú desplegable */}
@@ -5201,9 +5214,9 @@ export default function HomePage() {
             paddingTop: '100px'
           }}>
             <div style={{
-              backgroundColor: '#1a1a1a', 
-              border: '1px solid #333333', 
-              borderRadius: '8px', 
+            backgroundColor: '#1a1a1a', 
+            border: '1px solid #333333', 
+            borderRadius: '8px', 
               boxShadow: '0 4px 12px rgba(0,0,0,0.5)', 
               padding: '16px',
               maxHeight: '500px',
@@ -5216,15 +5229,15 @@ export default function HomePage() {
               alignItems: 'center',
               justifyContent: 'space-between',
               marginBottom: '16px'
-            }}>
-              <div style={{ 
-                fontSize: '12px', 
-                fontWeight: '500', 
-                color: '#666666', 
-                textTransform: 'uppercase', 
+          }}>
+            <div style={{ 
+              fontSize: '12px', 
+              fontWeight: '500', 
+              color: '#666666', 
+              textTransform: 'uppercase', 
                 letterSpacing: '0.05em'
-              }}>
-                Navegación
+            }}>
+              Navegación
               </div>
               <button
                 onClick={() => setIsMenuOpen(false)}
@@ -5281,8 +5294,8 @@ export default function HomePage() {
               </button>
             ))}
             </div>
-          </div>
-        )}
+              </div>
+            )}
 
         {/* Contenido */}
         <div style={{ 
@@ -5427,11 +5440,11 @@ export default function HomePage() {
               
               {/* Contenido narrativo */}
               {getStepContent(steps[currentStepIndex].id) && (
-              <div style={{
-                fontSize: '16px',
-                lineHeight: '1.6',
-                color: '#cccccc',
-                marginBottom: '32px',
+                <div style={{
+                  fontSize: '16px',
+                  lineHeight: '1.6',
+                  color: '#cccccc',
+                  marginBottom: '32px',
                 opacity: showElements.description ? 1 : 0,
                 transform: showElements.description ? 'translateY(0)' : 'translateY(20px)',
                 transition: 'opacity 0.6s ease-out, transform 0.6s ease-out',
@@ -5490,7 +5503,7 @@ export default function HomePage() {
                 <div>
                   {typewriterText}
                 </div>
-            </div>
+              </div>
               )}
               
               {/* Formulario */}
@@ -5499,12 +5512,12 @@ export default function HomePage() {
                 transform: showElements.form ? 'translateY(0)' : 'translateY(20px)',
                 transition: 'opacity 0.6s ease-out, transform 0.6s ease-out'
               }}>
-                {renderStep()}
-              </div>
+              {renderStep()}
             </div>
           </div>
         </div>
       </div>
+    </div>
       </div>
     </>
   );
