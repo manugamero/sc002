@@ -13,6 +13,8 @@ import {
   Eye
 } from 'lucide-react';
 import DummyContentButton from '@/components/DummyContentButton';
+import VideoPlayer from '@/components/VideoPlayer';
+import { getVideoForSection, videoExists } from '@/lib/videoMapping';
 import { BrandData } from '@/types';
 
 interface BrandSectionProps {
@@ -128,6 +130,10 @@ export default function BrandSection({ data, onUpdate, clientType }: BrandSectio
     'El Bufón', 'El Ciudadano'
   ];
 
+  // Obtener el video de portada para Brand
+  const coverVideo = getVideoForSection('brand');
+  const hasCoverVideo = videoExists(coverVideo);
+
   return (
     <div className="max-w-4xl mx-auto space-y-8">
       <div className="flex items-center justify-between">
@@ -145,6 +151,26 @@ export default function BrandSection({ data, onUpdate, clientType }: BrandSectio
         />
       </div>
 
+      {/* Video de portada del capítulo */}
+      {hasCoverVideo && (
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="bg-white rounded-lg shadow-lg p-6"
+        >
+          <div className="flex items-center space-x-3 mb-4">
+            <div className="w-6 h-6 bg-green-500 rounded-full flex items-center justify-center">
+              <span className="text-white text-xs font-bold">02</span>
+            </div>
+            <h3 className="text-xl font-semibold">Introducción a Brand</h3>
+          </div>
+          <VideoPlayer
+            videoPath={coverVideo}
+            className="w-full h-64 rounded-lg"
+          />
+        </motion.div>
+      )}
+
       {/* Values */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
@@ -155,6 +181,21 @@ export default function BrandSection({ data, onUpdate, clientType }: BrandSectio
           <Heart className="w-6 h-6 text-red-500" />
           <h3 className="text-xl font-semibold">Valores / Esencia</h3>
         </div>
+        
+        {/* Video de subsección */}
+        {(() => {
+          const sectionVideo = getVideoForSection('brand', 'values');
+          const hasSectionVideo = videoExists(sectionVideo);
+          
+          return hasSectionVideo ? (
+            <div className="mb-6">
+              <VideoPlayer
+                videoPath={sectionVideo}
+                className="w-full h-48 rounded-lg"
+              />
+            </div>
+          ) : null;
+        })()}
         
         <div className="space-y-4">
           <div>
@@ -221,6 +262,21 @@ export default function BrandSection({ data, onUpdate, clientType }: BrandSectio
           <Type className="w-6 h-6 text-blue-500" />
           <h3 className="text-xl font-semibold">Nombre / Verbal Identity</h3>
         </div>
+        
+        {/* Video de subsección */}
+        {(() => {
+          const sectionVideo = getVideoForSection('brand', 'naming');
+          const hasSectionVideo = videoExists(sectionVideo);
+          
+          return hasSectionVideo ? (
+            <div className="mb-6">
+              <VideoPlayer
+                videoPath={sectionVideo}
+                className="w-full h-48 rounded-lg"
+              />
+            </div>
+          ) : null;
+        })()}
         
         <div className="space-y-4">
           <div className="space-y-2">
@@ -314,6 +370,21 @@ export default function BrandSection({ data, onUpdate, clientType }: BrandSectio
           <Palette className="w-6 h-6 text-purple-500" />
           <h3 className="text-xl font-semibold">Logo / Sistema Visual</h3>
         </div>
+        
+        {/* Video de subsección */}
+        {(() => {
+          const sectionVideo = getVideoForSection('brand', 'visual');
+          const hasSectionVideo = videoExists(sectionVideo);
+          
+          return hasSectionVideo ? (
+            <div className="mb-6">
+              <VideoPlayer
+                videoPath={sectionVideo}
+                className="w-full h-48 rounded-lg"
+              />
+            </div>
+          ) : null;
+        })()}
         
         <div className="space-y-6">
           <div className="space-y-2">

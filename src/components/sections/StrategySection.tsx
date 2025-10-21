@@ -13,6 +13,8 @@ import {
   ExternalLink
 } from 'lucide-react';
 import DummyContentButton from '@/components/DummyContentButton';
+import VideoPlayer from '@/components/VideoPlayer';
+import { getVideoForSection, videoExists } from '@/lib/videoMapping';
 import { StrategyData } from '@/types';
 
 interface StrategySectionProps {
@@ -114,6 +116,10 @@ export default function StrategySection({ data, onUpdate, clientType }: Strategy
     }
   };
 
+  // Obtener el video de portada para Strategy
+  const coverVideo = getVideoForSection('strategy');
+  const hasCoverVideo = videoExists(coverVideo);
+
   return (
     <div className="max-w-4xl mx-auto space-y-8">
       <div className="flex items-center justify-between">
@@ -131,6 +137,26 @@ export default function StrategySection({ data, onUpdate, clientType }: Strategy
         />
       </div>
 
+      {/* Video de portada del capítulo */}
+      {hasCoverVideo && (
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="bg-white rounded-lg shadow-lg p-6"
+        >
+          <div className="flex items-center space-x-3 mb-4">
+            <div className="w-6 h-6 bg-blue-500 rounded-full flex items-center justify-center">
+              <span className="text-white text-xs font-bold">01</span>
+            </div>
+            <h3 className="text-xl font-semibold">Introducción a Strategy</h3>
+          </div>
+          <VideoPlayer
+            videoPath={coverVideo}
+            className="w-full h-64 rounded-lg"
+          />
+        </motion.div>
+      )}
+
       {/* Interviews */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
@@ -141,6 +167,21 @@ export default function StrategySection({ data, onUpdate, clientType }: Strategy
           <Users className="w-6 h-6 text-blue-500" />
           <h3 className="text-xl font-semibold">Entrevistas / Contexto</h3>
         </div>
+        
+        {/* Video de subsección */}
+        {(() => {
+          const sectionVideo = getVideoForSection('strategy', 'interviews');
+          const hasSectionVideo = videoExists(sectionVideo);
+          
+          return hasSectionVideo ? (
+            <div className="mb-6">
+              <VideoPlayer
+                videoPath={sectionVideo}
+                className="w-full h-48 rounded-lg"
+              />
+            </div>
+          ) : null;
+        })()}
         
         <div className="space-y-4">
           <div className="grid grid-cols-3 gap-4">
@@ -216,6 +257,21 @@ export default function StrategySection({ data, onUpdate, clientType }: Strategy
           <Search className="w-6 h-6 text-green-500" />
           <h3 className="text-xl font-semibold">Benchmark / Competencia</h3>
         </div>
+        
+        {/* Video de subsección */}
+        {(() => {
+          const sectionVideo = getVideoForSection('strategy', 'benchmark');
+          const hasSectionVideo = videoExists(sectionVideo);
+          
+          return hasSectionVideo ? (
+            <div className="mb-6">
+              <VideoPlayer
+                videoPath={sectionVideo}
+                className="w-full h-48 rounded-lg"
+              />
+            </div>
+          ) : null;
+        })()}
         
         <div className="space-y-4">
           <div className="flex items-center justify-between">
@@ -298,6 +354,21 @@ export default function StrategySection({ data, onUpdate, clientType }: Strategy
           <h3 className="text-xl font-semibold">Mercado / Posicionamiento</h3>
         </div>
         
+        {/* Video de subsección */}
+        {(() => {
+          const sectionVideo = getVideoForSection('strategy', 'market');
+          const hasSectionVideo = videoExists(sectionVideo);
+          
+          return hasSectionVideo ? (
+            <div className="mb-6">
+              <VideoPlayer
+                videoPath={sectionVideo}
+                className="w-full h-48 rounded-lg"
+              />
+            </div>
+          ) : null;
+        })()}
+        
         <div className="space-y-4">
           <textarea
             placeholder="Insights del mercado..."
@@ -365,6 +436,21 @@ export default function StrategySection({ data, onUpdate, clientType }: Strategy
           <Target className="w-6 h-6 text-orange-500" />
           <h3 className="text-xl font-semibold">Plan / Direction</h3>
         </div>
+        
+        {/* Video de subsección */}
+        {(() => {
+          const sectionVideo = getVideoForSection('strategy', 'plan');
+          const hasSectionVideo = videoExists(sectionVideo);
+          
+          return hasSectionVideo ? (
+            <div className="mb-6">
+              <VideoPlayer
+                videoPath={sectionVideo}
+                className="w-full h-48 rounded-lg"
+              />
+            </div>
+          ) : null;
+        })()}
         
         <div className="space-y-4">
           <textarea

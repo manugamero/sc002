@@ -12,6 +12,8 @@ import {
   Monitor
 } from 'lucide-react';
 import DummyContentButton from '@/components/DummyContentButton';
+import VideoPlayer from '@/components/VideoPlayer';
+import { getVideoForSection, videoExists } from '@/lib/videoMapping';
 import { ProductData } from '@/types';
 
 interface ProductSectionProps {
@@ -68,6 +70,10 @@ export default function ProductSection({ data, onUpdate, clientType }: ProductSe
     }
   };
 
+  // Obtener el video de portada para Product
+  const coverVideo = getVideoForSection('product');
+  const hasCoverVideo = videoExists(coverVideo);
+
   return (
     <div className="max-w-4xl mx-auto space-y-8">
       <div className="flex items-center justify-between">
@@ -85,6 +91,26 @@ export default function ProductSection({ data, onUpdate, clientType }: ProductSe
         />
       </div>
 
+      {/* Video de portada del capítulo */}
+      {hasCoverVideo && (
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="bg-white rounded-lg shadow-lg p-6"
+        >
+          <div className="flex items-center space-x-3 mb-4">
+            <div className="w-6 h-6 bg-purple-500 rounded-full flex items-center justify-center">
+              <span className="text-white text-xs font-bold">03</span>
+            </div>
+            <h3 className="text-xl font-semibold">Introducción a Product</h3>
+          </div>
+          <VideoPlayer
+            videoPath={coverVideo}
+            className="w-full h-64 rounded-lg"
+          />
+        </motion.div>
+      )}
+
       {/* Features */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
@@ -95,6 +121,21 @@ export default function ProductSection({ data, onUpdate, clientType }: ProductSe
           <Smartphone className="w-6 h-6 text-blue-500" />
           <h3 className="text-xl font-semibold">Features & Navigation</h3>
         </div>
+        
+        {/* Video de subsección */}
+        {(() => {
+          const sectionVideo = getVideoForSection('product', 'features');
+          const hasSectionVideo = videoExists(sectionVideo);
+          
+          return hasSectionVideo ? (
+            <div className="mb-6">
+              <VideoPlayer
+                videoPath={sectionVideo}
+                className="w-full h-48 rounded-lg"
+              />
+            </div>
+          ) : null;
+        })()}
         
         <div className="space-y-4">
           <div className="space-y-2">
@@ -173,6 +214,21 @@ export default function ProductSection({ data, onUpdate, clientType }: ProductSe
           <Code className="w-6 h-6 text-green-500" />
           <h3 className="text-xl font-semibold">Iteration & Prototype</h3>
         </div>
+        
+        {/* Video de subsección */}
+        {(() => {
+          const sectionVideo = getVideoForSection('product', 'prototype');
+          const hasSectionVideo = videoExists(sectionVideo);
+          
+          return hasSectionVideo ? (
+            <div className="mb-6">
+              <VideoPlayer
+                videoPath={sectionVideo}
+                className="w-full h-48 rounded-lg"
+              />
+            </div>
+          ) : null;
+        })()}
         
         <div className="space-y-4">
           <div className="grid grid-cols-3 gap-4">
