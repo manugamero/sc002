@@ -39,31 +39,35 @@ const initialProjectData: ProjectData = {
   launch: { questions: [] }
 };
 
-// Pasos individuales
+// Pasos individuales con contenido detallado
 const steps = [
   // Welcome
   { id: 'welcome-1', title: '¿Cómo te llamas?', type: 'text', field: 'name' },
   { id: 'welcome-2', title: '¿Cómo se llama tu empresa?', type: 'text', field: 'company' },
   
   // Strategy
-  { id: 'strategy-1', title: '1.1 Entrevistas / Contexto', type: 'textarea', field: 'strategy.interviews' },
-  { id: 'strategy-2', title: '1.2 Competidores', type: 'competitors', field: 'strategy.competitors' },
-  { id: 'strategy-3', title: '1.3 Plan / Direction', type: 'plan', field: 'strategy.plan' },
+  { id: 'strategy-1', title: '1.1 Contexto / Entrevistas', type: 'textarea', field: 'strategy.interviews' },
+  { id: 'strategy-2', title: '1.2 Mercado / Competidores', type: 'competitors', field: 'strategy.competitors' },
+  { id: 'strategy-3', title: '1.3 Plan / Estrategia', type: 'plan', field: 'strategy.plan' },
   
   // Brand
-  { id: 'brand-1', title: '2.1 Valores', type: 'values', field: 'brand.values' },
-  { id: 'brand-2', title: '2.2 Nombre', type: 'text', field: 'brand.selectedName' },
+  { id: 'brand-1', title: '2.1 Valores / Esencia', type: 'values', field: 'brand.values' },
+  { id: 'brand-2', title: '2.2 Verbal / Naming', type: 'names', field: 'brand.names' },
+  { id: 'brand-3', title: '2.3 Visual / Logo', type: 'logo', field: 'brand.logo' },
   
   // Product
-  { id: 'product-1', title: '3.1 Funcionalidades', type: 'features', field: 'product.features' },
-  { id: 'product-2', title: '3.2 Prototipo', type: 'text', field: 'product.prototype' },
+  { id: 'product-1', title: '3.1 Features / MVP', type: 'features', field: 'product.features' },
+  { id: 'product-2', title: '3.2 Iteración / Prototipo', type: 'prototype', field: 'product.prototypeLink' },
+  { id: 'product-3', title: '3.3 Shipping / Lanzamiento', type: 'questions', field: 'product.shippingQuestions' },
   
-  // Communication
-  { id: 'communication-1', title: '4.1 Social Media', type: 'social', field: 'communication.social' },
-  { id: 'communication-2', title: '4.2 Campaña', type: 'textarea', field: 'communication.ads' },
+  // Messages
+  { id: 'messages-1', title: '4.1 Social / Contenido', type: 'social', field: 'messages.social' },
+  { id: 'messages-2', title: '4.2 Ads / Campañas', type: 'campaign', field: 'messages.campaignText' },
+  { id: 'messages-3', title: '4.3 Merch / Merchandising', type: 'merch', field: 'messages.merchImages' },
   
   // Launch
-  { id: 'launch-1', title: '5.1 Validación', type: 'questions', field: 'launch.questions' },
+  { id: 'launch-1', title: '5.1 Validación Final', type: 'questions', field: 'launch.questions' },
+  { id: 'launch-2', title: '5.2 Brandbook Generation', type: 'brandbook', field: 'launch.brandbook' },
 ];
 
 const videos = [
@@ -174,9 +178,32 @@ export default function HomePage() {
     return current;
   };
 
+  const getStepContent = (stepId: string) => {
+    const contentMap: { [key: string]: string } = {
+      'welcome-1': 'Las ideas están por todas partes. Las hay buenas, malas, raras, olvidadas… e icónicas. Pero, ¿cómo lo consiguen? ¿Qué les hizo llegar hasta ahí?',
+      'welcome-2': 'Para dar forma a una idea —la tienda que quisiste abrir, la historia que quieres contar— empezamos delimitándola. Una exploración del contexto permite descubrir qué la hace distinta.',
+      'strategy-1': 'A todos nos ha pasado: tener una idea y no saber cómo aterrizarla. El primer paso no es diseñar ni planificar, sino escuchar. Las entrevistas con fundadores, equipo y usuarios nos permiten entender la historia desde dentro.',
+      'strategy-2': 'Mirar hacia fuera es tan importante como escuchar dentro. El mercado no es una amenaza: es el terreno donde la idea se pone a prueba. Analizamos competidores directos e indirectos, categorías, tendencias y comportamientos.',
+      'strategy-3': 'Una vez entendido el contexto y el entorno, llega el momento de elegir una dirección. El plan une la visión con los recursos: define prioridades, metas y tiempos.',
+      'brand-1': 'Cuando todo cambia, los valores son lo único que permanece. Aquí se define el propósito, la esencia que da coherencia al resto. No son palabras bonitas para un manifiesto: son decisiones que marcarán cada elección futura.',
+      'brand-2': 'Cuando le ponemos nombre a algo, lo volvemos real. El lenguaje convierte la idea en presencia. Aquí trabajamos cómo suena la marca cuando habla: su nombre, su tono, su narrativa.',
+      'brand-3': 'El logo es la síntesis más clara de una idea. Una combinación de forma, nombre y símbolo que se vuelve reconocible. Pero el sistema visual va más allá: es el conjunto de decisiones que hacen coherente todo lo que la marca toca.',
+      'product-1': 'Definir las funcionalidades es definir el alma del producto. Aquí se decide qué debe hacer, cómo y para quién. El MVP no es una versión reducida: es la esencia funcional.',
+      'product-2': 'Iterar no es corregir, es aprender. Los prototipos se diseñan para descubrir lo que aún no sabemos. Se prueban hipótesis, se recogen datos, se afinan detalles.',
+      'product-3': 'Llega el momento de ponerlo en marcha. Shipping no es el cierre, es la apertura al mundo real. Lo que antes eran hipótesis se convierte en hechos.',
+      'messages-1': 'Las redes no son escaparates, son conversaciones. Aquí se define cómo la marca se presenta, cómo responde, cómo escucha. La presencia digital es ritmo, tono y continuidad.',
+      'messages-2': 'Los anuncios son momentos breves de atención. Cada uno debe decir lo máximo en lo mínimo. Aquí se traduce la estrategia en piezas concretas: campañas, clips, titulares.',
+      'messages-3': 'El merchandising es la parte tangible del mensaje. Cuando se diseña con intención, se convierte en una extensión emocional de la marca. Una camiseta, un cartel o un cuaderno son recordatorios de pertenencia.',
+      'launch-1': 'El lanzamiento no es un final feliz: es el principio del cambio. Lo importante no es llegar, sino escuchar lo que ocurre después. Cada release enseña algo nuevo sobre el producto.',
+      'launch-2': 'Todo el proceso se compila en un Brandbook completo. Una síntesis de la estrategia, la identidad, el producto y los mensajes. El documento que cuenta la historia completa de la marca.'
+    };
+    return contentMap[stepId] || '';
+  };
+
   const renderStep = () => {
     const step = steps[currentStepIndex];
     const value = getFieldValue(step.field);
+    const content = getStepContent(step.id);
 
     switch (step.type) {
       case 'text':
@@ -750,6 +777,20 @@ export default function HomePage() {
             }}></div>
             
             <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+              {/* Contenido narrativo */}
+              {content && (
+                <div style={{
+                  fontSize: '16px',
+                  lineHeight: '1.6',
+                  color: '#cccccc',
+                  marginBottom: '32px',
+                  fontStyle: 'italic'
+                }}>
+                  {content}
+                </div>
+              )}
+              
+              {/* Formulario */}
               {renderStep()}
             </div>
           </div>
