@@ -431,6 +431,60 @@ export default function HomePage() {
     }
   };
 
+  // Función para generar contenido para toda la slide actual
+  const handleGlobalAIGenerate = () => {
+    const step = steps[currentStepIndex];
+    const value = getFieldValue(step.field);
+    
+    // Generar contenido según el tipo de paso
+    switch (step.type) {
+      case 'interview':
+        const interviewData = {
+          name: generateRandomContent('name'),
+          size: generateRandomContent('size'),
+          industry: generateRandomContent('industry'),
+          founder: generateRandomContent('founder'),
+          description: generateRandomContent('description')
+        };
+        updateField(step.field, interviewData);
+        break;
+        
+      case 'plan':
+        const planData = [
+          generateRandomContent('description'),
+          generateRandomContent('description'),
+          generateRandomContent('description')
+        ];
+        updateField(step.field, planData);
+        break;
+        
+      case 'values':
+        const valuesData = [
+          { value: generateRandomContent('description'), opposite: generateRandomContent('description') },
+          { value: generateRandomContent('description'), opposite: generateRandomContent('description') },
+          { value: generateRandomContent('description'), opposite: generateRandomContent('description') }
+        ];
+        updateField(step.field, valuesData);
+        break;
+        
+      case 'userflow':
+        const userflowData = {
+          steps: [
+            { title: generateRandomContent('description'), description: generateRandomContent('description') },
+            { title: generateRandomContent('description'), description: generateRandomContent('description') },
+            { title: generateRandomContent('description'), description: generateRandomContent('description') }
+          ]
+        };
+        updateField(step.field, userflowData);
+        break;
+        
+      default:
+        // Para otros tipos, generar contenido básico
+        const randomContent = generateRandomContent('description');
+        updateField(step.field, randomContent);
+    }
+  };
+
   // Función para iniciar el reconocimiento de voz
   const startVoiceRecognition = (field: string) => {
     if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
@@ -5102,7 +5156,7 @@ export default function HomePage() {
               )}
             </button>
             <button
-              onClick={handleAIGenerate}
+              onClick={handleGlobalAIGenerate}
               style={{ 
                 width: '32px', 
                 height: '32px', 
