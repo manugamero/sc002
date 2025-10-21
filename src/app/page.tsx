@@ -1508,10 +1508,22 @@ export default function HomePage() {
               })}
             </div>
             
-            {/* Lista de competidores abajo */}
+            {/* Etiquetas de ejes abajo del gráfico */}
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '16px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <span style={{ color: '#666666', fontSize: '14px' }}>Eje Y:</span>
+                <span style={{ color: '#ffffff', fontSize: '14px', fontWeight: '500' }}>{value?.yAxis || 'Precio'}</span>
+              </div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <span style={{ color: '#666666', fontSize: '14px' }}>Eje X:</span>
+                <span style={{ color: '#ffffff', fontSize: '14px', fontWeight: '500' }}>{value?.xAxis || 'Calidad'}</span>
+              </div>
+            </div>
+            
+            {/* Lista de competidores */}
             <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
               <h4 style={{ color: '#ffffff', fontSize: '16px', fontWeight: '500', marginBottom: '8px' }}>
-                Gestionar competidores
+                Competidores
               </h4>
               {(value?.competitors || []).map((competitor: any, index: number) => (
                 <div key={index} style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
@@ -1648,7 +1660,7 @@ export default function HomePage() {
       case 'plan':
         return (
           <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-            {(value || []).map((item: string, index: number) => (
+            {(value || ['', '', '']).map((item: string, index: number) => (
               <div key={index} style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                 <div style={{ position: 'relative', flex: 1 }}>
                   <input
@@ -2355,7 +2367,8 @@ export default function HomePage() {
                 fontSize: '24px',
                 fontWeight: '500',
                 color: value?.textColor || '#ffffff',
-                textAlign: 'center'
+                textAlign: 'center',
+                fontFamily: value?.typography || 'Inter'
               }}>
                 {getFieldValue('brand.names')?.selectedName || 'Marca'}
               </div>
@@ -3109,7 +3122,11 @@ export default function HomePage() {
               </h3>
               
               <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-                {(value?.steps || []).map((step: any, index: number) => (
+                {(value?.steps || [
+                  { title: '', description: '' },
+                  { title: '', description: '' },
+                  { title: '', description: '' }
+                ]).map((step: any, index: number) => (
                   <div key={index} style={{
                     display: 'flex',
                     alignItems: 'center',
