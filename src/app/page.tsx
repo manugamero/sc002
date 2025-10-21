@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
-import { ArrowRight, ArrowLeft, Play, Pause, Plus, Trash2, RefreshCw, Wand2 } from 'lucide-react';
+import { ArrowRight, ArrowLeft, Play, Pause, Plus, Trash2, RefreshCw, Wand2, Menu, SkipForward } from 'lucide-react';
 
 interface ProjectData {
   name: string;
@@ -92,6 +92,7 @@ export default function HomePage() {
   const [currentStepIndex, setCurrentStepIndex] = useState(0);
   const [projectData, setProjectData] = useState<ProjectData>(initialProjectData);
   const [isVideoPlaying, setIsVideoPlaying] = useState(true);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
   const videoRef = useRef<HTMLVideoElement>(null);
 
   // Forzar autoplay cuando cambie el video
@@ -180,17 +181,17 @@ export default function HomePage() {
     switch (step.type) {
       case 'text':
         return (
-          <div className="relative bg-red-200 border-4 border-red-600 p-2">
+          <div className="relative">
             <input
               type="text"
               value={value || ''}
               onChange={(e) => updateField(step.field, e.target.value)}
-              className="w-full h-12 px-4 pr-12 text-lg border-4 border-blue-600 rounded-lg focus:ring-2 focus:ring-gray-500 focus:border-transparent bg-yellow-100"
+              className="w-full h-12 px-4 pr-12 text-lg border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white shadow-sm"
               placeholder={step.title}
               autoFocus
             />
-            <button className="absolute right-3 top-1/2 transform -translate-y-1/2 p-1 text-gray-400 hover:text-gray-600 bg-green-200 border-2 border-green-600">
-              <Wand2 className="w-5 h-5" />
+            <button className="absolute right-3 top-1/2 transform -translate-y-1/2 p-1.5 text-gray-400 hover:text-blue-500 hover:bg-blue-50 rounded-lg transition-colors">
+              <Wand2 className="w-4 h-4" />
             </button>
           </div>
         );
@@ -494,42 +495,85 @@ export default function HomePage() {
             </div>
 
         {/* Content column - Derecha */}
-        <div className="w-1/2 bg-orange-100 border-4 border-orange-500 flex items-center justify-center">
-          <div className="w-full max-w-md bg-cyan-100 border-4 border-cyan-500 p-8">
-            <div className="space-y-6 bg-lime-100 border-4 border-lime-500 p-6">
-              {renderStep()}
+        <div className="w-1/2 bg-white flex flex-col">
+          {/* Header con paso actual, menú y continuar */}
+          <div className="sticky top-0 bg-white border-b border-gray-200 p-4 z-10">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center space-x-3">
+                <button
+                  onClick={() => setIsMenuOpen(!isMenuOpen)}
+                  className="p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors"
+                >
+                  <Menu className="w-5 h-5" />
+                </button>
+                <div className="text-sm text-gray-600">
+                  {currentStepIndex + 1} de {steps.length}
+                </div>
+              </div>
+              
+              <div className="flex items-center space-x-2">
+                <button
+                  onClick={handlePrevious}
+                  disabled={currentStepIndex === 0}
+                  className="flex items-center space-x-1 px-3 py-1.5 text-sm text-gray-600 hover:text-gray-900 border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                >
+                  <ArrowLeft className="w-4 h-4" />
+                  <span>Anterior</span>
+                </button>
+                <button
+                  onClick={handleDummyData}
+                  className="px-3 py-1.5 text-sm text-gray-600 hover:text-gray-900 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+                >
+                  Ver ejemplo
+                </button>
+                <button
+                  onClick={handleNext}
+                  disabled={currentStepIndex === steps.length - 1}
+                  className="flex items-center space-x-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                >
+                  <span>Continuar</span>
+                  <ArrowRight className="w-4 h-4" />
+                </button>
+              </div>
+            </div>
+            
+            {/* Menú desplegable */}
+            {isMenuOpen && (
+              <div className="absolute top-full left-4 right-4 mt-2 bg-white border border-gray-200 rounded-lg shadow-lg z-20">
+                <div className="p-2">
+                  <div className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-2">Navegación</div>
+                  {steps.map((step, index) => (
+                    <button
+                      key={step.id}
+                      onClick={() => {
+                        setCurrentStepIndex(index);
+                        setIsMenuOpen(false);
+                      }}
+                      className={`w-full text-left px-3 py-2 rounded-lg text-sm transition-colors ${
+                        index === currentStepIndex
+                          ? 'bg-blue-100 text-blue-700'
+                          : 'text-gray-700 hover:bg-gray-100'
+                      }`}
+                    >
+                      {step.title}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+          
+          {/* Contenido centrado */}
+          <div className="flex-1 flex items-center justify-center p-8">
+            <div className="w-full max-w-md">
+              <div className="space-y-6">
+                {renderStep()}
+              </div>
             </div>
           </div>
         </div>
       </main>
 
-      {/* Navigation - Siempre visible */}
-      <div className="fixed bottom-8 left-1/2 transform -translate-x-1/2 flex items-center space-x-4 bg-purple-200 border-4 border-purple-600 p-4">
-        <button
-          onClick={handlePrevious}
-          disabled={currentStepIndex === 0}
-          className="flex items-center space-x-2 px-6 h-12 bg-red-200 border-4 border-red-600 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
-        >
-          <ArrowLeft className="w-4 h-4" />
-          <span>Anterior</span>
-        </button>
-        
-        <button
-          onClick={handleDummyData}
-          className="px-6 h-12 text-sm text-gray-600 hover:text-gray-900 border-4 border-blue-600 rounded-lg hover:bg-gray-50 bg-blue-200"
-        >
-          Ver ejemplo
-        </button>
-        
-        <button
-          onClick={handleNext}
-          disabled={currentStepIndex === steps.length - 1}
-          className="flex items-center space-x-2 px-6 h-12 bg-green-200 border-4 border-green-600 text-black rounded-lg hover:bg-gray-800 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
-        >
-          <span>Continuar</span>
-          <ArrowRight className="w-4 h-4" />
-        </button>
-      </div>
     </div>
   );
 }
