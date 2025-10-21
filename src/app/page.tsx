@@ -186,11 +186,11 @@ export default function HomePage() {
               type="text"
               value={value || ''}
               onChange={(e) => updateField(step.field, e.target.value)}
-              className="w-full h-12 px-4 pr-12 text-lg border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white shadow-sm"
+              className="w-full h-12 px-4 pr-12 text-lg border border-gray-300 rounded focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-transparent text-white placeholder-gray-400"
               placeholder={step.title}
               autoFocus
             />
-            <button className="absolute right-3 top-1/2 transform -translate-y-1/2 p-1.5 text-gray-400 hover:text-blue-500 hover:bg-blue-50 rounded-lg transition-colors">
+            <button className="absolute right-3 top-1/2 transform -translate-y-1/2 p-1.5 text-gray-400 hover:text-white transition-colors">
               <Wand2 className="w-4 h-4" />
             </button>
           </div>
@@ -202,12 +202,12 @@ export default function HomePage() {
             <textarea
               value={value || ''}
               onChange={(e) => updateField(step.field, e.target.value)}
-              className="w-full h-32 px-4 pr-12 text-lg border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-500 focus:border-transparent resize-none"
+              className="w-full h-32 px-4 pr-12 text-lg border border-gray-300 rounded focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-transparent text-white placeholder-gray-400 resize-none"
               placeholder={step.title}
               autoFocus
             />
-            <button className="absolute right-3 top-3 p-1 text-gray-400 hover:text-gray-600">
-              <Wand2 className="w-5 h-5" />
+            <button className="absolute right-3 top-3 p-1.5 text-gray-400 hover:text-white transition-colors">
+              <Wand2 className="w-4 h-4" />
             </button>
           </div>
         );
@@ -487,9 +487,9 @@ export default function HomePage() {
               <div className="flex items-center space-x-3">
                 <button
                   onClick={() => setIsMenuOpen(!isMenuOpen)}
-                  className="p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-full transition-colors"
+                  className="w-8 h-8 flex items-center justify-center text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded transition-colors"
                 >
-                  <Menu className="w-5 h-5" />
+                  <Menu className="w-4 h-4" />
                 </button>
                 <div className="text-sm text-gray-600">
                   {currentStepIndex + 1} de {steps.length}
@@ -500,20 +500,20 @@ export default function HomePage() {
                 <button
                   onClick={handlePrevious}
                   disabled={currentStepIndex === 0}
-                  className="p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-full disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                  className="w-8 h-8 flex items-center justify-center text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                 >
                   <ArrowLeft className="w-4 h-4" />
                 </button>
                 <button
                   onClick={handleDummyData}
-                  className="p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-full transition-colors"
+                  className="w-8 h-8 flex items-center justify-center text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded transition-colors"
                 >
                   <RefreshCw className="w-4 h-4" />
                 </button>
                 <button
                   onClick={handleNext}
                   disabled={currentStepIndex === steps.length - 1}
-                  className="p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-full disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                  className="w-8 h-8 flex items-center justify-center text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                 >
                   <ArrowRight className="w-4 h-4" />
                 </button>
