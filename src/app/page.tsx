@@ -2,7 +2,6 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { ArrowRight, ArrowLeft, Plus, Trash2, RefreshCw, Wand2, Menu, SkipForward, Mic, MicOff, Zap, Rocket, Lightbulb, Target, Star, Flame, Gem, Sparkles } from 'lucide-react';
-import IntroductionVideoSequence from '@/components/IntroductionVideoSequence';
 
 interface ProjectData {
   name: string;
@@ -68,21 +67,25 @@ const steps = [
 ];
 
 const videos = [
-  'video01.mp4',
-  'video02.mp4',
-  'video03.mp4',
-  'video04.mp4',
-  'video05.mp4',
-  'video06.mp4',
-  'video07.mp4',
-  'video08.mp4',
-  'video09.mp4',
-  'video10.mp4',
-  'video11.mp4',
-  'video12.mp4',
-  'video13.mp4',
-  'video14.mp4',
-  'video15.mp4'
+  'video00.00.mp4',
+  'video00.01.mp4',
+  'video00.02.mp4',
+  'video00.03.mp4',
+  'video00.04.mp4',
+  'video00.05.mp4',
+  'video00.06.mp4',
+  'video00.07.mp4',
+  'video01.00.mp4',
+  'video01.01.mp4',
+  'video02.00.mp4',
+  'video02.01.mp4',
+  'video02.02.mp4',
+  'video03.00.mp4',
+  'video03.01.mp4',
+  'video04.00.mp4',
+  'video04.01.mp4',
+  'video05.00.mp4',
+  'video11.mp4'
 ];
 
 export default function HomePage() {
@@ -92,7 +95,6 @@ export default function HomePage() {
   const [selectedMode, setSelectedMode] = useState<'startup' | 'scaleup' | 'corporate'>('startup');
   const [selectedVersion, setSelectedVersion] = useState<number>(1);
   const [isAnimating, setIsAnimating] = useState(false);
-  const [showIntroduction, setShowIntroduction] = useState(true);
   const [showElements, setShowElements] = useState({
     video: false,
     title: false,
@@ -377,13 +379,6 @@ export default function HomePage() {
     });
   };
 
-  const handleIntroductionComplete = () => {
-    setShowIntroduction(false);
-  };
-
-  const handleIntroductionSkip = () => {
-    setShowIntroduction(false);
-  };
 
   const handleAIGenerate = async (field: string, currentValue: string) => {
     try {
@@ -4935,16 +4930,6 @@ export default function HomePage() {
     }
   };
 
-  // Si se debe mostrar la introducción, renderizar la secuencia de videos
-  if (showIntroduction) {
-    return (
-      <IntroductionVideoSequence
-        onComplete={handleIntroductionComplete}
-        onSkip={handleIntroductionSkip}
-        className="w-full h-screen"
-      />
-    );
-  }
 
       return (
     <>
