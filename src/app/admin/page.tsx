@@ -10,7 +10,11 @@ import {
   Calendar,
   User,
   TrendingUp,
-  FileText
+  FileText,
+  ArrowRight,
+  ArrowLeft,
+  Menu,
+  Plus
 } from 'lucide-react';
 import { ProjectData } from '@/types';
 
@@ -18,6 +22,8 @@ export default function AdminPage() {
   const [projects, setProjects] = useState<ProjectData[]>([]);
   const [selectedProject, setSelectedProject] = useState<ProjectData | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [view, setView] = useState<'dashboard' | 'project'>('dashboard');
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   useEffect(() => {
     // Simulate loading projects from database
@@ -146,119 +152,224 @@ export default function AdminPage() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-center">
-          <div className="w-16 h-16 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-          <p className="text-gray-600">Cargando proyectos...</p>
+      <div style={{ 
+        minHeight: '100vh', 
+        backgroundColor: '#000000', 
+        display: 'flex', 
+        alignItems: 'center', 
+        justifyContent: 'center' 
+      }}>
+        <div style={{ textAlign: 'center' }}>
+          <div style={{ 
+            width: '48px', 
+            height: '48px', 
+            border: '2px solid #333333', 
+            borderTop: '2px solid #4a9eff', 
+            borderRadius: '50%', 
+            animation: 'spin 1s linear infinite',
+            margin: '0 auto 16px'
+          }}></div>
+          <p style={{ color: '#cccccc', fontSize: '16px' }}>Cargando proyectos...</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="bg-white shadow-sm border-b">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16">
-            <div className="flex items-center space-x-3">
-              <h1 className="text-2xl font-bold text-gray-900">🧭 Studio Admin</h1>
-              <span className="bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-0.5 rounded">
-                {projects.length} proyectos
-              </span>
-            </div>
-            <div className="flex items-center space-x-4">
-              <button className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition-colors">
-                Nuevo Proyecto
-              </button>
-              <a href="/" className="text-gray-600 hover:text-gray-900">
-                Volver a la App
-              </a>
-            </div>
-          </div>
+    <div style={{ 
+      minHeight: '100vh', 
+      backgroundColor: '#000000', 
+      display: 'flex', 
+      fontFamily: 'Inter, system-ui, sans-serif' 
+    }}>
+      {/* Header */}
+      <div style={{ 
+        position: 'sticky', 
+        top: 0, 
+        backgroundColor: '#000000', 
+        padding: '16px', 
+        zIndex: 10,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        width: '100%'
+      }}>
+        {/* Left: Menu + Back */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+          <button
+            onClick={() => setIsMenuOpen(!isMenuOpen)}
+            style={{ 
+              width: '32px', 
+              height: '32px', 
+              display: 'flex', 
+              alignItems: 'center', 
+              justifyContent: 'center', 
+              backgroundColor: 'transparent', 
+              border: 'none', 
+              cursor: 'pointer',
+              color: '#666666',
+              transition: 'color 0.2s ease'
+            }}
+            onMouseEnter={(e) => e.target.style.color = '#ffffff'}
+            onMouseLeave={(e) => e.target.style.color = '#666666'}
+          >
+            <Menu style={{ width: '16px', height: '16px' }} />
+          </button>
+          {view === 'project' && (
+            <button
+              onClick={() => setView('dashboard')}
+              style={{ 
+                width: '32px', 
+                height: '32px', 
+                display: 'flex', 
+                alignItems: 'center', 
+                justifyContent: 'center', 
+                backgroundColor: 'transparent', 
+                border: 'none', 
+                cursor: 'pointer',
+                color: '#666666',
+                transition: 'color 0.2s ease'
+              }}
+              onMouseEnter={(e) => e.target.style.color = '#ffffff'}
+              onMouseLeave={(e) => e.target.style.color = '#666666'}
+            >
+              <ArrowLeft style={{ width: '16px', height: '16px' }} />
+            </button>
+          )}
+        </div>
+        
+        {/* Center: Title */}
+        <div style={{ 
+          fontSize: '16px', 
+          color: '#ffffff', 
+          fontWeight: '500',
+          textAlign: 'center'
+        }}>
+          {view === 'dashboard' ? 'ADMIN / Dashboard' : `ADMIN / ${selectedProject?.project.name}`}
+        </div>
+        
+        {/* Right: New Project */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+          <button
+            onClick={() => {/* TODO: Create new project */}}
+            style={{ 
+              width: '32px', 
+              height: '32px', 
+              display: 'flex', 
+              alignItems: 'center', 
+              justifyContent: 'center', 
+              backgroundColor: 'transparent', 
+              border: 'none', 
+              cursor: 'pointer',
+              color: '#666666',
+              transition: 'color 0.2s ease'
+            }}
+            onMouseEnter={(e) => e.target.style.color = '#ffffff'}
+            onMouseLeave={(e) => e.target.style.color = '#666666'}
+          >
+            <Plus style={{ width: '16px', height: '16px' }} />
+          </button>
         </div>
       </div>
-
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Projects List */}
-          <div className="lg:col-span-2">
-            <div className="bg-white rounded-lg shadow-lg">
-              <div className="p-6 border-b">
-                <h2 className="text-xl font-semibold">Proyectos Activos</h2>
-                <p className="text-gray-600 text-sm">Gestiona todos los proyectos del estudio</p>
-              </div>
-              
-              <div className="divide-y">
-                {projects.map((project) => (
+      
+      {/* Content */}
+      <div style={{ 
+        flex: 1, 
+        display: 'flex', 
+        alignItems: 'center', 
+        justifyContent: 'center', 
+        padding: '64px' 
+      }}>
+        <div style={{ width: '100%', maxWidth: '800px' }}>
+          {/* Separator line */}
+          <div style={{ 
+            width: '100%', 
+            height: '1px', 
+            backgroundColor: '#333333', 
+            marginBottom: '32px',
+            opacity: 0.08
+          }}></div>
+          
+          {view === 'dashboard' ? (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+              {/* Projects List */}
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                {projects.map((project, index) => (
                   <motion.div
                     key={project.id}
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
-                    className="p-6 hover:bg-gray-50 transition-colors cursor-pointer"
-                    onClick={() => setSelectedProject(project)}
+                    transition={{ delay: index * 0.1 }}
+                    style={{
+                      padding: '24px',
+                      border: '1px solid #333333',
+                      borderRadius: '8px',
+                      backgroundColor: 'transparent',
+                      cursor: 'pointer',
+                      transition: 'all 0.2s ease'
+                    }}
+                    onMouseEnter={(e) => {
+                      e.target.style.borderColor = '#4a9eff';
+                      e.target.style.backgroundColor = 'rgba(74, 158, 255, 0.05)';
+                    }}
+                    onMouseLeave={(e) => {
+                      e.target.style.borderColor = '#333333';
+                      e.target.style.backgroundColor = 'transparent';
+                    }}
+                    onClick={() => {
+                      setSelectedProject(project);
+                      setView('project');
+                    }}
                   >
-                    <div className="flex items-center justify-between">
-                      <div className="flex-1">
-                        <div className="flex items-center space-x-3 mb-2">
-                          <h3 className="text-lg font-semibold text-gray-900">
-                            {project.project.name}
-                          </h3>
-                          <span className={`px-2 py-1 text-xs font-medium rounded-full ${getClientTypeColor(project.project.clientType)}`}>
-                            Tipo {project.project.clientType}
-                          </span>
-                        </div>
-                        
-                        <p className="text-gray-600 text-sm mb-3">
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px' }}>
+                      <div>
+                        <h3 style={{ 
+                          fontSize: '18px', 
+                          fontWeight: '500', 
+                          color: '#ffffff', 
+                          marginBottom: '4px' 
+                        }}>
+                          {project.project.name}
+                        </h3>
+                        <p style={{ 
+                          fontSize: '14px', 
+                          color: '#cccccc', 
+                          marginBottom: '8px' 
+                        }}>
                           {project.project.sector} • {project.project.vision}
                         </p>
-                        
-                        <div className="flex items-center space-x-4 text-sm text-gray-500">
-                          <div className="flex items-center space-x-1">
-                            <Calendar className="w-4 h-4" />
-                            <span>{project.project.createdAt.toLocaleDateString()}</span>
-                          </div>
-                          <div className="flex items-center space-x-1">
-                            <User className="w-4 h-4" />
-                            <span>{project.project.values.length} valores</span>
-                          </div>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '16px', fontSize: '12px', color: '#666666' }}>
+                          <span>{project.project.createdAt.toLocaleDateString()}</span>
+                          <span>Tipo {project.project.clientType}</span>
+                          <span>{project.project.values.length} valores</span>
                         </div>
                       </div>
-                      
-                      <div className="flex items-center space-x-2">
-                        <button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            exportProject(project);
-                          }}
-                          className="p-2 text-gray-500 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
-                        >
-                          <Download className="w-4 h-4" />
-                        </button>
-                        <button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            setSelectedProject(project);
-                          }}
-                          className="p-2 text-gray-500 hover:text-green-600 hover:bg-green-50 rounded-lg transition-colors"
-                        >
-                          <Eye className="w-4 h-4" />
-                        </button>
-                      </div>
+                      <ArrowRight style={{ width: '16px', height: '16px', color: '#666666' }} />
                     </div>
                     
                     {/* Progress Bars */}
-                    <div className="mt-4 space-y-2">
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
                       {Object.entries(project.progress).map(([section, progress]) => (
-                        <div key={section} className="flex items-center justify-between">
-                          <span className="text-xs text-gray-600 capitalize">{section}</span>
-                          <div className="flex items-center space-x-2">
-                            <div className="w-20 bg-gray-200 rounded-full h-1.5">
+                        <div key={section} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                          <span style={{ fontSize: '12px', color: '#666666', textTransform: 'capitalize' }}>{section}</span>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                            <div style={{ 
+                              width: '80px', 
+                              height: '4px', 
+                              backgroundColor: '#333333', 
+                              borderRadius: '2px' 
+                            }}>
                               <div
-                                className={`h-1.5 rounded-full ${getProgressColor(progress)}`}
-                                style={{ width: `${progress}%` }}
+                                style={{ 
+                                  height: '4px', 
+                                  backgroundColor: progress >= 80 ? '#4a9eff' : progress >= 60 ? '#ffaa00' : progress >= 40 ? '#ff6600' : '#ff4444',
+                                  borderRadius: '2px',
+                                  width: `${progress}%`,
+                                  transition: 'width 0.3s ease'
+                                }}
                               />
                             </div>
-                            <span className="text-xs text-gray-600 w-8">{Math.round(progress)}%</span>
+                            <span style={{ fontSize: '12px', color: '#666666', width: '32px' }}>{Math.round(progress)}%</span>
                           </div>
                         </div>
                       ))}
@@ -267,93 +378,127 @@ export default function AdminPage() {
                 ))}
               </div>
             </div>
-          </div>
-
-          {/* Project Details */}
-          <div className="lg:col-span-1">
-            {selectedProject ? (
-              <motion.div
-                initial={{ opacity: 0, x: 20 }}
-                animate={{ opacity: 1, x: 0 }}
-                className="bg-white rounded-lg shadow-lg"
-              >
-                <div className="p-6 border-b">
-                  <h3 className="text-lg font-semibold">Detalles del Proyecto</h3>
-                </div>
-                
-                <div className="p-6 space-y-6">
-                  <div>
-                    <h4 className="font-medium text-gray-900 mb-2">Información Básica</h4>
-                    <div className="space-y-2 text-sm">
-                      <div>
-                        <span className="text-gray-600">Nombre:</span>
-                        <span className="ml-2 font-medium">{selectedProject.project.name}</span>
-                      </div>
-                      <div>
-                        <span className="text-gray-600">Sector:</span>
-                        <span className="ml-2 font-medium">{selectedProject.project.sector}</span>
-                      </div>
-                      <div>
-                        <span className="text-gray-600">Tipo:</span>
-                        <span className={`ml-2 px-2 py-1 text-xs font-medium rounded-full ${getClientTypeColor(selectedProject.project.clientType)}`}>
-                          Tipo {selectedProject.project.clientType}
-                        </span>
-                      </div>
-                    </div>
-                  </div>
+          ) : (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+              {selectedProject && (
+                <div>
+                  <h2 style={{ 
+                    fontSize: '24px', 
+                    fontWeight: '500', 
+                    color: '#ffffff', 
+                    marginBottom: '8px' 
+                  }}>
+                    {selectedProject.project.name}
+                  </h2>
+                  <p style={{ 
+                    fontSize: '16px', 
+                    color: '#cccccc', 
+                    marginBottom: '32px' 
+                  }}>
+                    {selectedProject.project.sector} • {selectedProject.project.vision}
+                  </p>
                   
-                  <div>
-                    <h4 className="font-medium text-gray-900 mb-2">Valores</h4>
-                    <div className="flex flex-wrap gap-2">
-                      {selectedProject.project.values.map((value, index) => (
-                        <span key={index} className="bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-0.5 rounded">
-                          {value}
-                        </span>
-                      ))}
-                    </div>
-                  </div>
-                  
-                  <div>
-                    <h4 className="font-medium text-gray-900 mb-2">Progreso General</h4>
-                    <div className="space-y-3">
-                      {Object.entries(selectedProject.progress).map(([section, progress]) => (
-                        <div key={section}>
-                          <div className="flex items-center justify-between mb-1">
-                            <span className="text-sm text-gray-600 capitalize">{section}</span>
-                            <span className="text-sm font-medium">{Math.round(progress)}%</span>
-                          </div>
-                          <div className="w-full bg-gray-200 rounded-full h-2">
-                            <div
-                              className={`h-2 rounded-full ${getProgressColor(progress)}`}
-                              style={{ width: `${progress}%` }}
-                            />
-                          </div>
+                  {/* Project Details */}
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+                    <div>
+                      <h3 style={{ 
+                        fontSize: '16px', 
+                        fontWeight: '500', 
+                        color: '#ffffff', 
+                        marginBottom: '16px' 
+                      }}>
+                        Información Básica
+                      </h3>
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', fontSize: '14px' }}>
+                        <div>
+                          <span style={{ color: '#666666' }}>Nombre:</span>
+                          <span style={{ color: '#ffffff', marginLeft: '8px' }}>{selectedProject.project.name}</span>
                         </div>
-                      ))}
+                        <div>
+                          <span style={{ color: '#666666' }}>Sector:</span>
+                          <span style={{ color: '#ffffff', marginLeft: '8px' }}>{selectedProject.project.sector}</span>
+                        </div>
+                        <div>
+                          <span style={{ color: '#666666' }}>Tipo:</span>
+                          <span style={{ 
+                            color: '#ffffff', 
+                            marginLeft: '8px',
+                            padding: '2px 8px',
+                            backgroundColor: '#333333',
+                            borderRadius: '4px',
+                            fontSize: '12px'
+                          }}>
+                            Tipo {selectedProject.project.clientType}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                    
+                    <div>
+                      <h3 style={{ 
+                        fontSize: '16px', 
+                        fontWeight: '500', 
+                        color: '#ffffff', 
+                        marginBottom: '16px' 
+                      }}>
+                        Valores
+                      </h3>
+                      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
+                        {selectedProject.project.values.map((value, index) => (
+                          <span key={index} style={{
+                            padding: '4px 12px',
+                            backgroundColor: '#333333',
+                            color: '#ffffff',
+                            borderRadius: '16px',
+                            fontSize: '12px'
+                          }}>
+                            {value}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                    
+                    <div>
+                      <h3 style={{ 
+                        fontSize: '16px', 
+                        fontWeight: '500', 
+                        color: '#ffffff', 
+                        marginBottom: '16px' 
+                      }}>
+                        Progreso General
+                      </h3>
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                        {Object.entries(selectedProject.progress).map(([section, progress]) => (
+                          <div key={section}>
+                            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '4px' }}>
+                              <span style={{ fontSize: '14px', color: '#666666', textTransform: 'capitalize' }}>{section}</span>
+                              <span style={{ fontSize: '14px', color: '#ffffff' }}>{Math.round(progress)}%</span>
+                            </div>
+                            <div style={{ 
+                              width: '100%', 
+                              height: '6px', 
+                              backgroundColor: '#333333', 
+                              borderRadius: '3px' 
+                            }}>
+                              <div
+                                style={{ 
+                                  height: '6px', 
+                                  backgroundColor: progress >= 80 ? '#4a9eff' : progress >= 60 ? '#ffaa00' : progress >= 40 ? '#ff6600' : '#ff4444',
+                                  borderRadius: '3px',
+                                  width: `${progress}%`,
+                                  transition: 'width 0.3s ease'
+                                }}
+                              />
+                            </div>
+                          </div>
+                        ))}
+                      </div>
                     </div>
                   </div>
-                  
-                  <div className="flex space-x-2">
-                    <button className="flex-1 bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition-colors text-sm">
-                      <Edit className="w-4 h-4 inline mr-2" />
-                      Editar
-                    </button>
-                    <button className="flex-1 bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 transition-colors text-sm">
-                      <FileText className="w-4 h-4 inline mr-2" />
-                      Brandbook
-                    </button>
-                  </div>
                 </div>
-              </motion.div>
-            ) : (
-              <div className="bg-white rounded-lg shadow-lg p-6">
-                <div className="text-center">
-                  <Eye className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-                  <p className="text-gray-600">Selecciona un proyecto para ver los detalles</p>
-                </div>
-              </div>
-            )}
-          </div>
+              )}
+            </div>
+          )}
         </div>
       </div>
     </div>
