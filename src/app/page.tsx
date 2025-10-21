@@ -452,12 +452,10 @@ export default function HomePage() {
       </header>
 
       {/* Main content - 2 columnas */}
-      <main className="pt-16 bg-red-100 border-4 border-red-500">
-        <div className="max-w-7xl mx-auto px-4 bg-blue-100 border-2 border-blue-500">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 min-h-screen bg-green-100 border-2 border-green-500">
-            {/* Video column - Izquierda */}
-            <div className="lg:sticky lg:top-20 lg:h-[calc(100vh-5rem)] bg-yellow-100 border-2 border-yellow-500">
-              <div className="relative w-full h-64 lg:h-full bg-gray-100 rounded-lg overflow-hidden border-2 border-purple-500">
+      <main className="h-screen flex">
+        {/* Video column - Izquierda */}
+        <div className="w-1/2 bg-yellow-100 border-4 border-yellow-500 flex items-center justify-center">
+          <div className="relative w-full h-full bg-gray-100 overflow-hidden border-2 border-purple-500">
                 <video
                   ref={videoRef}
                   key={currentStepIndex}
@@ -495,15 +493,11 @@ export default function HomePage() {
               </div>
             </div>
 
-            {/* Content column - Derecha */}
-            <div className="lg:h-[calc(100vh-5rem)] overflow-y-auto bg-orange-100 border-2 border-orange-500">
-              <div className="flex items-center justify-center min-h-full p-6 bg-pink-100 border-2 border-pink-500">
-                <div className="w-full max-w-md bg-cyan-100 border-2 border-cyan-500 p-4">
-                  <div className="space-y-6 bg-lime-100 border-2 border-lime-500 p-4">
-                    {renderStep()}
-                  </div>
-                </div>
-              </div>
+        {/* Content column - Derecha */}
+        <div className="w-1/2 bg-orange-100 border-4 border-orange-500 flex items-center justify-center">
+          <div className="w-full max-w-md bg-cyan-100 border-4 border-cyan-500 p-8">
+            <div className="space-y-6 bg-lime-100 border-4 border-lime-500 p-6">
+              {renderStep()}
             </div>
           </div>
         </div>
