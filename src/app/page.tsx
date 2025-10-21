@@ -168,6 +168,33 @@ export default function HomePage() {
     });
   };
 
+  const handleAIGenerate = async (field: string, currentValue: string) => {
+    try {
+      const response = await fetch('/api/transcribe', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          prompt: `Genera contenido para el campo: ${field}. Valor actual: ${currentValue}. Genera 3 opciones creativas y relevantes.`,
+          type: 'text'
+        }),
+      });
+      
+      if (response.ok) {
+        const data = await response.json();
+        const suggestions = data.text.split('\n').filter((line: string) => line.trim());
+        if (suggestions.length > 0) {
+          updateField(field, suggestions[0]);
+        }
+      }
+    } catch (error) {
+      console.error('Error generating AI content:', error);
+      // Fallback to dummy data
+      handleDummyData();
+    }
+  };
+
   const getFieldValue = (field: string) => {
     const keys = field.split('.');
     let current = projectData as any;
@@ -237,6 +264,7 @@ export default function HomePage() {
               }}
             />
             <button 
+              onClick={() => handleAIGenerate(step.field, value || '')}
               style={{
                 position: 'absolute',
                 right: '12px',
@@ -355,7 +383,7 @@ export default function HomePage() {
         );
 
       case 'values':
-        return (
+      return (
           <div className="space-y-3">
             {value.map((item: any, index: number) => (
               <div key={index} className="grid grid-cols-2 gap-3">
@@ -390,7 +418,7 @@ export default function HomePage() {
               <Plus className="w-4 h-4" />
               Añadir valor
             </button>
-          </div>
+            </div>
         );
 
       case 'features':
@@ -486,15 +514,15 @@ export default function HomePage() {
                 </div>
               </div>
             ))}
-          </div>
-        );
+        </div>
+      );
 
       default:
         return <div>Tipo de paso no soportado</div>;
     }
   };
 
-  return (
+      return (
     <div style={{ 
       minHeight: '100vh', 
       backgroundColor: '#000000', 
@@ -623,7 +651,7 @@ export default function HomePage() {
               {currentStepIndex + 1} de {steps.length}
             </div>
           </div>
-          
+
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
             <button
               onClick={handlePrevious}
@@ -710,7 +738,9 @@ export default function HomePage() {
             borderRadius: '8px', 
             boxShadow: '0 4px 12px rgba(0,0,0,0.3)', 
             zIndex: 20,
-            padding: '8px'
+            padding: '8px',
+            maxHeight: '400px',
+            overflowY: 'auto'
           }}>
             <div style={{ 
               fontSize: '12px', 
@@ -755,9 +785,9 @@ export default function HomePage() {
                 {step.title}
               </button>
             ))}
-          </div>
-        )}
-        
+              </div>
+            )}
+
         {/* Contenido */}
         <div style={{ 
           flex: 1, 
@@ -787,7 +817,7 @@ export default function HomePage() {
                   fontStyle: 'italic'
                 }}>
                   {getStepContent(steps[currentStepIndex].id)}
-                </div>
+              </div>
               )}
               
               {/* Formulario */}
