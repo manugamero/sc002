@@ -1,7 +1,7 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
+import { useState, useEffect, useRef } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { 
   Eye, 
   Edit, 
@@ -14,7 +14,12 @@ import {
   ArrowRight,
   ArrowLeft,
   Menu,
-  Plus
+  Plus,
+  GripVertical,
+  Settings,
+  Search,
+  Filter,
+  MoreHorizontal
 } from 'lucide-react';
 import { ProjectData } from '@/types';
 
@@ -22,8 +27,12 @@ export default function AdminPage() {
   const [projects, setProjects] = useState<ProjectData[]>([]);
   const [selectedProject, setSelectedProject] = useState<ProjectData | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-  const [view, setView] = useState<'dashboard' | 'project'>('dashboard');
+  const [view, setView] = useState<'dashboard' | 'project' | 'settings'>('dashboard');
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [filterType, setFilterType] = useState<'all' | 'A' | 'B' | 'C'>('all');
+  const [draggedItem, setDraggedItem] = useState<string | null>(null);
+  const [showSettings, setShowSettings] = useState(false);
 
   useEffect(() => {
     // Simulate loading projects from database
@@ -150,6 +159,48 @@ export default function AdminPage() {
     linkElement.click();
   };
 
+  // Drag & Drop functions
+  const handleDragStart = (e: React.DragEvent, projectId: string) => {
+    setDraggedItem(projectId);
+    e.dataTransfer.effectAllowed = 'move';
+  };
+
+  const handleDragOver = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.dataTransfer.dropEffect = 'move';
+  };
+
+  const handleDrop = (e: React.DragEvent, targetId: string) => {
+    e.preventDefault();
+    if (!draggedItem || draggedItem === targetId) return;
+
+    const newProjects = [...projects];
+    const draggedIndex = newProjects.findIndex(p => p.id === draggedItem);
+    const targetIndex = newProjects.findIndex(p => p.id === targetId);
+
+    if (draggedIndex !== -1 && targetIndex !== -1) {
+      const draggedProject = newProjects[draggedIndex];
+      newProjects.splice(draggedIndex, 1);
+      newProjects.splice(targetIndex, 0, draggedProject);
+      setProjects(newProjects);
+    }
+
+    setDraggedItem(null);
+  };
+
+  // Filter and search
+  const filteredProjects = projects.filter(project => {
+    const matchesSearch = project.project.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         project.project.sector.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesFilter = filterType === 'all' || project.project.clientType === filterType;
+    return matchesSearch && matchesFilter;
+  });
+
+  // Delete project
+  const deleteProject = (projectId: string) => {
+    setProjects(projects.filter(p => p.id !== projectId));
+  };
+
   if (isLoading) {
     return (
       <div style={{ 
@@ -192,7 +243,8 @@ export default function AdminPage() {
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'space-between',
-        width: '100%'
+        width: '100%',
+        borderBottom: '1px solid #333333'
       }}>
         {/* Left: Menu + Back */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
@@ -238,18 +290,101 @@ export default function AdminPage() {
           )}
         </div>
         
-        {/* Center: Title */}
+        {/* Center: Title + Search */}
         <div style={{ 
-          fontSize: '16px', 
-          color: '#ffffff', 
-          fontWeight: '500',
-          textAlign: 'center'
+          display: 'flex', 
+          alignItems: 'center', 
+          gap: '16px',
+          flex: 1,
+          justifyContent: 'center'
         }}>
-          {view === 'dashboard' ? 'ADMIN / Dashboard' : `ADMIN / ${selectedProject?.project.name}`}
+          <div style={{ 
+            fontSize: '16px', 
+            color: '#ffffff', 
+            fontWeight: '500'
+          }}>
+            {view === 'dashboard' ? 'ADMIN / Dashboard' : `ADMIN / ${selectedProject?.project.name}`}
+          </div>
+          
+          {view === 'dashboard' && (
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <div style={{ position: 'relative' }}>
+                <Search style={{ 
+                  position: 'absolute', 
+                  left: '8px', 
+                  top: '50%', 
+                  transform: 'translateY(-50%)',
+                  width: '16px', 
+                  height: '16px', 
+                  color: '#666666' 
+                }} />
+                <input
+                  type="text"
+                  placeholder="Buscar proyectos..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  style={{
+                    padding: '8px 8px 8px 32px',
+                    backgroundColor: 'transparent',
+                    border: '1px solid #333333',
+                    borderRadius: '20px',
+                    color: '#ffffff',
+                    fontSize: '14px',
+                    outline: 'none',
+                    width: '200px',
+                    transition: 'border-color 0.2s ease'
+                  }}
+                  onMouseEnter={(e) => e.target.style.borderColor = '#666666'}
+                  onMouseLeave={(e) => e.target.style.borderColor = '#333333'}
+                  onFocus={(e) => e.target.style.borderColor = '#ffffff'}
+                  onBlur={(e) => e.target.style.borderColor = '#333333'}
+                />
+              </div>
+              
+              <select
+                value={filterType}
+                onChange={(e) => setFilterType(e.target.value as 'all' | 'A' | 'B' | 'C')}
+                style={{
+                  padding: '8px 12px',
+                  backgroundColor: 'transparent',
+                  border: '1px solid #333333',
+                  borderRadius: '20px',
+                  color: '#ffffff',
+                  fontSize: '14px',
+                  outline: 'none',
+                  cursor: 'pointer'
+                }}
+              >
+                <option value="all" style={{ backgroundColor: '#1a1a1a' }}>Todos</option>
+                <option value="A" style={{ backgroundColor: '#1a1a1a' }}>Tipo A</option>
+                <option value="B" style={{ backgroundColor: '#1a1a1a' }}>Tipo B</option>
+                <option value="C" style={{ backgroundColor: '#1a1a1a' }}>Tipo C</option>
+              </select>
+            </div>
+          )}
         </div>
         
-        {/* Right: New Project */}
+        {/* Right: Actions */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+          <button
+            onClick={() => setShowSettings(!showSettings)}
+            style={{ 
+              width: '32px', 
+              height: '32px', 
+              display: 'flex', 
+              alignItems: 'center', 
+              justifyContent: 'center', 
+              backgroundColor: 'transparent', 
+              border: 'none', 
+              cursor: 'pointer',
+              color: '#666666',
+              transition: 'color 0.2s ease'
+            }}
+            onMouseEnter={(e) => e.target.style.color = '#ffffff'}
+            onMouseLeave={(e) => e.target.style.color = '#666666'}
+          >
+            <Settings style={{ width: '16px', height: '16px' }} />
+          </button>
           <button
             onClick={() => {/* TODO: Create new project */}}
             style={{ 
@@ -294,35 +429,53 @@ export default function AdminPage() {
             <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
               {/* Projects List */}
               <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-                {projects.map((project, index) => (
+                {filteredProjects.map((project, index) => (
                   <motion.div
                     key={project.id}
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: index * 0.1 }}
+                    draggable
+                    onDragStart={(e) => handleDragStart(e, project.id)}
+                    onDragOver={handleDragOver}
+                    onDrop={(e) => handleDrop(e, project.id)}
                     style={{
                       padding: '24px',
                       border: '1px solid #333333',
-                      borderRadius: '8px',
-                      backgroundColor: 'transparent',
-                      cursor: 'pointer',
-                      transition: 'all 0.2s ease'
+                      borderRadius: '12px',
+                      backgroundColor: draggedItem === project.id ? 'rgba(74, 158, 255, 0.1)' : 'transparent',
+                      cursor: 'move',
+                      transition: 'all 0.2s ease',
+                      position: 'relative',
+                      opacity: draggedItem === project.id ? 0.7 : 1
                     }}
                     onMouseEnter={(e) => {
-                      e.target.style.borderColor = '#4a9eff';
-                      e.target.style.backgroundColor = 'rgba(74, 158, 255, 0.05)';
+                      if (draggedItem !== project.id) {
+                        e.target.style.borderColor = '#ffffff';
+                        e.target.style.backgroundColor = 'rgba(255, 255, 255, 0.05)';
+                      }
                     }}
                     onMouseLeave={(e) => {
-                      e.target.style.borderColor = '#333333';
-                      e.target.style.backgroundColor = 'transparent';
-                    }}
-                    onClick={() => {
-                      setSelectedProject(project);
-                      setView('project');
+                      if (draggedItem !== project.id) {
+                        e.target.style.borderColor = '#333333';
+                        e.target.style.backgroundColor = 'transparent';
+                      }
                     }}
                   >
-                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px' }}>
-                      <div>
+                    {/* Drag Handle */}
+                    <div style={{
+                      position: 'absolute',
+                      left: '8px',
+                      top: '50%',
+                      transform: 'translateY(-50%)',
+                      color: '#666666',
+                      cursor: 'grab'
+                    }}>
+                      <GripVertical style={{ width: '16px', height: '16px' }} />
+                    </div>
+
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px', marginLeft: '24px' }}>
+                      <div style={{ flex: 1 }}>
                         <h3 style={{ 
                           fontSize: '18px', 
                           fontWeight: '500', 
@@ -344,7 +497,100 @@ export default function AdminPage() {
                           <span>{project.project.values.length} valores</span>
                         </div>
                       </div>
-                      <ArrowRight style={{ width: '16px', height: '16px', color: '#666666' }} />
+                      
+                      {/* Action Buttons */}
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setSelectedProject(project);
+                            setView('project');
+                          }}
+                          style={{
+                            width: '32px',
+                            height: '32px',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            backgroundColor: 'transparent',
+                            border: '1px solid #333333',
+                            borderRadius: '6px',
+                            cursor: 'pointer',
+                            color: '#666666',
+                            transition: 'all 0.2s ease'
+                          }}
+                          onMouseEnter={(e) => {
+                            e.target.style.borderColor = '#ffffff';
+                            e.target.style.color = '#ffffff';
+                          }}
+                          onMouseLeave={(e) => {
+                            e.target.style.borderColor = '#333333';
+                            e.target.style.color = '#666666';
+                          }}
+                        >
+                          <Eye style={{ width: '16px', height: '16px' }} />
+                        </button>
+                        
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            exportProject(project);
+                          }}
+                          style={{
+                            width: '32px',
+                            height: '32px',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            backgroundColor: 'transparent',
+                            border: '1px solid #333333',
+                            borderRadius: '6px',
+                            cursor: 'pointer',
+                            color: '#666666',
+                            transition: 'all 0.2s ease'
+                          }}
+                          onMouseEnter={(e) => {
+                            e.target.style.borderColor = '#ffffff';
+                            e.target.style.color = '#ffffff';
+                          }}
+                          onMouseLeave={(e) => {
+                            e.target.style.borderColor = '#333333';
+                            e.target.style.color = '#666666';
+                          }}
+                        >
+                          <Download style={{ width: '16px', height: '16px' }} />
+                        </button>
+                        
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            deleteProject(project.id);
+                          }}
+                          style={{
+                            width: '32px',
+                            height: '32px',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            backgroundColor: 'transparent',
+                            border: '1px solid #333333',
+                            borderRadius: '6px',
+                            cursor: 'pointer',
+                            color: '#666666',
+                            transition: 'all 0.2s ease'
+                          }}
+                          onMouseEnter={(e) => {
+                            e.target.style.borderColor = '#ff4444';
+                            e.target.style.color = '#ff4444';
+                          }}
+                          onMouseLeave={(e) => {
+                            e.target.style.borderColor = '#333333';
+                            e.target.style.color = '#666666';
+                          }}
+                        >
+                          <Trash2 style={{ width: '16px', height: '16px' }} />
+                        </button>
+                      </div>
                     </div>
                     
                     {/* Progress Bars */}
