@@ -778,25 +778,6 @@ export default function HomePage() {
                 e.target.style.boxShadow = 'none';
               }}
             />
-            <button 
-              onClick={() => handleAIGenerate(step.field, value || '')}
-              style={{
-                position: 'absolute',
-                right: '16px',
-                top: '50%',
-                transform: 'translateY(-50%)',
-                padding: '6px',
-                backgroundColor: 'transparent',
-                border: 'none',
-                cursor: 'pointer',
-                color: '#666666',
-                transition: 'color 0.2s ease'
-              }}
-              onMouseEnter={(e) => e.target.style.color = '#ffffff'}
-              onMouseLeave={(e) => e.target.style.color = '#666666'}
-            >
-              <Wand2 style={{ width: '16px', height: '16px' }} />
-            </button>
           </div>
         );
 
@@ -830,24 +811,6 @@ export default function HomePage() {
                 e.target.style.boxShadow = 'none';
               }}
             />
-            <button 
-              onClick={() => handleAIGenerate(step.field, value || '')}
-              style={{
-                position: 'absolute',
-                right: '16px',
-                top: '12px',
-                padding: '6px',
-                backgroundColor: 'transparent',
-                border: 'none',
-                cursor: 'pointer',
-                color: '#666666',
-                transition: 'color 0.2s ease'
-              }}
-              onMouseEnter={(e) => e.target.style.color = '#ffffff'}
-              onMouseLeave={(e) => e.target.style.color = '#666666'}
-            >
-              <Wand2 style={{ width: '16px', height: '16px' }} />
-            </button>
           </div>
         );
 
@@ -907,35 +870,12 @@ export default function HomePage() {
                   autoFocus
                 />
                 <div style={{ display: 'flex', gap: '8px' }}>
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      const randomName = generateRandomContent('name');
-                      updateField(step.field, { ...value, name: randomName });
-                    }}
-                    style={{
-                      width: '32px',
-                      height: '32px',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      backgroundColor: 'transparent',
-                      border: 'none',
-                      cursor: 'pointer',
-                      color: '#666666',
-                      transition: 'color 0.2s ease'
-                    }}
-                    onMouseEnter={(e) => e.target.style.color = '#ffffff'}
-                    onMouseLeave={(e) => e.target.style.color = '#666666'}
-                  >
-                    <Wand2 style={{ width: '16px', height: '16px' }} />
-                  </button>
-                  <button
+            <button 
                     onClick={(e) => {
                       e.stopPropagation();
                       startVoiceRecognition(`${step.field}.name`);
                     }}
-                    style={{
+              style={{
                       width: '32px',
                       height: '32px',
                       display: 'flex',
@@ -1015,15 +955,15 @@ export default function HomePage() {
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center',
-                      backgroundColor: 'transparent',
-                      border: 'none',
-                      cursor: 'pointer',
-                      color: '#666666',
-                      transition: 'color 0.2s ease'
-                    }}
-                    onMouseEnter={(e) => e.target.style.color = '#ffffff'}
-                    onMouseLeave={(e) => e.target.style.color = '#666666'}
-                  >
+                backgroundColor: 'transparent',
+                border: 'none',
+                cursor: 'pointer',
+                color: '#666666',
+                transition: 'color 0.2s ease'
+              }}
+              onMouseEnter={(e) => e.target.style.color = '#ffffff'}
+              onMouseLeave={(e) => e.target.style.color = '#666666'}
+            >
                     -
                   </button>
                   <input
@@ -1067,32 +1007,9 @@ export default function HomePage() {
                     onMouseLeave={(e) => e.target.style.color = '#666666'}
                   >
                     +
-                  </button>
-                </div>
+            </button>
+          </div>
                 <div style={{ display: 'flex', gap: '8px' }}>
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      const randomSize = generateRandomContent('size');
-                      updateField(step.field, { ...value, size: randomSize });
-                    }}
-                    style={{
-                      width: '32px',
-                      height: '32px',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      backgroundColor: 'transparent',
-                      border: 'none',
-                      cursor: 'pointer',
-                      color: '#666666',
-                      transition: 'color 0.2s ease'
-                    }}
-                    onMouseEnter={(e) => e.target.style.color = '#ffffff'}
-                    onMouseLeave={(e) => e.target.style.color = '#666666'}
-                  >
-                    <Wand2 style={{ width: '16px', height: '16px' }} />
-                  </button>
                   <button
                     onClick={(e) => {
                       e.stopPropagation();
@@ -1196,29 +1113,6 @@ export default function HomePage() {
                   <option value="Marketing" style={{ backgroundColor: '#1a1a1a', color: '#ffffff' }}>Marketing</option>
                   <option value="Otro" style={{ backgroundColor: '#1a1a1a', color: '#ffffff' }}>Otro</option>
                 </select>
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    const randomIndustry = generateRandomContent('industry');
-                    updateField(step.field, { ...value, industry: randomIndustry });
-                  }}
-                  style={{
-                    width: '32px',
-                    height: '32px',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    backgroundColor: 'transparent',
-                    border: 'none',
-                    cursor: 'pointer',
-                    color: '#666666',
-                    transition: 'color 0.2s ease'
-                  }}
-                  onMouseEnter={(e) => e.target.style.color = '#ffffff'}
-                  onMouseLeave={(e) => e.target.style.color = '#666666'}
-                >
-                  <Wand2 style={{ width: '16px', height: '16px' }} />
-                </button>
               </div>
             </div>
 
@@ -1272,29 +1166,6 @@ export default function HomePage() {
                   }}
                 />
                 <div style={{ display: 'flex', gap: '8px' }}>
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      const randomFounder = generateRandomContent('founder');
-                      updateField(step.field, { ...value, founder: randomFounder });
-                    }}
-                    style={{
-                      width: '32px',
-                      height: '32px',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      backgroundColor: 'transparent',
-                      border: 'none',
-                      cursor: 'pointer',
-                      color: '#666666',
-                      transition: 'color 0.2s ease'
-                    }}
-                    onMouseEnter={(e) => e.target.style.color = '#ffffff'}
-                    onMouseLeave={(e) => e.target.style.color = '#666666'}
-                  >
-                    <Wand2 style={{ width: '16px', height: '16px' }} />
-                  </button>
                   <button
                     onClick={(e) => {
                       e.stopPropagation();
@@ -1363,7 +1234,7 @@ export default function HomePage() {
                 Descripción
               </label>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                <textarea
+            <textarea
                   data-field="description"
                   value={value?.description || ''}
                   onChange={(e) => updateField(step.field, { ...value, description: e.target.value })}
@@ -1381,29 +1252,6 @@ export default function HomePage() {
                   }}
                 />
                 <div style={{ display: 'flex', gap: '8px', alignSelf: 'flex-end' }}>
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      const randomDescription = generateRandomContent('description');
-                      updateField(step.field, { ...value, description: randomDescription });
-                    }}
-                    style={{
-                      width: '32px',
-                      height: '32px',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      backgroundColor: 'transparent',
-                      border: 'none',
-                      cursor: 'pointer',
-                      color: '#666666',
-                      transition: 'color 0.2s ease'
-                    }}
-                    onMouseEnter={(e) => e.target.style.color = '#ffffff'}
-                    onMouseLeave={(e) => e.target.style.color = '#666666'}
-                  >
-                    <Wand2 style={{ width: '16px', height: '16px' }} />
-                  </button>
                 </div>
               </div>
             </div>
@@ -1638,25 +1486,6 @@ export default function HomePage() {
                     placeholder="Nombre del competidor"
                       autoFocus={index === (value?.competitors || []).length - 1}
                     />
-                    <button 
-                      onClick={() => handleAIGenerate(step.field, competitor.name || competitor || '')}
-                      style={{
-                        position: 'absolute',
-                        right: '16px',
-                        top: '50%',
-                        transform: 'translateY(-50%)',
-                        padding: '6px',
-                        backgroundColor: 'transparent',
-                        border: 'none',
-                        cursor: 'pointer',
-                        color: '#666666',
-                        transition: 'color 0.2s ease'
-                      }}
-                      onMouseEnter={(e) => e.target.style.color = '#ffffff'}
-                      onMouseLeave={(e) => e.target.style.color = '#666666'}
-                    >
-                      <Wand2 style={{ width: '16px', height: '16px' }} />
-                  </button>
                 </div>
                 <button
                   onClick={() => {
@@ -1759,25 +1588,6 @@ export default function HomePage() {
                     placeholder="Propuesta de valor"
                     autoFocus={index === (value || []).length - 1}
                   />
-                  <button 
-                    onClick={() => handleAIGenerate(step.field, item || '')}
-                    style={{
-                      position: 'absolute',
-                      right: '16px',
-                      top: '50%',
-                      transform: 'translateY(-50%)',
-                      padding: '6px',
-                      backgroundColor: 'transparent',
-                      border: 'none',
-                      cursor: 'pointer',
-                      color: '#666666',
-                      transition: 'color 0.2s ease'
-                    }}
-                    onMouseEnter={(e) => e.target.style.color = '#ffffff'}
-                    onMouseLeave={(e) => e.target.style.color = '#666666'}
-                  >
-                    <Wand2 style={{ width: '16px', height: '16px' }} />
-                  </button>
                 </div>
                 <button
                   onClick={() => {
@@ -5105,8 +4915,8 @@ export default function HomePage() {
                 ))}
               </div>
             </div>
-          </div>
-        );
+        </div>
+      );
 
       default:
         return null;
