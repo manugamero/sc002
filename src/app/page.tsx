@@ -1544,11 +1544,9 @@ export default function HomePage() {
             {/* Etiquetas de ejes abajo del gráfico */}
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '16px' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                <span style={{ color: '#666666', fontSize: '14px' }}>Eje Y:</span>
                 <span style={{ color: '#ffffff', fontSize: '14px', fontWeight: '500' }}>{value?.yAxis || 'Precio'}</span>
               </div>
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                <span style={{ color: '#666666', fontSize: '14px' }}>Eje X:</span>
                 <span style={{ color: '#ffffff', fontSize: '14px', fontWeight: '500' }}>{value?.xAxis || 'Calidad'}</span>
               </div>
             </div>
@@ -4973,6 +4971,101 @@ export default function HomePage() {
         </div>
       );
 
+      case 'mode-selector':
+        return (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+            <div style={{
+              padding: '20px',
+              backgroundColor: '#1a1a1a',
+              borderRadius: '8px',
+              border: '1px solid #333333'
+            }}>
+              <h3 style={{ color: '#ffffff', fontSize: '18px', marginBottom: '16px' }}>
+                Selecciona tu modo de trabajo
+              </h3>
+              <p style={{ color: '#cccccc', fontSize: '14px', marginBottom: '24px' }}>
+                Elige el modo que mejor se adapte a tu proyecto para personalizar la experiencia.
+              </p>
+              
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '0' }}>
+                {[
+                  {
+                    id: 'startup',
+                    title: 'Startup',
+                    description: 'Para proyectos en fase inicial con recursos limitados y enfoque en MVP.'
+                  },
+                  {
+                    id: 'scaleup',
+                    title: 'ScaleUp',
+                    description: 'Para proyectos en crecimiento que buscan escalar y optimizar procesos.'
+                  },
+                  {
+                    id: 'corporate',
+                    title: 'Corporate',
+                    description: 'Para proyectos empresariales con recursos completos y procesos establecidos.'
+                  }
+                ].map((mode, index) => (
+                  <div key={mode.id} style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '16px',
+                    padding: '20px',
+                    borderBottom: index < 2 ? '1px solid #333333' : 'none',
+                    cursor: 'pointer',
+                    backgroundColor: value === mode.id ? '#2a2a2a' : 'transparent',
+                    transition: 'background-color 0.2s ease'
+                  }}
+                  onClick={() => updateField(step.field, mode.id)}
+                  onMouseEnter={(e) => {
+                    if (value !== mode.id) e.target.style.backgroundColor = '#1a1a1a';
+                  }}
+                  onMouseLeave={(e) => {
+                    if (value !== mode.id) e.target.style.backgroundColor = 'transparent';
+                  }}>
+                    <div style={{
+                      width: '24px',
+                      height: '24px',
+                      border: '2px solid #333333',
+                      borderRadius: '50%',
+                      backgroundColor: value === mode.id ? '#ffffff' : 'transparent',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      transition: 'all 0.2s ease'
+                    }}>
+                      {value === mode.id && (
+                        <div style={{
+                          width: '8px',
+                          height: '8px',
+                          backgroundColor: '#000000',
+                          borderRadius: '50%'
+                        }} />
+                      )}
+                    </div>
+                    <div style={{ flex: 1 }}>
+                      <h4 style={{
+                        color: '#ffffff',
+                        fontSize: '16px',
+                        marginBottom: '4px',
+                        fontWeight: value === mode.id ? '600' : '400'
+                      }}>
+                        {mode.title}
+                      </h4>
+                      <p style={{
+                        color: '#cccccc',
+                        fontSize: '14px',
+                        margin: '0'
+                      }}>
+                        {mode.description}
+                      </p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        );
+
       default:
         return null;
     }
@@ -5135,6 +5228,25 @@ export default function HomePage() {
               ) : (
                 <Mic style={{ width: '16px', height: '16px' }} />
               )}
+            </button>
+            <button
+              onClick={handleAIGenerate}
+              style={{ 
+                width: '32px', 
+                height: '32px', 
+                display: 'flex', 
+                alignItems: 'center', 
+                justifyContent: 'center', 
+                backgroundColor: 'transparent', 
+                border: 'none', 
+                cursor: 'pointer',
+                color: '#666666',
+                transition: 'color 0.2s ease'
+              }}
+              onMouseEnter={(e) => e.target.style.color = '#ffffff'}
+              onMouseLeave={(e) => e.target.style.color = '#666666'}
+            >
+              <Wand2 style={{ width: '16px', height: '16px' }} />
             </button>
             <button
               onClick={handleNext}
