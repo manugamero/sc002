@@ -42,21 +42,25 @@ const initialProjectData: ProjectData = {
 // Pasos individuales con contenido detallado
 const steps = [
   // Strategy
+  { id: 'strategy-0', title: '1.0 Strategy', type: 'mode-selector', field: 'strategy.mode' },
   { id: 'strategy-1', title: '1.1 Contexto / Entrevistas', type: 'interview', field: 'strategy.interviews' },
   { id: 'strategy-2', title: '1.2 Mercado / Competidores', type: 'competitors', field: 'strategy.competitors' },
   { id: 'strategy-3', title: '1.3 Plan / Estrategia', type: 'plan', field: 'strategy.plan' },
   
   // Brand
+  { id: 'brand-0', title: '2.0 Brand', type: 'mode-selector', field: 'brand.mode' },
   { id: 'brand-1', title: '2.1 Valores / Esencia', type: 'values', field: 'brand.values' },
   { id: 'brand-2', title: '2.2 Verbal / Naming', type: 'names', field: 'brand.names' },
   { id: 'brand-3', title: '2.3 Visual / Logo', type: 'logo', field: 'brand.logo' },
   
   // Product
-  { id: 'product-1', title: '3.1 Features / MVP', type: 'features', field: 'product.features' },
+  { id: 'product-0', title: '3.0 Product', type: 'mode-selector', field: 'product.mode' },
+  { id: 'product-1', title: '3.1 Features / MVP', type: 'userflow', field: 'product.features' },
   { id: 'product-2', title: '3.2 Iteración / Prototipo', type: 'prototype', field: 'product.prototypeLink' },
   { id: 'product-3', title: '3.3 Shipping / Lanzamiento', type: 'rollout', field: 'product.shippingQuestions' },
   
   // Messages
+  { id: 'messages-0', title: '4.0 Messages', type: 'mode-selector', field: 'messages.mode' },
   { id: 'messages-1', title: '4.1 Social / Contenido', type: 'social', field: 'messages.social' },
   { id: 'messages-2', title: '4.2 Ads / Campañas', type: 'campaign', field: 'messages.campaignText' },
   { id: 'messages-3', title: '4.3 Merch / Merchandising', type: 'merch', field: 'messages.merchImages' },
@@ -637,12 +641,17 @@ export default function HomePage() {
 
   // Función para verificar si estamos en un capítulo principal
   const isMainChapter = (stepId: string) => {
-    const mainChapters = ['strategy-1', 'brand-1', 'product-1', 'messages-1'];
+    const mainChapters = ['strategy-0', 'brand-0', 'product-0', 'messages-0'];
     return mainChapters.includes(stepId);
   };
 
   const getStepContent = (stepId: string) => {
     const contentMap: { [key: string]: string[] } = {
+      'strategy-0': [
+        'La estrategia es el fundamento de todo proyecto exitoso. Comenzamos escuchando las voces que importan: fundadores, usuarios y stakeholders que dan vida a cada iniciativa.',
+        'Cada gran proyecto nace de una comprensión profunda del contexto. Las entrevistas nos revelan la verdadera esencia y potencial de cada idea.',
+        'Una estrategia sólida guía cada decisión. Definimos el camino más efectivo hacia nuestros objetivos.'
+      ],
       'strategy-1': [
         'A todos nos ha pasado: tener una idea y no saber cómo aterrizarla. El primer paso no es diseñar ni planificar, sino escuchar. Las entrevistas con fundadores, equipo y usuarios nos permiten entender la historia desde dentro.',
         'La estrategia es el fundamento de todo proyecto exitoso. Comenzamos escuchando las voces que importan: fundadores, usuarios y stakeholders que dan vida a cada iniciativa.',
@@ -657,6 +666,11 @@ export default function HomePage() {
         'Una vez entendido el contexto y el entorno, llega el momento de elegir una dirección. El plan une la visión con los recursos: define prioridades, metas y tiempos.',
         'La planificación estratégica transforma ideas en acciones concretas. Definimos el camino más efectivo hacia nuestros objetivos.',
         'Un plan sólido es la brújula que guía cada decisión. Establecemos prioridades claras y tiempos realistas.'
+      ],
+      'brand-0': [
+        'Una marca fuerte es el alma de cualquier proyecto. Definimos su esencia, valores y personalidad para crear conexiones auténticas con tu audiencia.',
+        'La marca trasciende lo visual. Es la experiencia completa que vives con un proyecto, desde el primer contacto hasta la relación a largo plazo.',
+        'Los valores son la columna vertebral de la marca. Establecen los principios que guían cada interacción y decisión.'
       ],
       'brand-1': [
         'Cuando todo cambia, los valores son lo único que permanece. Aquí se define el propósito, la esencia que da coherencia al resto. No son palabras bonitas para un manifiesto: son decisiones que marcarán cada elección futura.',
@@ -673,6 +687,11 @@ export default function HomePage() {
         'El sistema visual es la expresión tangible de la marca. Diseñamos elementos que comunican la personalidad y valores de forma consistente.',
         'La identidad visual trasciende lo estético. Cada elemento está pensado para reforzar la narrativa de la marca.'
       ],
+      'product-0': [
+        'Un gran producto resuelve problemas reales de forma elegante. Diseñamos funcionalidades que importan y experiencias que enamoran.',
+        'El producto es el puente entre la visión y la realidad. Cada función, cada interacción, cada detalle está pensado para crear valor genuino.',
+        'La iteración es el camino hacia la excelencia. Cada prototipo nos acerca más a la solución perfecta.'
+      ],
       'product-1': [
         'Definir las funcionalidades es definir el alma del producto. Aquí se decide qué debe hacer, cómo y para quién. El MVP no es una versión reducida: es la esencia funcional.',
         'Un gran producto resuelve problemas reales de forma elegante. Diseñamos funcionalidades que importan y experiencias que enamoran.',
@@ -687,6 +706,11 @@ export default function HomePage() {
         'Llega el momento de ponerlo en marcha. Shipping no es el cierre, es la apertura al mundo real. Lo que antes eran hipótesis se convierte en hechos.',
         'El lanzamiento es el inicio de una nueva fase. Preparamos todo para que el producto encuentre su lugar en el mercado.',
         'Shipping marca el comienzo del aprendizaje real. El producto finalmente se enfrenta a sus usuarios verdaderos.'
+      ],
+      'messages-0': [
+        'Una comunicación efectiva transforma ideas en conexiones. Desarrollamos mensajes que resuenan y estrategias que impactan.',
+        'Los mensajes dan vida a la marca. Cada contenido, cada campaña, cada palabra está diseñada para crear conversaciones significativas.',
+        'Las redes no son escaparates, son conversaciones. Aquí se define cómo la marca se presenta, cómo responde, cómo escucha.'
       ],
       'messages-1': [
         'Las redes no son escaparates, son conversaciones. Aquí se define cómo la marca se presenta, cómo responde, cómo escucha. La presencia digital es ritmo, tono y continuidad.',
@@ -2109,40 +2133,53 @@ export default function HomePage() {
       case 'rollout':
         return (
           <div style={{ display: 'flex', flexDirection: 'column', gap: '0' }}>
-            {(value || []).map((item: any, index: number) => (
+            {(value || [
+              { date: '', task: '', completed: false },
+              { date: '', task: '', completed: false },
+              { date: '', task: '', completed: false }
+            ]).map((item: any, index: number) => (
               <div key={index} style={{
                 display: 'flex',
                 alignItems: 'center',
                 gap: '12px',
                 padding: '16px 0',
-                borderBottom: index < (value || []).length - 1 ? '1px solid #333333' : 'none'
+                borderBottom: '1px solid #333333'
               }}>
                 <input
                   type="date"
                   value={item.date || ''}
                   onChange={(e) => {
-                    const newRollout = [...(value || [])];
+                    const newRollout = [...(value || [
+                      { date: '', task: '', completed: false },
+                      { date: '', task: '', completed: false },
+                      { date: '', task: '', completed: false }
+                    ])];
                     newRollout[index] = { ...newRollout[index], date: e.target.value };
                     updateField(step.field, newRollout);
                   }}
                   style={{
+                    height: '48px',
                     padding: '12px 16px',
                     fontSize: '16px',
-                    border: '1px solid #333333',
-                    borderRadius: '8px',
+                    border: 'none',
+                    borderBottom: '1px solid #333333',
                     backgroundColor: 'transparent',
                     color: '#ffffff',
                     outline: 'none',
                     transition: 'all 0.2s ease'
                   }}
-                  onMouseEnter={(e) => e.target.style.borderColor = '#ffffff'}
-                  onMouseLeave={(e) => e.target.style.borderColor = '#333333'}
+                  onMouseEnter={(e) => e.target.style.borderBottomColor = '#ffffff'}
+                  onMouseLeave={(e) => e.target.style.borderBottomColor = '#333333'}
                 />
                 <input
                   type="text"
                   value={item.task || ''}
                   onChange={(e) => {
-                    const newRollout = [...(value || [])];
+                    const newRollout = [...(value || [
+                      { date: '', task: '', completed: false },
+                      { date: '', task: '', completed: false },
+                      { date: '', task: '', completed: false }
+                    ])];
                     newRollout[index] = { ...newRollout[index], task: e.target.value };
                     updateField(step.field, newRollout);
                   }}
@@ -2151,20 +2188,24 @@ export default function HomePage() {
                     height: '48px',
                     padding: '12px 16px',
                     fontSize: '16px',
-                    border: '1px solid #333333',
-                    borderRadius: '8px',
+                    border: 'none',
+                    borderBottom: '1px solid #333333',
                     backgroundColor: 'transparent',
                     color: '#ffffff',
                     outline: 'none',
                     transition: 'all 0.2s ease'
                   }}
-                  onMouseEnter={(e) => e.target.style.borderColor = '#ffffff'}
-                  onMouseLeave={(e) => e.target.style.borderColor = '#333333'}
+                  onMouseEnter={(e) => e.target.style.borderBottomColor = '#ffffff'}
+                  onMouseLeave={(e) => e.target.style.borderBottomColor = '#333333'}
                   placeholder="Tarea del plan"
                 />
                 <button
                   onClick={() => {
-                    const newRollout = [...(value || [])];
+                    const newRollout = [...(value || [
+                      { date: '', task: '', completed: false },
+                      { date: '', task: '', completed: false },
+                      { date: '', task: '', completed: false }
+                    ])];
                     newRollout[index] = { ...newRollout[index], completed: !newRollout[index].completed };
                     updateField(step.field, newRollout);
                   }}
@@ -2172,7 +2213,7 @@ export default function HomePage() {
                     width: '32px',
                     height: '32px',
                     border: '2px solid #333333',
-                    borderRadius: '4px',
+                    borderRadius: '50%',
                     backgroundColor: item.completed ? '#ffffff' : 'transparent',
                     cursor: 'pointer',
                     display: 'flex',
@@ -2191,7 +2232,11 @@ export default function HomePage() {
             ))}
             
             <button
-              onClick={() => updateField(step.field, [...(value || []), { date: '', task: '', completed: false }])}
+              onClick={() => updateField(step.field, [...(value || [
+                { date: '', task: '', completed: false },
+                { date: '', task: '', completed: false },
+                { date: '', task: '', completed: false }
+              ]), { date: '', task: '', completed: false }])}
               style={{
                 display: 'flex',
                 alignItems: 'center',
@@ -4925,8 +4970,8 @@ export default function HomePage() {
                 </span>
               </div>
             ))}
-          </div>
-        );
+        </div>
+      );
 
       default:
         return null;
