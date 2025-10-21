@@ -303,7 +303,7 @@ export default function HomePage() {
                   } else {
                     clearInterval(wordInterval);
                   }
-                }, 80); // Más rápido y suave: 80ms por palabra
+                }, 120); // Más sutil: 120ms por palabra
               }
             }, 1000);
     
@@ -328,7 +328,7 @@ export default function HomePage() {
         } else {
           clearInterval(wordInterval);
         }
-      }, 80);
+      }, 120);
       
       return () => clearInterval(wordInterval);
     }
