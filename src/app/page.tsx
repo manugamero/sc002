@@ -1,8 +1,8 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
-import { ArrowRight, ArrowLeft, Play, Pause } from 'lucide-react';
+import { ArrowRight, ArrowLeft, Play, Pause, Plus, Trash2, RefreshCw } from 'lucide-react';
 
 interface ProjectData {
   name: string;
@@ -93,12 +93,12 @@ export default function HomePage() {
   const [currentStepIndex, setCurrentStepIndex] = useState(0);
   const [projectData, setProjectData] = useState<ProjectData>(initialProjectData);
   const [isVideoPlaying, setIsVideoPlaying] = useState(true);
+  const videoRef = useRef<HTMLVideoElement>(null);
 
   // Forzar autoplay cuando cambie el video
   useEffect(() => {
-    const video = document.querySelector('video');
-    if (video) {
-      video.play().catch(console.error);
+    if (videoRef.current) {
+      videoRef.current.play().catch(console.error);
       setIsVideoPlaying(true);
     }
   }, [currentStepIndex]);
@@ -120,7 +120,7 @@ export default function HomePage() {
       name: 'Juan Pérez',
       company: 'TechStart',
       strategy: {
-        interviews: 'Entrevistas realizadas con el equipo fundador',
+        interviews: 'Entrevistas realizadas con el equipo fundador y usuarios clave',
         competitors: ['Competitor A', 'Competitor B', 'Competitor C'],
         plan: ['Desarrollar MVP', 'Validar mercado', 'Lanzar beta']
       },
@@ -137,8 +137,8 @@ export default function HomePage() {
         prototype: 'https://figma.com/prototype'
       },
       communication: {
-        social: { name: 'TechStart', bio: 'Innovando el futuro' },
-        ads: 'Campaña de lanzamiento'
+        social: { name: 'TechStart', bio: 'Innovando el futuro de la tecnología' },
+        ads: 'Campaña de lanzamiento para TechStart'
       },
       launch: {
         questions: [
@@ -198,7 +198,7 @@ export default function HomePage() {
             onChange={(e) => updateField(step.field, e.target.value)}
             className="w-full px-4 py-3 text-lg border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-500 focus:border-transparent"
             rows={4}
-            placeholder={`Escribe tu respuesta...`}
+            placeholder={step.title}
             autoFocus
           />
         );
@@ -207,25 +207,36 @@ export default function HomePage() {
         return (
           <div className="space-y-3">
             {value.map((competitor: string, index: number) => (
-              <input
-                key={index}
-                type="text"
-                value={competitor}
-                onChange={(e) => {
-                  const newCompetitors = [...value];
-                  newCompetitors[index] = e.target.value;
-                  updateField(step.field, newCompetitors);
-                }}
-                className="w-full px-4 py-3 text-lg border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-500 focus:border-transparent"
-                placeholder="Nombre del competidor"
-                autoFocus={index === value.length - 1}
-              />
+              <div key={index} className="flex items-center gap-2">
+                <input
+                  type="text"
+                  value={competitor}
+                  onChange={(e) => {
+                    const newCompetitors = [...value];
+                    newCompetitors[index] = e.target.value;
+                    updateField(step.field, newCompetitors);
+                  }}
+                  className="flex-1 px-4 py-3 text-lg border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-500 focus:border-transparent"
+                  placeholder="Nombre del competidor"
+                  autoFocus={index === value.length - 1}
+                />
+                <button
+                  onClick={() => {
+                    const newCompetitors = value.filter((_: any, i: number) => i !== index);
+                    updateField(step.field, newCompetitors);
+                  }}
+                  className="p-2 text-red-500 hover:text-red-700"
+                >
+                  <Trash2 className="w-4 h-4" />
+                </button>
+              </div>
             ))}
             <button
               onClick={() => updateField(step.field, [...value, ''])}
-              className="text-sm text-gray-600 hover:text-gray-900"
+              className="flex items-center gap-2 text-sm text-gray-600 hover:text-gray-900"
             >
-              + Añadir competidor
+              <Plus className="w-4 h-4" />
+              Añadir competidor
             </button>
           </div>
         );
@@ -234,25 +245,36 @@ export default function HomePage() {
         return (
           <div className="space-y-3">
             {value.map((item: string, index: number) => (
-              <input
-                key={index}
-                type="text"
-                value={item}
-                onChange={(e) => {
-                  const newPlan = [...value];
-                  newPlan[index] = e.target.value;
-                  updateField(step.field, newPlan);
-                }}
-                className="w-full px-4 py-3 text-lg border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-500 focus:border-transparent"
-                placeholder="Tarea del plan"
-                autoFocus={index === value.length - 1}
-              />
+              <div key={index} className="flex items-center gap-2">
+                <input
+                  type="text"
+                  value={item}
+                  onChange={(e) => {
+                    const newPlan = [...value];
+                    newPlan[index] = e.target.value;
+                    updateField(step.field, newPlan);
+                  }}
+                  className="flex-1 px-4 py-3 text-lg border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-500 focus:border-transparent"
+                  placeholder="Tarea del plan"
+                  autoFocus={index === value.length - 1}
+                />
+                <button
+                  onClick={() => {
+                    const newPlan = value.filter((_: any, i: number) => i !== index);
+                    updateField(step.field, newPlan);
+                  }}
+                  className="p-2 text-red-500 hover:text-red-700"
+                >
+                  <Trash2 className="w-4 h-4" />
+                </button>
+              </div>
             ))}
             <button
               onClick={() => updateField(step.field, [...value, ''])}
-              className="text-sm text-gray-600 hover:text-gray-900"
+              className="flex items-center gap-2 text-sm text-gray-600 hover:text-gray-900"
             >
-              + Añadir tarea
+              <Plus className="w-4 h-4" />
+              Añadir tarea
             </button>
           </div>
         );
@@ -288,9 +310,10 @@ export default function HomePage() {
             ))}
             <button
               onClick={() => updateField(step.field, [...value, { value: '', opposite: '' }])}
-              className="text-sm text-gray-600 hover:text-gray-900"
+              className="flex items-center gap-2 text-sm text-gray-600 hover:text-gray-900"
             >
-              + Añadir valor
+              <Plus className="w-4 h-4" />
+              Añadir valor
             </button>
           </div>
         );
@@ -299,25 +322,36 @@ export default function HomePage() {
         return (
           <div className="space-y-3">
             {value.map((feature: string, index: number) => (
-              <input
-                key={index}
-                type="text"
-                value={feature}
-                onChange={(e) => {
-                  const newFeatures = [...value];
-                  newFeatures[index] = e.target.value;
-                  updateField(step.field, newFeatures);
-                }}
-                className="w-full px-4 py-3 text-lg border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-500 focus:border-transparent"
-                placeholder="Funcionalidad"
-                autoFocus={index === value.length - 1}
-              />
+              <div key={index} className="flex items-center gap-2">
+                <input
+                  type="text"
+                  value={feature}
+                  onChange={(e) => {
+                    const newFeatures = [...value];
+                    newFeatures[index] = e.target.value;
+                    updateField(step.field, newFeatures);
+                  }}
+                  className="flex-1 px-4 py-3 text-lg border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-500 focus:border-transparent"
+                  placeholder="Funcionalidad"
+                  autoFocus={index === value.length - 1}
+                />
+                <button
+                  onClick={() => {
+                    const newFeatures = value.filter((_: any, i: number) => i !== index);
+                    updateField(step.field, newFeatures);
+                  }}
+                  className="p-2 text-red-500 hover:text-red-700"
+                >
+                  <Trash2 className="w-4 h-4" />
+                </button>
+              </div>
             ))}
             <button
               onClick={() => updateField(step.field, [...value, ''])}
-              className="text-sm text-gray-600 hover:text-gray-900"
+              className="flex items-center gap-2 text-sm text-gray-600 hover:text-gray-900"
             >
-              + Añadir funcionalidad
+              <Plus className="w-4 h-4" />
+              Añadir funcionalidad
             </button>
           </div>
         );
@@ -412,6 +446,7 @@ export default function HomePage() {
             <div className="md:sticky md:top-20 md:h-[calc(100vh-5rem)]">
               <div className="relative w-full h-64 md:h-full bg-gray-100 rounded-lg overflow-hidden">
                 <video
+                  ref={videoRef}
                   key={currentStepIndex}
                   className="w-full h-full object-cover"
                   autoPlay
@@ -427,12 +462,11 @@ export default function HomePage() {
                 <div className="absolute inset-0 bg-black/10 flex items-center justify-center">
                   <button
                     onClick={() => {
-                      const video = document.querySelector('video');
-                      if (video) {
-                        if (video.paused) {
-                          video.play();
+                      if (videoRef.current) {
+                        if (videoRef.current.paused) {
+                          videoRef.current.play();
                         } else {
-                          video.pause();
+                          videoRef.current.pause();
                         }
                       }
                     }}
