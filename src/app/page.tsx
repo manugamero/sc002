@@ -96,7 +96,6 @@ export default function HomePage() {
   const [currentStepIndex, setCurrentStepIndex] = useState(0);
   const [projectData, setProjectData] = useState<ProjectData>(initialProjectData);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [selectedMode, setSelectedMode] = useState<'startup' | 'scaleup' | 'corporate'>('startup');
   const [selectedVersion, setSelectedVersion] = useState<number>(1);
   const [isAnimating, setIsAnimating] = useState(false);
   const [showElements, setShowElements] = useState({
@@ -1593,10 +1592,10 @@ export default function HomePage() {
             <button
                 onClick={() => {
                   const currentCount = (value?.competitors || []).length;
-                  const maxCompetitors = selectedMode === 'startup' ? 3 : selectedMode === 'scaleup' ? 6 : 10;
+                  const maxCompetitors = 5;
                   
                   if (currentCount >= maxCompetitors) {
-                    alert(`Máximo ${maxCompetitors} competidores para modo ${selectedMode.toUpperCase()}`);
+                    alert(`Máximo ${maxCompetitors} competidores`);
                     return;
                   }
                   
@@ -1631,7 +1630,7 @@ export default function HomePage() {
                 }}
               >
                 <Plus style={{ width: '16px', height: '16px' }} />
-                Añadir competidor ({(value?.competitors || []).length}/{selectedMode === 'startup' ? 3 : selectedMode === 'scaleup' ? 6 : 10})
+                Añadir competidor ({(value?.competitors || []).length}/{maxCompetitors})
             </button>
             </div>
           </div>
@@ -3898,11 +3897,11 @@ export default function HomePage() {
               border: '1px solid #333333'
             }}>
               <h3 style={{ color: '#ffffff', fontSize: '18px', marginBottom: '16px' }}>
-                Preguntas de Shipping - {selectedMode === 'startup' ? 'Startup' : selectedMode === 'scaleup' ? 'ScaleUp' : 'Corporate'}
+                Preguntas de Shipping
               </h3>
               
               <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-                {selectedMode === 'startup' && [
+                {[
                   '¿Cuál es tu fecha de lanzamiento objetivo?',
                   '¿Tienes un presupuesto definido para el lanzamiento?',
                   '¿Qué canales de marketing vas a usar?',
@@ -3939,7 +3938,7 @@ export default function HomePage() {
                   </div>
                 ))}
                 
-                {selectedMode === 'scaleup' && [
+                {false && [
                   '¿Cuál es tu estrategia de lanzamiento por fases?',
                   '¿Tienes equipos específicos para cada canal?',
                   '¿Cómo vas a medir el éxito del lanzamiento?',
@@ -3977,7 +3976,7 @@ export default function HomePage() {
                   </div>
                 ))}
                 
-                {selectedMode === 'corporate' && [
+                {false && [
                   '¿Cuál es tu plan de lanzamiento global?',
                   '¿Tienes equipos regionales preparados?',
                   '¿Cómo vas a coordinar el lanzamiento internacional?',
@@ -4531,7 +4530,7 @@ export default function HomePage() {
               </div>
               
               {/* Hoodie (ScaleUp) */}
-              {selectedMode === 'scaleup' && (
+              {false && (
                 <div style={{
                   display: 'flex',
                   flexDirection: 'column',
@@ -4579,7 +4578,7 @@ export default function HomePage() {
               )}
               
               {/* Backpack (ScaleUp) */}
-              {selectedMode === 'scaleup' && (
+              {false && (
                 <div style={{
                   display: 'flex',
                   flexDirection: 'column',
@@ -4627,7 +4626,7 @@ export default function HomePage() {
               )}
               
               {/* Corporate Items */}
-              {selectedMode === 'corporate' && (
+              {false && (
                 <>
                   <div style={{
                     display: 'flex',
@@ -4901,100 +4900,6 @@ export default function HomePage() {
         </div>
       );
 
-      case 'mode-selector':
-        return (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
-            <div style={{
-              padding: '20px',
-              backgroundColor: '#1a1a1a',
-              borderRadius: '8px',
-              border: '1px solid #333333'
-            }}>
-              <h3 style={{ color: '#ffffff', fontSize: '18px', marginBottom: '16px' }}>
-                Selecciona tu modo de trabajo
-              </h3>
-              <p style={{ color: '#cccccc', fontSize: '14px', marginBottom: '24px' }}>
-                Elige el modo que mejor se adapte a tu proyecto para personalizar la experiencia.
-              </p>
-              
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '0' }}>
-                {[
-                  {
-                    id: 'startup',
-                    title: 'Startup',
-                    description: 'Para proyectos en fase inicial con recursos limitados y enfoque en MVP.'
-                  },
-                  {
-                    id: 'scaleup',
-                    title: 'ScaleUp',
-                    description: 'Para proyectos en crecimiento que buscan escalar y optimizar procesos.'
-                  },
-                  {
-                    id: 'corporate',
-                    title: 'Corporate',
-                    description: 'Para proyectos empresariales con recursos completos y procesos establecidos.'
-                  }
-                ].map((mode, index) => (
-                  <div key={mode.id} style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '16px',
-                    padding: '20px',
-                    borderBottom: index < 2 ? '1px solid #333333' : 'none',
-                    cursor: 'pointer',
-                    backgroundColor: value === mode.id ? '#2a2a2a' : 'transparent',
-                    transition: 'background-color 0.2s ease'
-                  }}
-                  onClick={() => updateField(step.field, mode.id)}
-                  onMouseEnter={(e) => {
-                    if (value !== mode.id) e.target.style.backgroundColor = '#1a1a1a';
-                  }}
-                  onMouseLeave={(e) => {
-                    if (value !== mode.id) e.target.style.backgroundColor = 'transparent';
-                  }}>
-                    <div style={{
-                      width: '24px',
-                      height: '24px',
-                      border: '2px solid #333333',
-                      borderRadius: '50%',
-                      backgroundColor: value === mode.id ? '#ffffff' : 'transparent',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      transition: 'all 0.2s ease'
-                    }}>
-                      {value === mode.id && (
-                        <div style={{
-                          width: '8px',
-                          height: '8px',
-                          backgroundColor: '#000000',
-                          borderRadius: '50%'
-                        }} />
-                      )}
-                    </div>
-                    <div style={{ flex: 1 }}>
-                      <h4 style={{
-                        color: '#ffffff',
-                        fontSize: '16px',
-                        marginBottom: '4px',
-                        fontWeight: value === mode.id ? '600' : '400'
-                      }}>
-                        {mode.title}
-                      </h4>
-                      <p style={{
-                        color: '#cccccc',
-                        fontSize: '14px',
-                        margin: '0'
-                      }}>
-                        {mode.description}
-                      </p>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-        </div>
-      );
 
       default:
         return null;
@@ -5025,11 +4930,13 @@ export default function HomePage() {
           .video-column {
             width: 50%;
             height: 100vh;
+            flex-shrink: 0;
           }
           
           .content-column {
             width: 50%;
             height: 100vh;
+            flex-shrink: 0;
           }
           
           .mobile-menu {
@@ -5603,8 +5510,8 @@ export default function HomePage() {
                     fontSize: '14px',
                     border: '1px solid #333333',
                     borderRadius: '20px',
-                    backgroundColor: selectedMode === 'startup' ? '#ffffff' : 'transparent',
-                    color: selectedMode === 'startup' ? '#000000' : '#666666',
+                    backgroundColor: '#ffffff',
+                    color: '#000000',
                     cursor: 'pointer',
                     transition: 'all 0.2s ease'
                   }}
@@ -5618,8 +5525,8 @@ export default function HomePage() {
                     fontSize: '14px',
                     border: '1px solid #333333',
                     borderRadius: '20px',
-                    backgroundColor: selectedMode === 'scaleup' ? '#ffffff' : 'transparent',
-                    color: selectedMode === 'scaleup' ? '#000000' : '#666666',
+                    backgroundColor: 'transparent',
+                    color: '#666666',
                     cursor: 'pointer',
                     transition: 'all 0.2s ease'
                   }}
@@ -5633,8 +5540,8 @@ export default function HomePage() {
                     fontSize: '14px',
                     border: '1px solid #333333',
                     borderRadius: '20px',
-                    backgroundColor: selectedMode === 'corporate' ? '#ffffff' : 'transparent',
-                    color: selectedMode === 'corporate' ? '#000000' : '#666666',
+                    backgroundColor: 'transparent',
+                    color: '#666666',
                     cursor: 'pointer',
                     transition: 'all 0.2s ease'
                   }}
