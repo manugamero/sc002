@@ -5925,7 +5925,7 @@ export default function HomePage() {
                   }
                 }}
                 >
-                  {getSectionTitle(steps[currentStepIndex].id).split(' / ')[0]?.toUpperCase() || 'S+C'}
+                  {getSectionTitle(steps[currentStepIndex]?.id || 'intro').split(' / ')[0]?.toUpperCase() || 'S+C'}
                 </div>
                 <div style={{ 
                   fontSize: '24px', 
@@ -5936,7 +5936,7 @@ export default function HomePage() {
                 onMouseEnter={(e) => e.target.style.color = '#ffffff'}
                 onMouseLeave={(e) => e.target.style.color = '#cccccc'}
                 onClick={() => {
-                  const subsectionName = getSectionTitle(steps[currentStepIndex].id).split(' / ')[1] || 'Framework';
+                  const subsectionName = getSectionTitle(steps[currentStepIndex]?.id || 'intro').split(' / ')[1] || 'Framework';
                   console.log('Subsection name:', subsectionName);
                   const targetIndex = findSubsectionIndex(subsectionName);
                   console.log('Target index:', targetIndex);
@@ -5945,7 +5945,7 @@ export default function HomePage() {
                   }
                 }}
                 >
-                  {getSectionTitle(steps[currentStepIndex].id).split(' / ')[1]?.toUpperCase() || 'FRAMEWORK'}
+                  {getSectionTitle(steps[currentStepIndex]?.id || 'intro').split(' / ')[1]?.toUpperCase() || 'FRAMEWORK'}
                 </div>
               </div>
               
