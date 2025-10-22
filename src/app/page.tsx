@@ -421,6 +421,45 @@ export default function HomePage() {
     }
   };
 
+  // Efecto para manejar navegación con teclado
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      // Evitar la navegación si el usuario está escribiendo en un input o textarea
+      const target = event.target as HTMLElement;
+      if (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA') {
+        return;
+      }
+
+      switch (event.key) {
+        case 'ArrowRight':
+          event.preventDefault();
+          handleNext();
+          break;
+        case 'ArrowLeft':
+          event.preventDefault();
+          handlePrevious();
+          break;
+        case 'ArrowDown':
+          event.preventDefault();
+          window.scrollBy({
+            top: 200,
+            behavior: 'smooth'
+          });
+          break;
+        case 'ArrowUp':
+          event.preventDefault();
+          window.scrollBy({
+            top: -200,
+            behavior: 'smooth'
+          });
+          break;
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [currentStepIndex, isAnimating]);
+
   const handleDummyData = () => {
     setProjectData({
       name: 'Juan Pérez',

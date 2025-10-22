@@ -569,15 +569,15 @@ export default function AdminPage() {
             </div>
 
             {/* Tabla de Pasos */}
-            <div className="bg-white/[0.02] border border-white/10 rounded-xl overflow-hidden">
+            <div className="bg-transparent border border-white/[0.08] rounded-xl overflow-hidden">
               <Table>
                 <TableHeader>
-                  <TableRow className="border-b border-white/10 hover:bg-transparent">
-                    <TableHead className="text-gray-400 font-medium w-20">#</TableHead>
-                    <TableHead className="text-gray-400 font-medium">Paso</TableHead>
-                    <TableHead className="text-gray-400 font-medium">Descripción</TableHead>
-                    <TableHead className="text-gray-400 font-medium text-center">Respuestas</TableHead>
-                    <TableHead className="text-gray-400 font-medium text-right">Acciones</TableHead>
+                  <TableRow className="border-b border-white/[0.08] hover:bg-transparent">
+                    <TableHead className="text-white/40 font-medium w-32">#</TableHead>
+                    <TableHead className="text-white/40 font-medium w-48">Paso</TableHead>
+                    <TableHead className="text-white/40 font-medium">Descripción</TableHead>
+                    <TableHead className="text-white/40 font-medium text-center w-32">Respuestas</TableHead>
+                    <TableHead className="text-white/40 font-medium text-right w-40">Acciones</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -607,30 +607,28 @@ export default function AdminPage() {
                       return (
                         <TableRow 
                           key={step.id} 
-                          className="border-b border-white/5 hover:bg-white/[0.02] transition-colors"
+                          className="border-b border-white/[0.08] hover:bg-white/[0.02] transition-colors"
                         >
-                          <TableCell className="font-mono text-blue-400 font-semibold">
+                          <TableCell className="font-mono text-white font-medium">
                             {stepNumber}
                           </TableCell>
                           <TableCell>
                             <div className="flex items-center gap-3">
-                              <div className="w-8 h-8 rounded-lg bg-blue-500/10 border border-blue-500/20 flex items-center justify-center">
-                                <IconComponent className="w-4 h-4 text-blue-400" />
-                              </div>
+                              <IconComponent className="w-5 h-5 text-white" />
                               <div>
                                 <div className="text-white font-medium">{step.title}</div>
-                                <div className="text-xs text-gray-500">{step.type}</div>
+                                <div className="text-xs text-white/40">{step.type}</div>
                               </div>
                             </div>
                           </TableCell>
-                          <TableCell className="text-gray-400 text-sm max-w-md">
+                          <TableCell className="text-white/60 text-sm max-w-md">
                             {step.description}
                           </TableCell>
                           <TableCell className="text-center">
-                            <div className="flex flex-col gap-1 items-center">
+                            <div className="flex flex-col gap-2 items-center">
                               <button
                                 onClick={() => setViewStepDetails({ stepId: step.id })}
-                                className="text-white font-semibold text-lg hover:text-blue-400 transition-colors cursor-pointer"
+                                className="text-white font-semibold text-lg hover:text-white/80 transition-colors cursor-pointer"
                                 title="Ver todas las respuestas de este paso"
                               >
                                 {totalResponses}
@@ -649,8 +647,8 @@ export default function AdminPage() {
                                       }}
                                       className={`w-6 h-6 rounded text-xs font-medium transition-all ${
                                         isCompleted
-                                          ? 'bg-green-500/20 text-green-400 border border-green-500/30 hover:bg-green-500/30'
-                                          : 'bg-white/5 text-gray-600 border border-white/10 hover:bg-white/10'
+                                          ? 'bg-white text-black hover:bg-white/90'
+                                          : 'bg-white/5 text-white/40 border border-white/10 hover:bg-white/10'
                                       }`}
                                       title={`${project.project.name}: ${count} respuestas`}
                                     >
@@ -666,7 +664,7 @@ export default function AdminPage() {
                               {step.videoUrl && (
                                 <button
                                   onClick={() => setPreviewVideo(step.videoUrl)}
-                                  className="w-8 h-8 flex items-center justify-center bg-purple-500/10 border border-purple-500/20 rounded-md text-purple-400 hover:bg-purple-500/20 transition-all"
+                                  className="w-9 h-9 flex items-center justify-center bg-white/5 border border-white/10 rounded-full text-white hover:bg-white/10 transition-all"
                                   title="Previsualizar video"
                                 >
                                   <Play className="w-4 h-4" />
@@ -674,7 +672,7 @@ export default function AdminPage() {
                               )}
                               <button
                                 onClick={() => setEditingStepData(step)}
-                                className="w-8 h-8 flex items-center justify-center bg-blue-500/10 border border-blue-500/20 rounded-md text-blue-400 hover:bg-blue-500/20 transition-all"
+                                className="w-9 h-9 flex items-center justify-center bg-white/5 border border-white/10 rounded-full text-white hover:bg-white/10 transition-all"
                                 title="Editar paso"
                               >
                                 <Edit className="w-4 h-4" />
@@ -685,7 +683,7 @@ export default function AdminPage() {
                                     handleRemoveStep(step.id);
                                   }
                                 }}
-                                className="w-8 h-8 flex items-center justify-center bg-red-500/10 border border-red-500/20 rounded-md text-red-400 hover:bg-red-500/20 transition-all"
+                                className="w-9 h-9 flex items-center justify-center bg-white/10 border border-white/20 rounded-full text-white hover:bg-white/20 transition-all"
                                 title="Eliminar paso"
                               >
                                 <Trash2 className="w-4 h-4" />
@@ -709,30 +707,30 @@ export default function AdminPage() {
 
             {/* Estadísticas Resumidas */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <Card className="bg-white/[0.03] border-white/10">
+              <Card className="bg-white/[0.03] border-white/[0.08]">
                 <CardHeader className="pb-3">
-                  <CardTitle className="text-sm font-medium text-gray-400">Total Proyectos</CardTitle>
+                  <CardTitle className="text-sm font-medium text-white/40">Total Proyectos</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <div className="text-3xl font-bold text-blue-400">{projects.length}</div>
+                  <div className="text-3xl font-bold text-white">{projects.length}</div>
                 </CardContent>
               </Card>
               
-              <Card className="bg-white/[0.03] border-white/10">
+              <Card className="bg-white/[0.03] border-white/[0.08]">
                 <CardHeader className="pb-3">
-                  <CardTitle className="text-sm font-medium text-gray-400">Pasos Configurados</CardTitle>
+                  <CardTitle className="text-sm font-medium text-white/40">Pasos Configurados</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <div className="text-3xl font-bold text-green-400">{config.steps.length}</div>
+                  <div className="text-3xl font-bold text-white">{config.steps.length}</div>
                 </CardContent>
               </Card>
               
-              <Card className="bg-white/[0.03] border-white/10">
+              <Card className="bg-white/[0.03] border-white/[0.08]">
                 <CardHeader className="pb-3">
-                  <CardTitle className="text-sm font-medium text-gray-400">Videos Disponibles</CardTitle>
+                  <CardTitle className="text-sm font-medium text-white/40">Videos Disponibles</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <div className="text-3xl font-bold text-orange-400">{config.videos?.length || 0}</div>
+                  <div className="text-3xl font-bold text-white">{config.videos?.length || 0}</div>
                 </CardContent>
               </Card>
             </div>
@@ -740,136 +738,74 @@ export default function AdminPage() {
         )}
 
         {view === 'steps' && config && (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <h2 style={{ fontSize: '24px', fontWeight: '600', color: '#ffffff' }}>
+          <div className="flex flex-col gap-6">
+            <div className="flex justify-between items-center">
+              <h2 className="text-2xl font-semibold text-white">
                 Gestión de Pasos
               </h2>
               <button
                 onClick={() => setNewStep({})}
-                style={{
-                  padding: '12px 20px',
-                  backgroundColor: '#4a9eff',
-                  border: 'none',
-                  borderRadius: '8px',
-                  cursor: 'pointer',
-                  color: '#ffffff',
-                  fontSize: '14px',
-                  fontWeight: '500',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '8px'
-                }}
+                className="px-6 py-3 bg-white text-black rounded-full hover:bg-white/90 transition-all text-sm font-medium flex items-center gap-2"
               >
-                <Plus style={{ width: '16px', height: '16px' }} />
+                <Plus className="w-4 h-4" />
                 Nuevo Paso
               </button>
             </div>
 
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+            <div className="flex flex-col gap-0">
               {config.steps
                 .sort((a: any, b: any) => (a.order || 0) - (b.order || 0))
                 .map((step: any, index: number) => {
                   const IconComponent = getIconComponent(step.icon || 'target');
+                  const stepNumber = getStepNumber(step.id);
                   return (
                     <div
                       key={step.id}
-                      style={{
-                        padding: '20px',
-                        backgroundColor: 'rgba(255, 255, 255, 0.03)',
-                        border: '1px solid #333333',
-                        borderRadius: '12px',
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: '16px'
-                      }}
+                      className="px-6 py-5 border-b border-white/[0.08] flex items-center gap-4 hover:bg-white/[0.02] transition-colors"
                     >
-                      <div style={{ 
-                        width: '40px', 
-                        height: '40px', 
-                        display: 'flex', 
-                        alignItems: 'center', 
-                        justifyContent: 'center',
-                        backgroundColor: 'rgba(74, 158, 255, 0.1)',
-                        borderRadius: '8px',
-                        color: '#4a9eff'
-                      }}>
-                        <IconComponent style={{ width: '20px', height: '20px' }} />
+                      <div className="font-mono text-white font-medium w-16">
+                        {stepNumber}
                       </div>
                       
-                      <div style={{ flex: 1 }}>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '4px' }}>
-                          <h3 style={{ fontSize: '16px', fontWeight: '600', color: '#ffffff' }}>
+                      <IconComponent className="w-5 h-5 text-white" />
+                      
+                      <div className="flex-1">
+                        <div className="flex items-center gap-3 mb-1">
+                          <h3 className="text-base font-medium text-white">
                             {step.title}
                           </h3>
-                          <span style={{
-                            padding: '2px 8px',
-                            backgroundColor: 'rgba(34, 197, 94, 0.2)',
-                            color: '#22c55e',
-                            borderRadius: '4px',
-                            fontSize: '12px',
-                            fontWeight: '500'
-                          }}>
+                          <span className="px-3 py-1 bg-white/5 text-white/60 rounded-full text-xs font-medium">
                             {step.type}
                           </span>
                           {step.required && (
-                            <span style={{
-                              padding: '2px 8px',
-                              backgroundColor: 'rgba(239, 68, 68, 0.2)',
-                              color: '#ef4444',
-                              borderRadius: '4px',
-                              fontSize: '12px',
-                              fontWeight: '500'
-                            }}>
+                            <span className="px-3 py-1 bg-white/10 text-white rounded-full text-xs font-medium">
                               Requerido
                             </span>
                           )}
                         </div>
-                        <p style={{ fontSize: '14px', color: '#cccccc', lineHeight: '1.4' }}>
+                        <p className="text-sm text-white/60 leading-relaxed">
                           {step.description}
                         </p>
                         {step.videoUrl && (
-                          <div style={{ marginTop: '8px', fontSize: '12px', color: '#888888' }}>
+                          <div className="mt-2 text-xs text-white/40">
                             Video: {step.videoUrl}
                           </div>
                         )}
                       </div>
                       
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                      <div className="flex items-center gap-2">
                         <button
                           onClick={() => setEditingStep(editingStep === step.id ? null : step.id)}
-                          style={{
-                            width: '32px',
-                            height: '32px',
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            backgroundColor: 'rgba(74, 158, 255, 0.1)',
-                            border: '1px solid rgba(74, 158, 255, 0.3)',
-                            borderRadius: '6px',
-                            cursor: 'pointer',
-                            color: '#4a9eff'
-                          }}
+                          className="w-9 h-9 flex items-center justify-center bg-white/5 border border-white/10 rounded-full text-white hover:bg-white/10 transition-all"
                         >
-                          <Edit style={{ width: '14px', height: '14px' }} />
+                          <Edit className="w-4 h-4" />
                         </button>
                         
                         <button
                           onClick={() => handleRemoveStep(step.id)}
-                          style={{
-                            width: '32px',
-                            height: '32px',
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            backgroundColor: 'rgba(239, 68, 68, 0.1)',
-                            border: '1px solid rgba(239, 68, 68, 0.3)',
-                            borderRadius: '6px',
-                            cursor: 'pointer',
-                            color: '#ef4444'
-                          }}
+                          className="w-9 h-9 flex items-center justify-center bg-white/10 border border-white/20 rounded-full text-white hover:bg-white/20 transition-all"
                         >
-                          <Trash2 style={{ width: '14px', height: '14px' }} />
+                          <Trash2 className="w-4 h-4" />
                         </button>
                       </div>
                     </div>
@@ -880,27 +816,23 @@ export default function AdminPage() {
         )}
 
         {view === 'assets' && config && (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <h2 style={{ fontSize: '24px', fontWeight: '600', color: '#ffffff' }}>
+          <div className="flex flex-col gap-6">
+            <div className="flex justify-between items-center">
+              <h2 className="text-2xl font-semibold text-white">
                 Gestión de Assets
               </h2>
-              <div style={{ display: 'flex', gap: '8px' }}>
+              <div className="flex gap-2">
                 {['videos', 'icons', 'colors'].map((type) => (
                   <button
                     key={type}
                     onClick={() => setAssetType(type as any)}
-                    style={{
-                      padding: '8px 16px',
-                      backgroundColor: assetType === type ? '#4a9eff' : 'rgba(255, 255, 255, 0.05)',
-                      border: `1px solid ${assetType === type ? '#4a9eff' : '#333333'}`,
-                      borderRadius: '6px',
-                      cursor: 'pointer',
-                      color: assetType === type ? '#ffffff' : '#cccccc',
-                      fontSize: '14px',
-                      fontWeight: '500',
-                      textTransform: 'capitalize'
-                    }}
+                    className={`
+                      px-6 py-3 rounded-full text-sm font-medium transition-all capitalize
+                      ${assetType === type 
+                        ? 'bg-white text-black' 
+                        : 'bg-white/5 text-white/60 border border-white/10 hover:bg-white/10 hover:text-white'
+                      }
+                    `}
                   >
                     {type}
                   </button>
@@ -909,74 +841,46 @@ export default function AdminPage() {
             </div>
 
             {assetType === 'videos' && (
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <h3 style={{ fontSize: '18px', fontWeight: '600', color: '#ffffff' }}>
+              <div className="flex flex-col gap-4">
+                <div className="flex justify-between items-center">
+                  <h3 className="text-lg font-semibold text-white">
                     Videos Disponibles
                   </h3>
                   <button
                     onClick={() => setShowAssetManager(true)}
-                    style={{
-                      padding: '8px 16px',
-                      backgroundColor: '#4a9eff',
-                      border: 'none',
-                      borderRadius: '6px',
-                      cursor: 'pointer',
-                      color: '#ffffff',
-                      fontSize: '14px',
-                      fontWeight: '500',
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: '8px'
-                    }}
+                    className="px-6 py-3 bg-white text-black rounded-full hover:bg-white/90 transition-all text-sm font-medium flex items-center gap-2"
                   >
-                    <Plus style={{ width: '16px', height: '16px' }} />
+                    <Plus className="w-4 h-4" />
                     Agregar Video
                   </button>
                 </div>
                 
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '16px' }}>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                   {config.videos?.map((video: any, index: number) => (
                     <div
                       key={index}
-                      style={{
-                        padding: '16px',
-                        backgroundColor: 'rgba(255, 255, 255, 0.03)',
-                        border: '1px solid #333333',
-                        borderRadius: '8px'
-                      }}
+                      className="p-4 bg-white/[0.03] border border-white/[0.08] rounded-xl"
                     >
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '12px' }}>
-                        <Video style={{ width: '20px', height: '20px', color: '#4a9eff' }} />
+                      <div className="flex items-center gap-3 mb-3">
+                        <Video className="w-5 h-5 text-white" />
                         <div>
-                          <div style={{ fontSize: '14px', fontWeight: '600', color: '#ffffff' }}>
+                          <div className="text-sm font-medium text-white">
                             {video.name}
                           </div>
-                          <div style={{ fontSize: '12px', color: '#888888' }}>
+                          <div className="text-xs text-white/40">
                             {video.category}
                           </div>
                         </div>
                       </div>
-                      <div style={{ fontSize: '12px', color: '#cccccc', marginBottom: '12px' }}>
+                      <div className="text-xs text-white/60 mb-3">
                         {video.url}
                       </div>
-                      <div style={{ display: 'flex', gap: '8px' }}>
+                      <div className="flex gap-2">
                         <button
                           onClick={() => setPreviewVideo(video.url)}
-                          style={{
-                            padding: '6px 12px',
-                            backgroundColor: 'rgba(74, 158, 255, 0.1)',
-                            border: '1px solid rgba(74, 158, 255, 0.3)',
-                            borderRadius: '4px',
-                            cursor: 'pointer',
-                            color: '#4a9eff',
-                            fontSize: '12px',
-                            display: 'flex',
-                            alignItems: 'center',
-                            gap: '4px'
-                          }}
+                          className="px-4 py-2 bg-white/5 border border-white/10 rounded-full text-white hover:bg-white/10 transition-all text-xs flex items-center gap-1.5"
                         >
-                          <Play style={{ width: '12px', height: '12px' }} />
+                          <Play className="w-3 h-3" />
                           Preview
                         </button>
                         <button
@@ -986,20 +890,9 @@ export default function AdminPage() {
                               setConfig(adminService.getConfig());
                             }
                           }}
-                          style={{
-                            padding: '6px 12px',
-                            backgroundColor: 'rgba(239, 68, 68, 0.1)',
-                            border: '1px solid rgba(239, 68, 68, 0.3)',
-                            borderRadius: '4px',
-                            cursor: 'pointer',
-                            color: '#ef4444',
-                            fontSize: '12px',
-                            display: 'flex',
-                            alignItems: 'center',
-                            gap: '4px'
-                          }}
+                          className="px-4 py-2 bg-white/10 border border-white/20 rounded-full text-white hover:bg-white/20 transition-all text-xs flex items-center gap-1.5"
                         >
-                          <Trash2 style={{ width: '12px', height: '12px' }} />
+                          <Trash2 className="w-3 h-3" />
                           Eliminar
                         </button>
                       </div>
@@ -1010,65 +903,33 @@ export default function AdminPage() {
             )}
 
             {assetType === 'icons' && (
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <h3 style={{ fontSize: '18px', fontWeight: '600', color: '#ffffff' }}>
+              <div className="flex flex-col gap-4">
+                <div className="flex justify-between items-center">
+                  <h3 className="text-lg font-semibold text-white">
                     Iconos Disponibles
                   </h3>
                   <button
                     onClick={() => setShowAssetManager(true)}
-                    style={{
-                      padding: '8px 16px',
-                      backgroundColor: '#4a9eff',
-                      border: 'none',
-                      borderRadius: '6px',
-                      cursor: 'pointer',
-                      color: '#ffffff',
-                      fontSize: '14px',
-                      fontWeight: '500',
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: '8px'
-                    }}
+                    className="px-6 py-3 bg-white text-black rounded-full hover:bg-white/90 transition-all text-sm font-medium flex items-center gap-2"
                   >
-                    <Plus style={{ width: '16px', height: '16px' }} />
+                    <Plus className="w-4 h-4" />
                     Agregar Icono
                   </button>
                 </div>
                 
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(120px, 1fr))', gap: '12px' }}>
+                <div className="grid grid-cols-4 md:grid-cols-6 lg:grid-cols-8 gap-3">
                   {config.icons.map((icon: any, index: number) => {
                     const IconComponent = getIconComponent(icon.name);
                     return (
                       <div
                         key={index}
-                        style={{
-                          padding: '16px',
-                          backgroundColor: 'rgba(255, 255, 255, 0.03)',
-                          border: '1px solid #333333',
-                          borderRadius: '8px',
-                          textAlign: 'center',
-                          cursor: 'pointer',
-                          transition: 'all 0.2s ease'
-                        }}
+                        className="p-4 bg-white/[0.03] border border-white/[0.08] rounded-xl text-center hover:bg-white/[0.05] cursor-pointer transition-all"
                       >
-                        <div style={{ 
-                          width: '32px', 
-                          height: '32px', 
-                          display: 'flex', 
-                          alignItems: 'center', 
-                          justifyContent: 'center',
-                          backgroundColor: 'rgba(74, 158, 255, 0.1)',
-                          borderRadius: '6px',
-                          color: '#4a9eff',
-                          margin: '0 auto 8px'
-                        }}>
-                          <IconComponent style={{ width: '16px', height: '16px' }} />
-                        </div>
-                        <div style={{ fontSize: '12px', color: '#cccccc', marginBottom: '4px' }}>
+                        <IconComponent className="w-8 h-8 text-white mx-auto mb-2" />
+                        <div className="text-xs text-white/60 mb-1">
                           {icon.name}
                         </div>
-                        <div style={{ fontSize: '10px', color: '#888888' }}>
+                        <div className="text-xs text-white/40">
                           {icon.category}
                         </div>
                       </div>
