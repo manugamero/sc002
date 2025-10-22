@@ -97,25 +97,24 @@ const steps = [
 ];
 
 const videos = [
-  'video00.00.mp4',
-  'video00.01.mp4',
-  'video00.02.mp4',
-  'video00.03.mp4',
-  'video00.04.mp4',
-  'video00.05.mp4',
-  'video00.06.mp4',
-  'video00.07.mp4',
-  'video01.00.mp4',
-  'video01.01.mp4',
-  'video02.00.mp4',
-  'video02.01.mp4',
-  'video02.02.mp4',
-  'video03.00.mp4',
-  'video03.01.mp4',
-  'video04.00.mp4',
-  'video04.01.mp4',
-  'video05.00.mp4',
-  'video11.mp4'
+  'video/video01-01.mp4',  // strategy-0
+  'video/video01-02.mp4',  // strategy-1
+  'video/video01-03.mp4',  // strategy-2
+  'video/video01-04.mp4',  // strategy-3
+  'video/video02-00.mp4',  // brand-0
+  'video/video02-01.mp4',  // brand-1
+  'video/video02-02.mp4',  // brand-2
+  'video/video02-03.mp4',  // brand-3
+  'video/video03-00.mp4',  // product-0
+  'video/video03-01.mp4',  // product-1
+  'video/video03-02.mp4',  // product-2
+  'video/video03-04.mp4',  // product-3
+  'video/video04-00.mp4',  // messages-0
+  'video/video04.01.mp4',  // messages-1
+  'video/video04-02.mp4',  // messages-2
+  'video/video04-03.mp4',  // messages-3
+  'video/video05-00.mp4',  // launch-1
+  'video/video05-01.mp4'   // launch-2
 ];
 
 export default function HomePage() {
