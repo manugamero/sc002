@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { 
   Target, 
   Palette, 
@@ -26,13 +26,32 @@ import {
   Upload,
   Eye,
   ExternalLink,
-  ArrowLeft
+  ArrowLeft,
+  ChevronDown,
+  ChevronUp,
+  Maximize2,
+  Minimize2
 } from 'lucide-react';
 import Button from '@/components/ui/Button';
 import HamburgerMenu from '@/components/HamburgerMenu';
 
 export default function SystemPage() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [expandedSections, setExpandedSections] = useState({
+    colors: true,
+    typography: true,
+    buttons: true,
+    forms: true,
+    tables: true,
+    lists: true,
+    cards: true,
+    alerts: true,
+    loading: true,
+    progress: true,
+    icons: true
+  });
+  const [allExpanded, setAllExpanded] = useState(true);
+  
   const [formData, setFormData] = useState({
     text: '',
     email: '',
@@ -73,6 +92,31 @@ export default function SystemPage() {
     setTableData(prev => prev.map((item, i) => 
       i === index ? { ...item, [field]: value } : item
     ));
+  };
+
+  const toggleSection = (section: string) => {
+    setExpandedSections(prev => ({
+      ...prev,
+      [section]: !prev[section as keyof typeof prev]
+    }));
+  };
+
+  const toggleAllSections = () => {
+    const newState = !allExpanded;
+    setAllExpanded(newState);
+    setExpandedSections({
+      colors: newState,
+      typography: newState,
+      buttons: newState,
+      forms: newState,
+      tables: newState,
+      lists: newState,
+      cards: newState,
+      alerts: newState,
+      loading: newState,
+      progress: newState,
+      icons: newState
+    });
   };
 
   return (
@@ -139,6 +183,23 @@ export default function SystemPage() {
         maxWidth: '1200px',
         margin: '0 auto'
       }}>
+        
+        {/* Control Panel */}
+        <div className="mb-8 p-6 bg-gray-900 border border-gray-700 rounded-xl">
+          <div className="flex items-center justify-between mb-4">
+            <h1 className="text-2xl font-bold text-white">Design System</h1>
+            <button
+              onClick={toggleAllSections}
+              className="flex items-center space-x-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors"
+            >
+              {allExpanded ? <Minimize2 className="w-4 h-4" /> : <Maximize2 className="w-4 h-4" />}
+              <span>{allExpanded ? 'Colapsar Todo' : 'Expandir Todo'}</span>
+            </button>
+          </div>
+          <p className="text-gray-400">
+            Sistema de diseño completo con componentes interactivos y colapsables
+          </p>
+        </div>
         
         {/* Colors Section */}
         <motion.div
