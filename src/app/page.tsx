@@ -540,7 +540,7 @@ export default function HomePage() {
     
             // Descripción con delay y fade-in por palabras
             setTimeout(() => {
-              const description = getStepContent(steps[currentStepIndex].id);
+              const description = getStepContent(steps[currentStepIndex]?.id);
               if (description) {
                 // Activar descripción y typewriter al mismo tiempo
                 setShowElements(prev => ({ ...prev, description: true }));
@@ -569,7 +569,7 @@ export default function HomePage() {
 
   // Efecto para actualizar el texto cuando cambie la versión seleccionada
   useEffect(() => {
-    const description = getStepContent(steps[currentStepIndex].id);
+    const description = getStepContent(steps[currentStepIndex]?.id);
     if (description) {
       setTypewriterText('');
       const words = description.split(' ');
