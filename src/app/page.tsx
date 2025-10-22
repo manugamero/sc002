@@ -5017,18 +5017,61 @@ export default function HomePage() {
             0%, 100% { opacity: 1; }
             50% { opacity: 0.3; }
           }
+          
+          .main-container {
+            flex-direction: row;
+          }
+          
+          .video-column {
+            width: 50%;
+            height: 100vh;
+          }
+          
+          .content-column {
+            width: 50%;
+            height: 100vh;
+          }
+          
+          .mobile-menu {
+            display: none;
+          }
+          
+          .desktop-header {
+            display: flex;
+          }
+          
+          @media (max-width: 767px) {
+            .main-container {
+              flex-direction: column;
+            }
+            
+            .video-column {
+              width: 100%;
+              height: 40vh;
+            }
+            
+            .content-column {
+              width: 100%;
+              height: 60vh;
+            }
+            
+            .mobile-menu {
+              display: flex;
+            }
+            
+            .desktop-header {
+              display: none;
+            }
+          }
         `}</style>
-    <div style={{ 
+    <div className="main-container" style={{ 
       minHeight: '100vh', 
       backgroundColor: '#000000', 
       display: 'flex', 
-      flexDirection: window.innerWidth < 768 ? 'column' : 'row',
       fontFamily: 'Inter, system-ui, sans-serif' 
     }}>
       {/* Video column - Izquierda en desktop, arriba en mobile */}
-      <div style={{ 
-        width: window.innerWidth < 768 ? '100%' : '50%', 
-        height: window.innerWidth < 768 ? '40vh' : '100vh', 
+      <div className="video-column" style={{ 
         display: 'flex', 
         alignItems: 'center', 
         justifyContent: 'center',
@@ -5036,17 +5079,15 @@ export default function HomePage() {
         position: 'relative'
       }}>
         {/* Menú fijo sobre el video en móvil */}
-        {window.innerWidth < 768 && (
-          <div style={{ 
-            position: 'absolute', 
-            top: '16px', 
-            left: '16px', 
-            right: '16px',
-            zIndex: 20,
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between'
-          }}>
+        <div className="mobile-menu" style={{ 
+          position: 'absolute', 
+          top: '16px', 
+          left: '16px', 
+          right: '16px',
+          zIndex: 20,
+          alignItems: 'center',
+          justifyContent: 'space-between'
+        }}>
             {/* Left: Menu + Previous */}
             <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
               <button
@@ -5112,7 +5153,7 @@ export default function HomePage() {
               <ArrowRight size={16} />
             </button>
           </div>
-        )}
+        </div>
 
         <div style={{ 
           position: 'relative', 
@@ -5141,26 +5182,22 @@ export default function HomePage() {
       </div>
 
       {/* Content column - Derecha en desktop, abajo en mobile */}
-      <div style={{ 
-        width: window.innerWidth < 768 ? '100%' : '50%', 
-        height: window.innerWidth < 768 ? '60vh' : '100vh', 
+      <div className="content-column" style={{ 
         backgroundColor: '#000000', 
         display: 'flex', 
         flexDirection: 'column',
         overflow: 'hidden'
       }}>
         {/* Header - Solo visible en desktop */}
-        {window.innerWidth >= 768 && (
-          <div style={{ 
-            position: 'sticky', 
-            top: 0, 
-            backgroundColor: '#000000', 
-            padding: '16px', 
-            zIndex: 10,
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between'
-          }}>
+        <div className="desktop-header" style={{ 
+          position: 'sticky', 
+          top: 0, 
+          backgroundColor: '#000000', 
+          padding: '16px', 
+          zIndex: 10,
+          alignItems: 'center',
+          justifyContent: 'space-between'
+        }}>
           {/* Left: Menu + Previous */}
           <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
             <button
@@ -5287,7 +5324,6 @@ export default function HomePage() {
             </button>
           </div>
         </div>
-        )}
         
         {/* Panel de voz colapsado */}
         {showVoicePanel && (
