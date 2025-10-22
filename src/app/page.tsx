@@ -336,26 +336,14 @@ export default function HomePage() {
         break;
 
       case 'typewriter':
-        // Typewriter - efecto máquina de escribir
+        // Typewriter - texto directo sin animación
         setTimeout(() => setShowElements(prev => ({ ...prev, video: true, title: true })), 100);
         setTimeout(() => {
           setShowElements(prev => ({ ...prev, description: true }));
-          if (description) {
-            setTypewriterText('');
-            const words = description.split(' ');
-            let i = 0;
-            const wordInterval = setInterval(() => {
-              if (i < words.length) {
-                setTypewriterText(words.slice(0, i + 1).join(' '));
-                i++;
-              } else {
-                clearInterval(wordInterval);
-              }
-            }, 80); // Más rápido que antes
-          }
-        }, 500);
-        setTimeout(() => setShowElements(prev => ({ ...prev, form: true })), 1000);
-        setTimeout(() => setShowElements(prev => ({ ...prev, selectors: true })), 1200);
+          if (description) setTypewriterText(description);
+        }, 200);
+        setTimeout(() => setShowElements(prev => ({ ...prev, form: true })), 300);
+        setTimeout(() => setShowElements(prev => ({ ...prev, selectors: true })), 400);
         break;
 
       case 'cascade':
@@ -385,19 +373,7 @@ export default function HomePage() {
   useEffect(() => {
     const description = getStepContent(steps[currentStepIndex]?.id);
     if (description) {
-      setTypewriterText('');
-      const words = description.split(' ');
-      let i = 0;
-      const wordInterval = setInterval(() => {
-        if (i < words.length) {
-          setTypewriterText(words.slice(0, i + 1).join(' '));
-          i++;
-        } else {
-          clearInterval(wordInterval);
-        }
-      }, 120);
-      
-      return () => clearInterval(wordInterval);
+      setTypewriterText(description);
     }
   }, [selectedVersion, currentStepIndex]);
 
@@ -5489,8 +5465,8 @@ export default function HomePage() {
                     src="/sensa.svg" 
                     alt="Sensa" 
                     style={{ 
-                      height: '24px',
-                      width: 'auto',
+                      height: '20px',
+                      width: '20px',
                       filter: 'brightness(0) saturate(100%) invert(42%) sepia(0%) saturate(0%) hue-rotate(173deg) brightness(95%) contrast(88%)',
                       transition: 'filter 0.2s ease'
                     }} 

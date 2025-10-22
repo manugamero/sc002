@@ -204,13 +204,13 @@ export default function AdminPage() {
           <div style={{ 
             width: '48px', 
             height: '48px', 
-            border: '2px solid #333333', 
-            borderTop: '2px solid #4a9eff', 
+            border: '2px solid rgba(255, 255, 255, 0.1)', 
+            borderTop: '2px solid #ffffff', 
             borderRadius: '50%', 
             animation: 'spin 1s linear infinite',
             margin: '0 auto 16px'
           }}></div>
-          <p style={{ color: '#cccccc', fontSize: '16px' }}>Cargando panel de administración...</p>
+          <p style={{ color: 'rgba(255, 255, 255, 0.6)', fontSize: '16px' }}>Cargando panel de administración...</p>
         </div>
       </div>
     );
@@ -940,39 +940,26 @@ export default function AdminPage() {
             )}
 
             {assetType === 'colors' && (
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-                <h3 style={{ fontSize: '18px', fontWeight: '600', color: '#ffffff' }}>
+              <div className="flex flex-col gap-4">
+                <h3 className="text-lg font-semibold text-white">
                   Paleta de Colores
                 </h3>
                 
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: '16px' }}>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                   {Object.entries(config.colors).map(([key, value]) => (
                     <div
                       key={key}
-                      style={{
-                        padding: '16px',
-                        backgroundColor: 'rgba(255, 255, 255, 0.03)',
-                        border: '1px solid #333333',
-                        borderRadius: '8px',
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: '12px'
-                      }}
+                      className="p-4 bg-white/[0.03] border border-white/[0.08] rounded-xl flex items-center gap-3"
                     >
                       <div
-                        style={{
-                          width: '32px',
-                          height: '32px',
-                          backgroundColor: value as string,
-                          borderRadius: '6px',
-                          border: '1px solid #333333'
-                        }}
+                        className="w-12 h-12 rounded-lg border border-white/[0.08]"
+                        style={{ backgroundColor: value as string }}
                       />
                       <div>
-                        <div style={{ fontSize: '14px', fontWeight: '600', color: '#ffffff', textTransform: 'capitalize' }}>
+                        <div className="text-sm font-medium text-white capitalize">
                           {key}
                         </div>
-                        <div style={{ fontSize: '12px', color: '#888888' }}>
+                        <div className="text-xs text-white/40">
                           {value as string}
                         </div>
                       </div>
@@ -985,9 +972,9 @@ export default function AdminPage() {
         )}
 
         {view === 'projects' && (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <h2 style={{ fontSize: '24px', fontWeight: '600', color: '#ffffff' }}>
+          <div className="flex flex-col gap-6">
+            <div className="flex justify-between items-center">
+              <h2 className="text-2xl font-semibold text-white">
                 Gestión de Proyectos
               </h2>
               <button
@@ -1012,91 +999,48 @@ export default function AdminPage() {
                   });
                   setProjects(adminService.getProjects());
                 }}
-                style={{
-                  padding: '12px 20px',
-                  backgroundColor: '#4a9eff',
-                  border: 'none',
-                  borderRadius: '8px',
-                  cursor: 'pointer',
-                  color: '#ffffff',
-                  fontSize: '14px',
-                  fontWeight: '500',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '8px'
-                }}
+                className="px-6 py-3 bg-white text-black rounded-full hover:bg-white/90 transition-all text-sm font-medium flex items-center gap-2"
               >
-                <Plus style={{ width: '16px', height: '16px' }} />
+                <Plus className="w-4 h-4" />
                 Nuevo Proyecto
               </button>
             </div>
 
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+            <div className="flex flex-col gap-0">
               {projects.map((project) => (
                 <div
                   key={project.id}
-                  style={{
-                    padding: '20px',
-                    backgroundColor: 'rgba(255, 255, 255, 0.03)',
-                    border: '1px solid #333333',
-                    borderRadius: '12px',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'space-between'
-                  }}
+                  className="px-6 py-5 border-b border-white/[0.08] flex items-center justify-between hover:bg-white/[0.02] transition-colors"
                 >
-                  <div style={{ flex: 1 }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '8px' }}>
-                      <h3 style={{ fontSize: '18px', fontWeight: '600', color: '#ffffff' }}>
+                  <div className="flex-1">
+                    <div className="flex items-center gap-3 mb-2">
+                      <h3 className="text-lg font-medium text-white">
                         {project.project.name}
                       </h3>
-                      <span style={{
-                        padding: '4px 8px',
-                        backgroundColor: 'rgba(74, 158, 255, 0.2)',
-                        color: '#4a9eff',
-                        borderRadius: '4px',
-                        fontSize: '12px',
-                        fontWeight: '500'
-                      }}>
+                      <span className="px-3 py-1 bg-white/5 text-white/60 rounded-full text-xs font-medium">
                         {project.project.clientType}
                       </span>
                     </div>
-                    <p style={{ fontSize: '14px', color: '#cccccc' }}>
+                    <p className="text-sm text-white/60">
                       {project.project.sector} • {project.project.vision}
                     </p>
                   </div>
                   
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <div className="flex items-center gap-2">
                     <button
                       onClick={() => {
                         setSelectedProject(project);
                         setShowStepResponses(true);
                       }}
-                      style={{
-                        padding: '8px 16px',
-                        backgroundColor: 'rgba(74, 158, 255, 0.1)',
-                        border: '1px solid rgba(74, 158, 255, 0.3)',
-                        borderRadius: '6px',
-                        cursor: 'pointer',
-                        color: '#4a9eff',
-                        fontSize: '14px'
-                      }}
+                      className="px-4 py-2 bg-white/5 border border-white/10 rounded-full text-white hover:bg-white/10 transition-all text-sm flex items-center gap-2"
                     >
-                      <Eye style={{ width: '16px', height: '16px', marginRight: '8px' }} />
+                      <Eye className="w-4 h-4" />
                       Ver Respuestas
                     </button>
                     <button
-                      style={{
-                        padding: '8px 16px',
-                        backgroundColor: 'rgba(34, 197, 94, 0.1)',
-                        border: '1px solid rgba(34, 197, 94, 0.3)',
-                        borderRadius: '6px',
-                        cursor: 'pointer',
-                        color: '#22c55e',
-                        fontSize: '14px'
-                      }}
+                      className="px-4 py-2 bg-white/5 border border-white/10 rounded-full text-white hover:bg-white/10 transition-all text-sm flex items-center gap-2"
                     >
-                      <Edit style={{ width: '16px', height: '16px', marginRight: '8px' }} />
+                      <Edit className="w-4 h-4" />
                       Editar
                     </button>
                     <button
@@ -1104,17 +1048,9 @@ export default function AdminPage() {
                         adminService.deleteProject(project.id);
                         setProjects(adminService.getProjects());
                       }}
-                      style={{
-                        padding: '8px 16px',
-                        backgroundColor: 'rgba(239, 68, 68, 0.1)',
-                        border: '1px solid rgba(239, 68, 68, 0.3)',
-                        borderRadius: '6px',
-                        cursor: 'pointer',
-                        color: '#ef4444',
-                        fontSize: '14px'
-                      }}
+                      className="px-4 py-2 bg-white/10 border border-white/20 rounded-full text-white hover:bg-white/20 transition-all text-sm flex items-center gap-2"
                     >
-                      <Trash2 style={{ width: '16px', height: '16px', marginRight: '8px' }} />
+                      <Trash2 className="w-4 h-4" />
                       Eliminar
                     </button>
                   </div>
@@ -1125,24 +1061,19 @@ export default function AdminPage() {
         )}
 
         {view === 'settings' && config && (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
-            <h2 style={{ fontSize: '24px', fontWeight: '600', color: '#ffffff' }}>
+          <div className="flex flex-col gap-6">
+            <h2 className="text-2xl font-semibold text-white">
               Configuración General
             </h2>
 
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '24px' }}>
-              <div style={{
-                padding: '24px',
-                backgroundColor: 'rgba(255, 255, 255, 0.03)',
-                border: '1px solid #333333',
-                borderRadius: '12px'
-              }}>
-                <h3 style={{ fontSize: '18px', fontWeight: '600', color: '#ffffff', marginBottom: '16px' }}>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="p-6 bg-white/[0.03] border border-white/[0.08] rounded-xl">
+                <h3 className="text-lg font-semibold text-white mb-4">
                   Información Básica
                 </h3>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                <div className="flex flex-col gap-4">
                   <div>
-                    <label style={{ fontSize: '14px', color: '#cccccc', marginBottom: '4px', display: 'block' }}>
+                    <label className="text-sm text-white/60 mb-2 block">
                       Título
                     </label>
                     <input
@@ -1153,19 +1084,11 @@ export default function AdminPage() {
                         setConfig(newConfig);
                         adminService.updateConfig({ title: e.target.value });
                       }}
-                      style={{
-                        width: '100%',
-                        padding: '8px 12px',
-                        backgroundColor: 'rgba(255, 255, 255, 0.05)',
-                        border: '1px solid #333333',
-                        borderRadius: '6px',
-                        color: '#ffffff',
-                        fontSize: '14px'
-                      }}
+                      className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-full text-white text-sm focus:outline-none focus:border-white/20"
                     />
                   </div>
                   <div>
-                    <label style={{ fontSize: '14px', color: '#cccccc', marginBottom: '4px', display: 'block' }}>
+                    <label className="text-sm text-white/60 mb-2 block">
                       Versión
                     </label>
                     <input
@@ -1176,46 +1099,28 @@ export default function AdminPage() {
                         setConfig(newConfig);
                         adminService.updateConfig({ version: e.target.value });
                       }}
-                      style={{
-                        width: '100%',
-                        padding: '8px 12px',
-                        backgroundColor: 'rgba(255, 255, 255, 0.05)',
-                        border: '1px solid #333333',
-                        borderRadius: '6px',
-                        color: '#ffffff',
-                        fontSize: '14px'
-                      }}
+                      className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-full text-white text-sm focus:outline-none focus:border-white/20"
                     />
                   </div>
                 </div>
               </div>
 
-              <div style={{
-                padding: '24px',
-                backgroundColor: 'rgba(255, 255, 255, 0.03)',
-                border: '1px solid #333333',
-                borderRadius: '12px'
-              }}>
-                <h3 style={{ fontSize: '18px', fontWeight: '600', color: '#ffffff', marginBottom: '16px' }}>
+              <div className="p-6 bg-white/[0.03] border border-white/[0.08] rounded-xl">
+                <h3 className="text-lg font-semibold text-white mb-4">
                   Colores
                 </h3>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                <div className="flex flex-col gap-3">
                   {Object.entries(config.colors).map(([key, value]) => (
-                    <div key={key} style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                    <div key={key} className="flex items-center gap-3">
                       <div
-                        style={{
-                          width: '32px',
-                          height: '32px',
-                          backgroundColor: value as string,
-                          borderRadius: '6px',
-                          border: '1px solid #333333'
-                        }}
+                        className="w-10 h-10 rounded-lg border border-white/[0.08]"
+                        style={{ backgroundColor: value as string }}
                       />
-                      <div style={{ flex: 1 }}>
-                        <div style={{ fontSize: '14px', color: '#ffffff', textTransform: 'capitalize' }}>
+                      <div className="flex-1">
+                        <div className="text-sm text-white capitalize">
                           {key}
                         </div>
-                        <div style={{ fontSize: '12px', color: '#888888' }}>
+                        <div className="text-xs text-white/40">
                           {value as string}
                         </div>
                       </div>
@@ -1228,13 +1133,7 @@ export default function AdminPage() {
                           setConfig(newConfig);
                           adminService.updateConfig({ colors: newColors });
                         }}
-                        style={{
-                          width: '32px',
-                          height: '32px',
-                          border: 'none',
-                          borderRadius: '6px',
-                          cursor: 'pointer'
-                        }}
+                        className="w-10 h-10 border-none rounded-lg cursor-pointer"
                       />
                     </div>
                   ))}
@@ -1242,44 +1141,28 @@ export default function AdminPage() {
               </div>
             </div>
 
-            <div style={{
-              padding: '24px',
-              backgroundColor: 'rgba(239, 68, 68, 0.1)',
-              border: '1px solid rgba(239, 68, 68, 0.3)',
-              borderRadius: '12px'
-            }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '12px' }}>
-                <AlertCircle style={{ width: '20px', height: '20px', color: '#ef4444' }} />
-                <h3 style={{ fontSize: '18px', fontWeight: '600', color: '#ef4444' }}>
+            <div className="p-6 bg-white/[0.05] border border-white/[0.12] rounded-xl">
+              <div className="flex items-center gap-3 mb-3">
+                <AlertCircle className="w-5 h-5 text-white" />
+                <h3 className="text-lg font-semibold text-white">
                   Zona de Peligro
                 </h3>
               </div>
-              <p style={{ fontSize: '14px', color: '#cccccc', marginBottom: '16px' }}>
+              <p className="text-sm text-white/60 mb-4">
                 Estas acciones son irreversibles. Ten cuidado al utilizarlas.
               </p>
-              <div style={{ display: 'flex', gap: '12px' }}>
-                <button
-                  onClick={() => {
-                    if (confirm('¿Estás seguro de que quieres resetear todos los datos?')) {
-                      adminService.resetData();
-                      loadData();
-                      alert('Datos reseteados correctamente');
-                    }
-                  }}
-                  style={{
-                    padding: '12px 20px',
-                    backgroundColor: 'rgba(239, 68, 68, 0.2)',
-                    border: '1px solid rgba(239, 68, 68, 0.5)',
-                    borderRadius: '8px',
-                    cursor: 'pointer',
-                    color: '#ef4444',
-                    fontSize: '14px',
-                    fontWeight: '500'
-                  }}
-                >
-                  Resetear Datos
-                </button>
-              </div>
+              <button
+                onClick={() => {
+                  if (confirm('¿Estás seguro de que quieres resetear todos los datos?')) {
+                    adminService.resetData();
+                    loadData();
+                    alert('Datos reseteados correctamente');
+                  }
+                }}
+                className="px-6 py-3 bg-white/10 border border-white/20 rounded-full text-white hover:bg-white/20 transition-all text-sm font-medium"
+              >
+                Resetear Datos
+              </button>
             </div>
           </div>
         )}
@@ -1295,11 +1178,11 @@ export default function AdminPage() {
             className="relative w-full max-w-2xl bg-black border border-white/20 rounded-2xl overflow-hidden"
             onClick={(e) => e.stopPropagation()}
           >
-            <div className="flex items-center justify-between p-6 border-b border-white/10">
+            <div className="flex items-center justify-between p-6 border-b border-white/[0.08]">
               <h3 className="text-xl font-semibold text-white">Editar Paso</h3>
               <button
                 onClick={() => setEditingStepData(null)}
-                className="w-10 h-10 flex items-center justify-center bg-white/5 hover:bg-white/10 border border-white/20 rounded-lg text-white transition-all"
+                className="w-10 h-10 flex items-center justify-center bg-white/5 hover:bg-white/10 border border-white/10 rounded-full text-white transition-all"
               >
                 <X className="w-5 h-5" />
               </button>
@@ -1378,10 +1261,10 @@ export default function AdminPage() {
               </div>
             </div>
 
-            <div className="flex items-center justify-end gap-3 p-6 border-t border-white/10">
+            <div className="flex items-center justify-end gap-3 p-6 border-t border-white/[0.08]">
               <button
                 onClick={() => setEditingStepData(null)}
-                className="px-4 py-2 bg-white/5 border border-white/10 rounded-lg text-gray-400 hover:bg-white/10 hover:text-white transition-all"
+                className="px-6 py-3 bg-white/5 border border-white/10 rounded-full text-white/60 hover:bg-white/10 hover:text-white transition-all text-sm"
               >
                 Cancelar
               </button>
@@ -1393,7 +1276,7 @@ export default function AdminPage() {
                     setEditingStep(null);
                   }
                 }}
-                className="px-4 py-2 bg-blue-500 hover:bg-blue-600 rounded-lg text-white transition-all flex items-center gap-2"
+                className="px-6 py-3 bg-white text-black hover:bg-white/90 rounded-full transition-all flex items-center gap-2 text-sm font-medium"
               >
                 <Save className="w-4 h-4" />
                 Guardar Cambios
@@ -1433,24 +1316,22 @@ export default function AdminPage() {
               
               return (
                 <>
-                  <div className="flex items-center justify-between p-6 border-b border-white/10">
+                  <div className="flex items-center justify-between p-6 border-b border-white/[0.08]">
                     <div className="flex items-center gap-4">
-                      <div className="w-12 h-12 rounded-xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-center">
-                        <IconComponent className="w-6 h-6 text-blue-400" />
-                      </div>
+                      <IconComponent className="w-8 h-8 text-white" />
                       <div>
                         <div className="flex items-center gap-3">
                           <h3 className="text-xl font-semibold text-white">{step.title}</h3>
-                          <Badge className="bg-blue-500/20 text-blue-400 border-blue-500/30">
+                          <Badge className="bg-white/5 text-white/60 border-white/10">
                             {getStepNumber(step.id)}
                           </Badge>
                         </div>
-                        <p className="text-sm text-gray-400 mt-1">{step.description}</p>
+                        <p className="text-sm text-white/60 mt-1">{step.description}</p>
                       </div>
                     </div>
                     <button
                       onClick={() => setViewStepDetails(null)}
-                      className="w-10 h-10 flex items-center justify-center bg-white/5 hover:bg-white/10 border border-white/20 rounded-lg text-white transition-all"
+                      className="w-10 h-10 flex items-center justify-center bg-white/5 hover:bg-white/10 border border-white/10 rounded-full text-white transition-all"
                     >
                       <X className="w-5 h-5" />
                     </button>
@@ -1474,8 +1355,8 @@ export default function AdminPage() {
                                 </h4>
                                 <Badge className={`${
                                   responseCount > 0 
-                                    ? 'bg-green-500/20 text-green-400 border-green-500/30'
-                                    : 'bg-gray-500/20 text-gray-400 border-gray-500/30'
+                                    ? 'bg-white text-black'
+                                    : 'bg-white/5 text-white/40 border-white/10'
                                 }`}>
                                   {responseCount > 0 ? `${responseCount} respuestas` : 'Sin respuestas'}
                                 </Badge>
@@ -1486,7 +1367,7 @@ export default function AdminPage() {
                                   setShowStepResponses(true);
                                   setViewStepDetails(null);
                                 }}
-                                className="px-3 py-1.5 bg-blue-500/10 border border-blue-500/20 rounded-md text-blue-400 hover:bg-blue-500/20 transition-all text-sm flex items-center gap-2"
+                                className="px-4 py-2 bg-white/5 border border-white/10 rounded-full text-white hover:bg-white/10 transition-all text-sm flex items-center gap-2"
                               >
                                 <Eye className="w-4 h-4" />
                                 Ver Detalles Completos
@@ -1507,9 +1388,9 @@ export default function AdminPage() {
                                         {typeof value === 'boolean' ? (
                                           <div className="flex items-center gap-2">
                                             {value ? (
-                                              <><Check className="w-4 h-4 text-green-400" /> Sí</>
+                                              <><Check className="w-4 h-4 text-white" /> Sí</>
                                             ) : (
-                                              <><X className="w-4 h-4 text-red-400" /> No</>
+                                              <><X className="w-4 h-4 text-white/40" /> No</>
                                             )}
                                           </div>
                                         ) : typeof value === 'string' ? (
@@ -1563,11 +1444,11 @@ export default function AdminPage() {
             className="relative w-full max-w-4xl bg-black border border-white/20 rounded-2xl overflow-hidden"
             onClick={(e) => e.stopPropagation()}
           >
-            <div className="flex items-center justify-between p-4 border-b border-white/10">
+            <div className="flex items-center justify-between p-4 border-b border-white/[0.08]">
               <h3 className="text-lg font-semibold text-white">Previsualización de Video</h3>
               <button
                 onClick={() => setPreviewVideo(null)}
-                className="w-10 h-10 flex items-center justify-center bg-white/5 hover:bg-white/10 border border-white/20 rounded-lg text-white transition-all"
+                className="w-10 h-10 flex items-center justify-center bg-white/5 hover:bg-white/10 border border-white/10 rounded-full text-white transition-all"
               >
                 <X className="w-5 h-5" />
               </button>
