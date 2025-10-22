@@ -230,7 +230,6 @@ export default function AdminPage() {
     <div style={{ 
       minHeight: '100vh', 
       backgroundColor: '#000000', 
-      display: 'flex', 
       fontFamily: 'Inter, system-ui, sans-serif' 
     }}>
       {/* Header */}
@@ -238,80 +237,93 @@ export default function AdminPage() {
         position: 'sticky', 
         top: 0, 
         backgroundColor: '#000000', 
-        padding: '16px', 
+        padding: '20px 24px', 
         zIndex: 10,
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        width: '100%',
-        borderBottom: '1px solid #333333'
+        borderBottom: '1px solid #333333',
+        backdropFilter: 'blur(10px)'
       }}>
-        {/* Left: Menu + Back */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-          <button
-            onClick={() => setIsMenuOpen(!isMenuOpen)}
-            style={{ 
-              width: '32px', 
-              height: '32px', 
-              display: 'flex', 
-              alignItems: 'center', 
-              justifyContent: 'center', 
-              backgroundColor: 'transparent', 
-              border: 'none', 
-              cursor: 'pointer',
-              color: '#666666',
-              transition: 'color 0.2s ease'
-            }}
-            onMouseEnter={(e) => e.target.style.color = '#ffffff'}
-            onMouseLeave={(e) => e.target.style.color = '#666666'}
-          >
-            <Menu style={{ width: '16px', height: '16px' }} />
-          </button>
-          {view === 'project' && (
-            <button
-              onClick={() => setView('dashboard')}
-              style={{ 
-                width: '32px', 
-                height: '32px', 
-                display: 'flex', 
-                alignItems: 'center', 
-                justifyContent: 'center', 
-                backgroundColor: 'transparent', 
-                border: 'none', 
-                cursor: 'pointer',
-                color: '#666666',
-                transition: 'color 0.2s ease'
-              }}
-              onMouseEnter={(e) => e.target.style.color = '#ffffff'}
-              onMouseLeave={(e) => e.target.style.color = '#666666'}
-            >
-              <ArrowLeft style={{ width: '16px', height: '16px' }} />
-            </button>
-          )}
-        </div>
-        
-        {/* Center: Title + Search */}
         <div style={{ 
           display: 'flex', 
           alignItems: 'center', 
-          gap: '16px',
-          flex: 1,
-          justifyContent: 'center'
+          justifyContent: 'space-between',
+          maxWidth: '1200px',
+          margin: '0 auto'
         }}>
-          <div style={{ 
-            fontSize: '16px', 
-            color: '#ffffff', 
-            fontWeight: '500'
-          }}>
-            {view === 'dashboard' ? 'ADMIN / Dashboard' : `ADMIN / ${selectedProject?.project.name}`}
+          {/* Left: Navigation */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+            <button
+              onClick={() => setIsMenuOpen(!isMenuOpen)}
+              style={{ 
+                width: '40px', 
+                height: '40px', 
+                display: 'flex', 
+                alignItems: 'center', 
+                justifyContent: 'center', 
+                backgroundColor: 'rgba(255, 255, 255, 0.05)', 
+                border: '1px solid #333333', 
+                borderRadius: '8px',
+                cursor: 'pointer',
+                color: '#ffffff',
+                transition: 'all 0.2s ease'
+              }}
+              onMouseEnter={(e) => {
+                e.target.style.backgroundColor = 'rgba(255, 255, 255, 0.1)';
+                e.target.style.borderColor = '#ffffff';
+              }}
+              onMouseLeave={(e) => {
+                e.target.style.backgroundColor = 'rgba(255, 255, 255, 0.05)';
+                e.target.style.borderColor = '#333333';
+              }}
+            >
+              <Menu style={{ width: '18px', height: '18px' }} />
+            </button>
+            
+            {view === 'project' && (
+              <button
+                onClick={() => setView('dashboard')}
+                style={{ 
+                  width: '40px', 
+                  height: '40px', 
+                  display: 'flex', 
+                  alignItems: 'center', 
+                  justifyContent: 'center', 
+                  backgroundColor: 'rgba(255, 255, 255, 0.05)', 
+                  border: '1px solid #333333', 
+                  borderRadius: '8px',
+                  cursor: 'pointer',
+                  color: '#ffffff',
+                  transition: 'all 0.2s ease'
+                }}
+                onMouseEnter={(e) => {
+                  e.target.style.backgroundColor = 'rgba(255, 255, 255, 0.1)';
+                  e.target.style.borderColor = '#ffffff';
+                }}
+                onMouseLeave={(e) => {
+                  e.target.style.backgroundColor = 'rgba(255, 255, 255, 0.05)';
+                  e.target.style.borderColor = '#333333';
+                }}
+              >
+                <ArrowLeft style={{ width: '18px', height: '18px' }} />
+              </button>
+            )}
+            
+            <div style={{ 
+              fontSize: '20px', 
+              color: '#ffffff', 
+              fontWeight: '600',
+              letterSpacing: '-0.02em'
+            }}>
+              {view === 'dashboard' ? 'Admin Dashboard' : selectedProject?.project.name}
+            </div>
           </div>
           
+          {/* Center: Search & Filters (only on dashboard) */}
           {view === 'dashboard' && (
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
               <div style={{ position: 'relative' }}>
                 <Search style={{ 
                   position: 'absolute', 
-                  left: '8px', 
+                  left: '12px', 
                   top: '50%', 
                   transform: 'translateY(-50%)',
                   width: '16px', 
@@ -324,20 +336,26 @@ export default function AdminPage() {
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                   style={{
-                    padding: '8px 8px 8px 32px',
-                    backgroundColor: 'transparent',
+                    padding: '12px 12px 12px 40px',
+                    backgroundColor: 'rgba(255, 255, 255, 0.05)',
                     border: '1px solid #333333',
-                    borderRadius: '20px',
+                    borderRadius: '8px',
                     color: '#ffffff',
                     fontSize: '14px',
                     outline: 'none',
-                    width: '200px',
-                    transition: 'border-color 0.2s ease'
+                    width: '240px',
+                    transition: 'all 0.2s ease'
                   }}
                   onMouseEnter={(e) => e.target.style.borderColor = '#666666'}
                   onMouseLeave={(e) => e.target.style.borderColor = '#333333'}
-                  onFocus={(e) => e.target.style.borderColor = '#ffffff'}
-                  onBlur={(e) => e.target.style.borderColor = '#333333'}
+                  onFocus={(e) => {
+                    e.target.style.borderColor = '#4a9eff';
+                    e.target.style.backgroundColor = 'rgba(255, 255, 255, 0.08)';
+                  }}
+                  onBlur={(e) => {
+                    e.target.style.borderColor = '#333333';
+                    e.target.style.backgroundColor = 'rgba(255, 255, 255, 0.05)';
+                  }}
                 />
               </div>
               
@@ -345,94 +363,146 @@ export default function AdminPage() {
                 value={filterType}
                 onChange={(e) => setFilterType(e.target.value as 'all' | 'A' | 'B' | 'C')}
                 style={{
-                  padding: '8px 12px',
-                  backgroundColor: 'transparent',
+                  padding: '12px 16px',
+                  backgroundColor: 'rgba(255, 255, 255, 0.05)',
                   border: '1px solid #333333',
-                  borderRadius: '20px',
+                  borderRadius: '8px',
                   color: '#ffffff',
                   fontSize: '14px',
                   outline: 'none',
-                  cursor: 'pointer'
+                  cursor: 'pointer',
+                  transition: 'all 0.2s ease'
                 }}
+                onMouseEnter={(e) => e.target.style.borderColor = '#666666'}
+                onMouseLeave={(e) => e.target.style.borderColor = '#333333'}
               >
-                <option value="all" style={{ backgroundColor: '#1a1a1a' }}>Todos</option>
+                <option value="all" style={{ backgroundColor: '#1a1a1a' }}>Todos los tipos</option>
                 <option value="A" style={{ backgroundColor: '#1a1a1a' }}>Tipo A</option>
                 <option value="B" style={{ backgroundColor: '#1a1a1a' }}>Tipo B</option>
                 <option value="C" style={{ backgroundColor: '#1a1a1a' }}>Tipo C</option>
               </select>
             </div>
           )}
-        </div>
-        
-        {/* Right: Actions */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-          <button
-            onClick={() => setShowSettings(!showSettings)}
-            style={{ 
-              width: '32px', 
-              height: '32px', 
-              display: 'flex', 
-              alignItems: 'center', 
-              justifyContent: 'center', 
-              backgroundColor: 'transparent', 
-              border: 'none', 
-              cursor: 'pointer',
-              color: '#666666',
-              transition: 'color 0.2s ease'
-            }}
-            onMouseEnter={(e) => e.target.style.color = '#ffffff'}
-            onMouseLeave={(e) => e.target.style.color = '#666666'}
-          >
-            <Settings style={{ width: '16px', height: '16px' }} />
-          </button>
-          <button
-            onClick={() => {
-              // Crear nuevo proyecto
-              console.log('Creando nuevo proyecto...');
-              // Aquí se implementaría la lógica para crear un nuevo proyecto
-            }}
-            style={{ 
-              width: '32px', 
-              height: '32px', 
-              display: 'flex', 
-              alignItems: 'center', 
-              justifyContent: 'center', 
-              backgroundColor: 'transparent', 
-              border: 'none', 
-              cursor: 'pointer',
-              color: '#666666',
-              transition: 'color 0.2s ease'
-            }}
-            onMouseEnter={(e) => e.target.style.color = '#ffffff'}
-            onMouseLeave={(e) => e.target.style.color = '#666666'}
-          >
-            <Plus style={{ width: '16px', height: '16px' }} />
-          </button>
+          
+          {/* Right: Actions */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <button
+              onClick={() => setShowSettings(!showSettings)}
+              style={{ 
+                width: '40px', 
+                height: '40px', 
+                display: 'flex', 
+                alignItems: 'center', 
+                justifyContent: 'center', 
+                backgroundColor: 'rgba(255, 255, 255, 0.05)', 
+                border: '1px solid #333333', 
+                borderRadius: '8px',
+                cursor: 'pointer',
+                color: '#ffffff',
+                transition: 'all 0.2s ease'
+              }}
+              onMouseEnter={(e) => {
+                e.target.style.backgroundColor = 'rgba(255, 255, 255, 0.1)';
+                e.target.style.borderColor = '#ffffff';
+              }}
+              onMouseLeave={(e) => {
+                e.target.style.backgroundColor = 'rgba(255, 255, 255, 0.05)';
+                e.target.style.borderColor = '#333333';
+              }}
+            >
+              <Settings style={{ width: '18px', height: '18px' }} />
+            </button>
+            
+            <button
+              onClick={() => {
+                console.log('Creando nuevo proyecto...');
+              }}
+              style={{ 
+                width: '40px', 
+                height: '40px', 
+                display: 'flex', 
+                alignItems: 'center', 
+                justifyContent: 'center', 
+                backgroundColor: '#4a9eff', 
+                border: 'none', 
+                borderRadius: '8px',
+                cursor: 'pointer',
+                color: '#ffffff',
+                transition: 'all 0.2s ease'
+              }}
+              onMouseEnter={(e) => {
+                e.target.style.backgroundColor = '#3a8bef';
+                e.target.style.transform = 'scale(1.05)';
+              }}
+              onMouseLeave={(e) => {
+                e.target.style.backgroundColor = '#4a9eff';
+                e.target.style.transform = 'scale(1)';
+              }}
+            >
+              <Plus style={{ width: '18px', height: '18px' }} />
+            </button>
+          </div>
         </div>
       </div>
       
       {/* Content */}
       <div style={{ 
-        flex: 1, 
-        display: 'flex', 
-        alignItems: 'center', 
-        justifyContent: 'center', 
-        padding: '64px' 
+        padding: '40px 24px',
+        maxWidth: '1200px',
+        margin: '0 auto'
       }}>
-        <div style={{ width: '100%', maxWidth: '800px' }}>
-          {/* Separator line */}
-          <div style={{ 
-            width: '100%', 
-            height: '1px', 
-            backgroundColor: '#333333', 
-            marginBottom: '32px',
-            opacity: 0.08
-          }}></div>
           
           {view === 'dashboard' ? (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '32px' }}>
+              {/* Stats Overview */}
+              <div style={{ 
+                display: 'grid', 
+                gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', 
+                gap: '20px',
+                marginBottom: '8px'
+              }}>
+                <div style={{
+                  padding: '24px',
+                  backgroundColor: 'rgba(255, 255, 255, 0.03)',
+                  border: '1px solid #333333',
+                  borderRadius: '12px',
+                  textAlign: 'center'
+                }}>
+                  <div style={{ fontSize: '32px', fontWeight: '700', color: '#4a9eff', marginBottom: '8px' }}>
+                    {projects.length}
+                  </div>
+                  <div style={{ fontSize: '14px', color: '#cccccc' }}>Total Proyectos</div>
+                </div>
+                
+                <div style={{
+                  padding: '24px',
+                  backgroundColor: 'rgba(255, 255, 255, 0.03)',
+                  border: '1px solid #333333',
+                  borderRadius: '12px',
+                  textAlign: 'center'
+                }}>
+                  <div style={{ fontSize: '32px', fontWeight: '700', color: '#34c759', marginBottom: '8px' }}>
+                    {Math.round(projects.reduce((acc, p) => acc + Object.values(p.progress).reduce((a, b) => a + b, 0) / 5, 0) / projects.length)}%
+                  </div>
+                  <div style={{ fontSize: '14px', color: '#cccccc' }}>Progreso Promedio</div>
+                </div>
+                
+                <div style={{
+                  padding: '24px',
+                  backgroundColor: 'rgba(255, 255, 255, 0.03)',
+                  border: '1px solid #333333',
+                  borderRadius: '12px',
+                  textAlign: 'center'
+                }}>
+                  <div style={{ fontSize: '32px', fontWeight: '700', color: '#ff9500', marginBottom: '8px' }}>
+                    {projects.filter(p => p.project.clientType === 'A').length}
+                  </div>
+                  <div style={{ fontSize: '14px', color: '#cccccc' }}>Tipo A</div>
+                </div>
+              </div>
+
               {/* Projects List */}
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
                 {filteredProjects.map((project, index) => (
                   <motion.div
                     key={project.id}
@@ -444,61 +514,89 @@ export default function AdminPage() {
                     onDragOver={handleDragOver}
                     onDrop={(e) => handleDrop(e, project.id)}
                     style={{
-                      padding: '24px',
+                      padding: '28px',
                       border: '1px solid #333333',
-                      borderRadius: '12px',
-                      backgroundColor: draggedItem === project.id ? 'rgba(74, 158, 255, 0.1)' : 'transparent',
+                      borderRadius: '16px',
+                      backgroundColor: draggedItem === project.id ? 'rgba(74, 158, 255, 0.1)' : 'rgba(255, 255, 255, 0.02)',
                       cursor: 'move',
-                      transition: 'all 0.2s ease',
+                      transition: 'all 0.3s ease',
                       position: 'relative',
-                      opacity: draggedItem === project.id ? 0.7 : 1
+                      opacity: draggedItem === project.id ? 0.7 : 1,
+                      backdropFilter: 'blur(10px)'
                     }}
                     onMouseEnter={(e) => {
                       if (draggedItem !== project.id) {
-                        e.target.style.borderColor = '#ffffff';
-                        e.target.style.backgroundColor = 'rgba(255, 255, 255, 0.05)';
+                        e.target.style.borderColor = '#4a9eff';
+                        e.target.style.backgroundColor = 'rgba(74, 158, 255, 0.05)';
+                        e.target.style.transform = 'translateY(-2px)';
+                        e.target.style.boxShadow = '0 8px 32px rgba(74, 158, 255, 0.1)';
                       }
                     }}
                     onMouseLeave={(e) => {
                       if (draggedItem !== project.id) {
                         e.target.style.borderColor = '#333333';
-                        e.target.style.backgroundColor = 'transparent';
+                        e.target.style.backgroundColor = 'rgba(255, 255, 255, 0.02)';
+                        e.target.style.transform = 'translateY(0)';
+                        e.target.style.boxShadow = 'none';
                       }
                     }}
                   >
                     {/* Drag Handle */}
                     <div style={{
                       position: 'absolute',
-                      left: '8px',
+                      left: '12px',
                       top: '50%',
                       transform: 'translateY(-50%)',
                       color: '#666666',
-                      cursor: 'grab'
+                      cursor: 'grab',
+                      opacity: 0.6
                     }}>
                       <GripVertical style={{ width: '16px', height: '16px' }} />
                     </div>
 
-                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px', marginLeft: '24px' }}>
+                    <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: '24px', marginLeft: '32px' }}>
                       <div style={{ flex: 1 }}>
-                        <h3 style={{ 
-                          fontSize: '18px', 
-                          fontWeight: '500', 
-                          color: '#ffffff', 
-                          marginBottom: '4px' 
-                        }}>
-                          {project.project.name}
-                        </h3>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '8px' }}>
+                          <h3 style={{ 
+                            fontSize: '20px', 
+                            fontWeight: '600', 
+                            color: '#ffffff',
+                            letterSpacing: '-0.01em'
+                          }}>
+                            {project.project.name}
+                          </h3>
+                          <span style={{
+                            padding: '4px 12px',
+                            backgroundColor: project.project.clientType === 'A' ? 'rgba(52, 199, 89, 0.2)' : 
+                                           project.project.clientType === 'B' ? 'rgba(74, 158, 255, 0.2)' : 'rgba(175, 82, 222, 0.2)',
+                            color: project.project.clientType === 'A' ? '#34c759' : 
+                                   project.project.clientType === 'B' ? '#4a9eff' : '#af52de',
+                            borderRadius: '12px',
+                            fontSize: '12px',
+                            fontWeight: '500'
+                          }}>
+                            Tipo {project.project.clientType}
+                          </span>
+                        </div>
+                        
                         <p style={{ 
-                          fontSize: '14px', 
+                          fontSize: '15px', 
                           color: '#cccccc', 
-                          marginBottom: '8px' 
+                          marginBottom: '12px',
+                          lineHeight: '1.5'
                         }}>
                           {project.project.sector} • {project.project.vision}
                         </p>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '16px', fontSize: '12px', color: '#666666' }}>
-                          <span>{project.project.createdAt.toLocaleDateString()}</span>
-                          <span>Tipo {project.project.clientType}</span>
-                          <span>{project.project.values.length} valores</span>
+                        
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '20px', fontSize: '13px', color: '#666666' }}>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                            <Calendar style={{ width: '14px', height: '14px' }} />
+                            <span>{project.project.createdAt.toLocaleDateString()}</span>
+                          </div>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                            <User style={{ width: '14px', height: '14px' }} />
+                            <span>{project.project.values.length} valores</span>
+                          </div>
                         </div>
                       </div>
                       
@@ -511,25 +609,27 @@ export default function AdminPage() {
                             setView('project');
                           }}
                           style={{
-                            width: '32px',
-                            height: '32px',
+                            width: '36px',
+                            height: '36px',
                             display: 'flex',
                             alignItems: 'center',
                             justifyContent: 'center',
-                            backgroundColor: 'transparent',
-                            border: '1px solid #333333',
-                            borderRadius: '6px',
+                            backgroundColor: 'rgba(74, 158, 255, 0.1)',
+                            border: '1px solid rgba(74, 158, 255, 0.3)',
+                            borderRadius: '8px',
                             cursor: 'pointer',
-                            color: '#666666',
+                            color: '#4a9eff',
                             transition: 'all 0.2s ease'
                           }}
                           onMouseEnter={(e) => {
-                            e.target.style.borderColor = '#ffffff';
-                            e.target.style.color = '#ffffff';
+                            e.target.style.backgroundColor = 'rgba(74, 158, 255, 0.2)';
+                            e.target.style.borderColor = '#4a9eff';
+                            e.target.style.transform = 'scale(1.05)';
                           }}
                           onMouseLeave={(e) => {
-                            e.target.style.borderColor = '#333333';
-                            e.target.style.color = '#666666';
+                            e.target.style.backgroundColor = 'rgba(74, 158, 255, 0.1)';
+                            e.target.style.borderColor = 'rgba(74, 158, 255, 0.3)';
+                            e.target.style.transform = 'scale(1)';
                           }}
                         >
                           <Eye style={{ width: '16px', height: '16px' }} />
@@ -541,25 +641,29 @@ export default function AdminPage() {
                             exportProject(project);
                           }}
                           style={{
-                            width: '32px',
-                            height: '32px',
+                            width: '36px',
+                            height: '36px',
                             display: 'flex',
                             alignItems: 'center',
                             justifyContent: 'center',
-                            backgroundColor: 'transparent',
+                            backgroundColor: 'rgba(255, 255, 255, 0.05)',
                             border: '1px solid #333333',
-                            borderRadius: '6px',
+                            borderRadius: '8px',
                             cursor: 'pointer',
-                            color: '#666666',
+                            color: '#cccccc',
                             transition: 'all 0.2s ease'
                           }}
                           onMouseEnter={(e) => {
+                            e.target.style.backgroundColor = 'rgba(255, 255, 255, 0.1)';
                             e.target.style.borderColor = '#ffffff';
                             e.target.style.color = '#ffffff';
+                            e.target.style.transform = 'scale(1.05)';
                           }}
                           onMouseLeave={(e) => {
+                            e.target.style.backgroundColor = 'rgba(255, 255, 255, 0.05)';
                             e.target.style.borderColor = '#333333';
-                            e.target.style.color = '#666666';
+                            e.target.style.color = '#cccccc';
+                            e.target.style.transform = 'scale(1)';
                           }}
                         >
                           <Download style={{ width: '16px', height: '16px' }} />
@@ -571,25 +675,27 @@ export default function AdminPage() {
                             deleteProject(project.id);
                           }}
                           style={{
-                            width: '32px',
-                            height: '32px',
+                            width: '36px',
+                            height: '36px',
                             display: 'flex',
                             alignItems: 'center',
                             justifyContent: 'center',
-                            backgroundColor: 'transparent',
-                            border: '1px solid #333333',
-                            borderRadius: '6px',
+                            backgroundColor: 'rgba(255, 68, 68, 0.1)',
+                            border: '1px solid rgba(255, 68, 68, 0.3)',
+                            borderRadius: '8px',
                             cursor: 'pointer',
-                            color: '#666666',
+                            color: '#ff4444',
                             transition: 'all 0.2s ease'
                           }}
                           onMouseEnter={(e) => {
+                            e.target.style.backgroundColor = 'rgba(255, 68, 68, 0.2)';
                             e.target.style.borderColor = '#ff4444';
-                            e.target.style.color = '#ff4444';
+                            e.target.style.transform = 'scale(1.05)';
                           }}
                           onMouseLeave={(e) => {
-                            e.target.style.borderColor = '#333333';
-                            e.target.style.color = '#666666';
+                            e.target.style.backgroundColor = 'rgba(255, 68, 68, 0.1)';
+                            e.target.style.borderColor = 'rgba(255, 68, 68, 0.3)';
+                            e.target.style.transform = 'scale(1)';
                           }}
                         >
                           <Trash2 style={{ width: '16px', height: '16px' }} />
@@ -598,28 +704,47 @@ export default function AdminPage() {
                     </div>
                     
                     {/* Progress Bars */}
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '16px', marginLeft: '32px' }}>
                       {Object.entries(project.progress).map(([section, progress]) => (
-                        <div key={section} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                          <span style={{ fontSize: '12px', color: '#666666', textTransform: 'capitalize' }}>{section}</span>
-                          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                            <div style={{ 
-                              width: '80px', 
-                              height: '4px', 
-                              backgroundColor: '#333333', 
-                              borderRadius: '2px' 
+                        <div key={section} style={{ 
+                          padding: '16px',
+                          backgroundColor: 'rgba(255, 255, 255, 0.02)',
+                          border: '1px solid #333333',
+                          borderRadius: '8px'
+                        }}>
+                          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '8px' }}>
+                            <span style={{ 
+                              fontSize: '13px', 
+                              color: '#cccccc', 
+                              textTransform: 'capitalize',
+                              fontWeight: '500'
                             }}>
-                              <div
-                                style={{ 
-                                  height: '4px', 
-                                  backgroundColor: progress >= 80 ? '#4a9eff' : progress >= 60 ? '#ffaa00' : progress >= 40 ? '#ff6600' : '#ff4444',
-                                  borderRadius: '2px',
-                                  width: `${progress}%`,
-                                  transition: 'width 0.3s ease'
-                                }}
-                              />
-                            </div>
-                            <span style={{ fontSize: '12px', color: '#666666', width: '32px' }}>{Math.round(progress)}%</span>
+                              {section}
+                            </span>
+                            <span style={{ 
+                              fontSize: '13px', 
+                              color: progress >= 80 ? '#4a9eff' : progress >= 60 ? '#ffaa00' : progress >= 40 ? '#ff6600' : '#ff4444',
+                              fontWeight: '600'
+                            }}>
+                              {Math.round(progress)}%
+                            </span>
+                          </div>
+                          <div style={{ 
+                            width: '100%', 
+                            height: '6px', 
+                            backgroundColor: '#333333', 
+                            borderRadius: '3px',
+                            overflow: 'hidden'
+                          }}>
+                            <div
+                              style={{ 
+                                height: '6px', 
+                                backgroundColor: progress >= 80 ? '#4a9eff' : progress >= 60 ? '#ffaa00' : progress >= 40 ? '#ff6600' : '#ff4444',
+                                borderRadius: '3px',
+                                width: `${progress}%`,
+                                transition: 'width 0.3s ease'
+                              }}
+                            />
                           </div>
                         </div>
                       ))}
@@ -629,54 +754,139 @@ export default function AdminPage() {
               </div>
             </div>
           ) : (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '32px' }}>
               {selectedProject && (
                 <div>
-                  <h2 style={{ 
-                    fontSize: '24px', 
-                    fontWeight: '500', 
-                    color: '#ffffff', 
-                    marginBottom: '8px' 
+                  {/* Project Header */}
+                  <div style={{ 
+                    padding: '32px',
+                    backgroundColor: 'rgba(255, 255, 255, 0.02)',
+                    border: '1px solid #333333',
+                    borderRadius: '16px',
+                    marginBottom: '32px'
                   }}>
-                    {selectedProject.project.name}
-                  </h2>
-                  <p style={{ 
-                    fontSize: '16px', 
-                    color: '#cccccc', 
-                    marginBottom: '32px' 
-                  }}>
-                    {selectedProject.project.sector} • {selectedProject.project.vision}
-                  </p>
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px' }}>
+                      <div>
+                        <h2 style={{ 
+                          fontSize: '28px', 
+                          fontWeight: '600', 
+                          color: '#ffffff',
+                          letterSpacing: '-0.02em',
+                          marginBottom: '8px'
+                        }}>
+                          {selectedProject.project.name}
+                        </h2>
+                        <p style={{ 
+                          fontSize: '16px', 
+                          color: '#cccccc',
+                          lineHeight: '1.5'
+                        }}>
+                          {selectedProject.project.sector} • {selectedProject.project.vision}
+                        </p>
+                      </div>
+                      
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                        <span style={{
+                          padding: '8px 16px',
+                          backgroundColor: selectedProject.project.clientType === 'A' ? 'rgba(52, 199, 89, 0.2)' : 
+                                         selectedProject.project.clientType === 'B' ? 'rgba(74, 158, 255, 0.2)' : 'rgba(175, 82, 222, 0.2)',
+                          color: selectedProject.project.clientType === 'A' ? '#34c759' : 
+                                 selectedProject.project.clientType === 'B' ? '#4a9eff' : '#af52de',
+                          borderRadius: '12px',
+                          fontSize: '14px',
+                          fontWeight: '500'
+                        }}>
+                          Tipo {selectedProject.project.clientType}
+                        </span>
+                        
+                        <button
+                          onClick={() => exportProject(selectedProject)}
+                          style={{
+                            padding: '8px 16px',
+                            backgroundColor: 'rgba(74, 158, 255, 0.1)',
+                            border: '1px solid rgba(74, 158, 255, 0.3)',
+                            borderRadius: '8px',
+                            color: '#4a9eff',
+                            fontSize: '14px',
+                            fontWeight: '500',
+                            cursor: 'pointer',
+                            transition: 'all 0.2s ease'
+                          }}
+                          onMouseEnter={(e) => {
+                            e.target.style.backgroundColor = 'rgba(74, 158, 255, 0.2)';
+                            e.target.style.borderColor = '#4a9eff';
+                          }}
+                          onMouseLeave={(e) => {
+                            e.target.style.backgroundColor = 'rgba(74, 158, 255, 0.1)';
+                            e.target.style.borderColor = 'rgba(74, 158, 255, 0.3)';
+                          }}
+                        >
+                          <Download style={{ width: '16px', height: '16px', marginRight: '8px' }} />
+                          Exportar
+                        </button>
+                      </div>
+                    </div>
+                    
+                    {/* Project Stats */}
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', gap: '16px' }}>
+                      <div style={{ textAlign: 'center' }}>
+                        <div style={{ fontSize: '24px', fontWeight: '700', color: '#4a9eff', marginBottom: '4px' }}>
+                          {selectedProject.project.values.length}
+                        </div>
+                        <div style={{ fontSize: '12px', color: '#666666' }}>Valores</div>
+                      </div>
+                      <div style={{ textAlign: 'center' }}>
+                        <div style={{ fontSize: '24px', fontWeight: '700', color: '#34c759', marginBottom: '4px' }}>
+                          {selectedProject.project.createdAt.toLocaleDateString()}
+                        </div>
+                        <div style={{ fontSize: '12px', color: '#666666' }}>Creado</div>
+                      </div>
+                      <div style={{ textAlign: 'center' }}>
+                        <div style={{ fontSize: '24px', fontWeight: '700', color: '#ff9500', marginBottom: '4px' }}>
+                          {Math.round(Object.values(selectedProject.progress).reduce((a, b) => a + b, 0) / 5)}%
+                        </div>
+                        <div style={{ fontSize: '12px', color: '#666666' }}>Progreso</div>
+                      </div>
+                    </div>
+                  </div>
                   
                   {/* Project Details */}
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
-                    <div>
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '24px' }}>
+                    {/* Basic Info */}
+                    <div style={{
+                      padding: '24px',
+                      backgroundColor: 'rgba(255, 255, 255, 0.02)',
+                      border: '1px solid #333333',
+                      borderRadius: '12px'
+                    }}>
                       <h3 style={{ 
-                        fontSize: '16px', 
-                        fontWeight: '500', 
+                        fontSize: '18px', 
+                        fontWeight: '600', 
                         color: '#ffffff', 
-                        marginBottom: '16px' 
+                        marginBottom: '20px',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '8px'
                       }}>
+                        <FileText style={{ width: '18px', height: '18px' }} />
                         Información Básica
                       </h3>
-                      <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', fontSize: '14px' }}>
-                        <div>
-                          <span style={{ color: '#666666' }}>Nombre:</span>
-                          <span style={{ color: '#ffffff', marginLeft: '8px' }}>{selectedProject.project.name}</span>
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                          <span style={{ color: '#666666', fontSize: '14px' }}>Nombre</span>
+                          <span style={{ color: '#ffffff', fontSize: '14px', fontWeight: '500' }}>{selectedProject.project.name}</span>
                         </div>
-                        <div>
-                          <span style={{ color: '#666666' }}>Sector:</span>
-                          <span style={{ color: '#ffffff', marginLeft: '8px' }}>{selectedProject.project.sector}</span>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                          <span style={{ color: '#666666', fontSize: '14px' }}>Sector</span>
+                          <span style={{ color: '#ffffff', fontSize: '14px', fontWeight: '500' }}>{selectedProject.project.sector}</span>
                         </div>
-                        <div>
-                          <span style={{ color: '#666666' }}>Tipo:</span>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                          <span style={{ color: '#666666', fontSize: '14px' }}>Tipo</span>
                           <span style={{ 
-                            color: '#ffffff', 
-                            marginLeft: '8px',
-                            padding: '2px 8px',
-                            backgroundColor: '#333333',
-                            borderRadius: '4px',
-                            fontSize: '12px'
+                            color: selectedProject.project.clientType === 'A' ? '#34c759' : 
+                                   selectedProject.project.clientType === 'B' ? '#4a9eff' : '#af52de',
+                            fontSize: '14px', 
+                            fontWeight: '500'
                           }}>
                             Tipo {selectedProject.project.clientType}
                           </span>
@@ -684,23 +894,35 @@ export default function AdminPage() {
                       </div>
                     </div>
                     
-                    <div>
+                    {/* Values */}
+                    <div style={{
+                      padding: '24px',
+                      backgroundColor: 'rgba(255, 255, 255, 0.02)',
+                      border: '1px solid #333333',
+                      borderRadius: '12px'
+                    }}>
                       <h3 style={{ 
-                        fontSize: '16px', 
-                        fontWeight: '500', 
+                        fontSize: '18px', 
+                        fontWeight: '600', 
                         color: '#ffffff', 
-                        marginBottom: '16px' 
+                        marginBottom: '20px',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '8px'
                       }}>
+                        <TrendingUp style={{ width: '18px', height: '18px' }} />
                         Valores
                       </h3>
                       <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
                         {selectedProject.project.values.map((value, index) => (
                           <span key={index} style={{
-                            padding: '4px 12px',
-                            backgroundColor: '#333333',
-                            color: '#ffffff',
+                            padding: '6px 12px',
+                            backgroundColor: 'rgba(74, 158, 255, 0.1)',
+                            color: '#4a9eff',
                             borderRadius: '16px',
-                            fontSize: '12px'
+                            fontSize: '13px',
+                            fontWeight: '500',
+                            border: '1px solid rgba(74, 158, 255, 0.3)'
                           }}>
                             {value}
                           </span>
@@ -708,27 +930,57 @@ export default function AdminPage() {
                       </div>
                     </div>
                     
-                    <div>
+                    {/* Progress Overview */}
+                    <div style={{
+                      padding: '24px',
+                      backgroundColor: 'rgba(255, 255, 255, 0.02)',
+                      border: '1px solid #333333',
+                      borderRadius: '12px',
+                      gridColumn: '1 / -1'
+                    }}>
                       <h3 style={{ 
-                        fontSize: '16px', 
-                        fontWeight: '500', 
+                        fontSize: '18px', 
+                        fontWeight: '600', 
                         color: '#ffffff', 
-                        marginBottom: '16px' 
+                        marginBottom: '20px',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '8px'
                       }}>
+                        <TrendingUp style={{ width: '18px', height: '18px' }} />
                         Progreso General
                       </h3>
-                      <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '16px' }}>
                         {Object.entries(selectedProject.progress).map(([section, progress]) => (
-                          <div key={section}>
-                            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '4px' }}>
-                              <span style={{ fontSize: '14px', color: '#666666', textTransform: 'capitalize' }}>{section}</span>
-                              <span style={{ fontSize: '14px', color: '#ffffff' }}>{Math.round(progress)}%</span>
+                          <div key={section} style={{ 
+                            padding: '16px',
+                            backgroundColor: 'rgba(255, 255, 255, 0.02)',
+                            border: '1px solid #333333',
+                            borderRadius: '8px'
+                          }}>
+                            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '8px' }}>
+                              <span style={{ 
+                                fontSize: '14px', 
+                                color: '#cccccc', 
+                                textTransform: 'capitalize',
+                                fontWeight: '500'
+                              }}>
+                                {section}
+                              </span>
+                              <span style={{ 
+                                fontSize: '14px', 
+                                color: progress >= 80 ? '#4a9eff' : progress >= 60 ? '#ffaa00' : progress >= 40 ? '#ff6600' : '#ff4444',
+                                fontWeight: '600'
+                              }}>
+                                {Math.round(progress)}%
+                              </span>
                             </div>
                             <div style={{ 
                               width: '100%', 
                               height: '6px', 
                               backgroundColor: '#333333', 
-                              borderRadius: '3px' 
+                              borderRadius: '3px',
+                              overflow: 'hidden'
                             }}>
                               <div
                                 style={{ 
