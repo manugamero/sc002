@@ -37,6 +37,7 @@ interface ProjectData {
   launch: {
     questions: { question: string; answer: boolean }[];
     brandbook: string;
+    feedback: string;
   };
 }
 
@@ -54,7 +55,8 @@ const initialProjectData: ProjectData = {
       { question: '¿Qué canales de marketing vas a usar?', answer: false },
       { question: '¿Tienes una lista de usuarios beta?', answer: false }
     ],
-    brandbook: ''
+    brandbook: '',
+    feedback: ''
   }
 };
 
@@ -470,15 +472,15 @@ export default function HomePage() {
 
   // Actualizar título al cargar la página
   useEffect(() => {
-    document.title = "S+C 013";
+    document.title = "S+C Framework v1.0";
     // Forzar actualización del título con un pequeño delay
     setTimeout(() => {
-      document.title = "S+C 013";
+      document.title = "S+C Framework v1.0";
     }, 100);
 
     // Actualizar título cuando la ventana vuelva a estar activa
     const handleFocus = () => {
-      document.title = "S+C 013";
+      document.title = "S+C Framework v1.0";
     };
 
     window.addEventListener('focus', handleFocus);
@@ -512,9 +514,9 @@ export default function HomePage() {
       playVideo();
     }
     // Forzar actualización del título para evitar caché del navegador
-    document.title = "S+C 013";
+    document.title = "S+C Framework v1.0";
     setTimeout(() => {
-      document.title = "S+C 013";
+      document.title = "S+C Framework v1.0";
     }, 50);
   }, [currentStepIndex]);
 
@@ -943,7 +945,7 @@ export default function HomePage() {
       'launch-1': '5. Launch / 5.1 Validation',
       'launch-2': '5. Launch / 5.2 Brandbook'
     };
-    return sectionMap[stepId] || '';
+    return sectionMap[stepId] || 'S+C / Framework';
   };
 
   // Función para encontrar el índice de una sección principal
