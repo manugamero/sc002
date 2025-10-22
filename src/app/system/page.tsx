@@ -76,38 +76,82 @@ export default function SystemPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div style={{ 
+      minHeight: '100vh', 
+      backgroundColor: '#000000', 
+      fontFamily: 'Inter, system-ui, sans-serif' 
+    }}>
       {/* Header */}
-      <div className="bg-white shadow-sm border-b">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-4">
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => window.history.back()}
-                className="flex items-center space-x-2"
-              >
-                <ArrowLeft className="w-4 h-4" />
-                <span>Volver</span>
-              </Button>
-              <h1 className="text-2xl font-bold text-gray-900">🎨 Design System</h1>
+      <div style={{ 
+        position: 'sticky', 
+        top: 0, 
+        backgroundColor: '#000000', 
+        padding: '20px 24px', 
+        zIndex: 10,
+        borderBottom: '1px solid #333333',
+        backdropFilter: 'blur(10px)'
+      }}>
+        <div style={{ 
+          display: 'flex', 
+          alignItems: 'center', 
+          justifyContent: 'space-between',
+          maxWidth: '1200px',
+          margin: '0 auto'
+        }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+            <button
+              onClick={() => window.history.back()}
+              style={{ 
+                width: '40px', 
+                height: '40px', 
+                display: 'flex', 
+                alignItems: 'center', 
+                justifyContent: 'center', 
+                backgroundColor: 'rgba(255, 255, 255, 0.05)', 
+                border: '1px solid #333333', 
+                borderRadius: '8px',
+                cursor: 'pointer',
+                color: '#ffffff',
+                transition: 'all 0.2s ease'
+              }}
+            >
+              <ArrowLeft style={{ width: '18px', height: '18px' }} />
+            </button>
+            
+            <div style={{ 
+              fontSize: '20px', 
+              color: '#ffffff', 
+              fontWeight: '600',
+              letterSpacing: '-0.02em'
+            }}>
+              🎨 Design System
             </div>
-            <HamburgerMenu 
-              isOpen={isMenuOpen} 
-              onClick={() => setIsMenuOpen(!isMenuOpen)}
-            />
+          </div>
+          
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <HamburgerMenu isOpen={isMenuOpen} onClick={() => setIsMenuOpen(!isMenuOpen)} />
           </div>
         </div>
       </div>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div style={{ 
+        padding: '40px 24px',
+        maxWidth: '1200px',
+        margin: '0 auto'
+      }}>
         
         {/* Colors Section */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="bg-white rounded-lg shadow-lg p-6 mb-8"
+          style={{
+            padding: '28px',
+            border: '1px solid #333333',
+            borderRadius: '16px',
+            backgroundColor: 'rgba(255, 255, 255, 0.02)',
+            marginBottom: '32px',
+            backdropFilter: 'blur(10px)'
+          }}
         >
           <h2 className="text-xl font-semibold mb-4 flex items-center space-x-2">
             <Palette className="w-5 h-5 text-purple-500" />
@@ -119,34 +163,34 @@ export default function SystemPage() {
             <div className="text-center">
               <div className="w-16 h-16 bg-gray-900 rounded-lg mx-auto mb-2"></div>
               <p className="text-sm font-medium">Gray 900</p>
-              <p className="text-xs text-gray-500">#111827</p>
+              <p className="text-xs #666666">#111827</p>
             </div>
             <div className="text-center">
               <div className="w-16 h-16 bg-gray-800 rounded-lg mx-auto mb-2"></div>
               <p className="text-sm font-medium">Gray 800</p>
-              <p className="text-xs text-gray-500">#1F2937</p>
+              <p className="text-xs #666666">#1F2937</p>
             </div>
             <div className="text-center">
-              <div className="w-16 h-16 bg-gray-100 rounded-lg mx-auto mb-2"></div>
+              <div className="w-16 h-16 #333333 rounded-lg mx-auto mb-2"></div>
               <p className="text-sm font-medium">Gray 100</p>
-              <p className="text-xs text-gray-500">#F3F4F6</p>
+              <p className="text-xs #666666">#F3F4F6</p>
             </div>
             
             {/* Accent Colors */}
             <div className="text-center">
               <div className="w-16 h-16 bg-blue-500 rounded-lg mx-auto mb-2"></div>
               <p className="text-sm font-medium">Blue 500</p>
-              <p className="text-xs text-gray-500">#3B82F6</p>
+              <p className="text-xs #666666">#3B82F6</p>
             </div>
             <div className="text-center">
               <div className="w-16 h-16 bg-red-500 rounded-lg mx-auto mb-2"></div>
               <p className="text-sm font-medium">Red 500</p>
-              <p className="text-xs text-gray-500">#EF4444</p>
+              <p className="text-xs #666666">#EF4444</p>
             </div>
             <div className="text-center">
               <div className="w-16 h-16 bg-green-500 rounded-lg mx-auto mb-2"></div>
               <p className="text-sm font-medium">Green 500</p>
-              <p className="text-xs text-gray-500">#10B981</p>
+              <p className="text-xs #666666">#10B981</p>
             </div>
           </div>
         </motion.div>
@@ -156,7 +200,14 @@ export default function SystemPage() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
-          className="bg-white rounded-lg shadow-lg p-6 mb-8"
+          style={{
+            padding: '28px',
+            border: '1px solid #333333',
+            borderRadius: '16px',
+            backgroundColor: 'rgba(255, 255, 255, 0.02)',
+            marginBottom: '32px',
+            backdropFilter: 'blur(10px)'
+          }}
         >
           <h2 className="text-xl font-semibold mb-4 flex items-center space-x-2">
             <Type className="w-5 h-5 text-blue-500" />
@@ -165,32 +216,32 @@ export default function SystemPage() {
           
           <div className="space-y-4">
             <div>
-              <h1 className="text-4xl font-bold text-gray-900">Heading 1 - 4xl Bold</h1>
-              <p className="text-sm text-gray-500 mt-1">text-4xl font-bold</p>
+              <h1 className="text-4xl font-bold #ffffff">Heading 1 - 4xl Bold</h1>
+              <p className="text-sm #666666 mt-1">text-4xl font-bold</p>
             </div>
             <div>
-              <h2 className="text-3xl font-bold text-gray-900">Heading 2 - 3xl Bold</h2>
-              <p className="text-sm text-gray-500 mt-1">text-3xl font-bold</p>
+              <h2 className="text-3xl font-bold #ffffff">Heading 2 - 3xl Bold</h2>
+              <p className="text-sm #666666 mt-1">text-3xl font-bold</p>
             </div>
             <div>
-              <h3 className="text-xl font-semibold text-gray-900">Heading 3 - xl Semibold</h3>
-              <p className="text-sm text-gray-500 mt-1">text-xl font-semibold</p>
+              <h3 className="text-xl font-semibold #ffffff">Heading 3 - xl Semibold</h3>
+              <p className="text-sm #666666 mt-1">text-xl font-semibold</p>
             </div>
             <div>
-              <h4 className="text-lg font-medium text-gray-900">Heading 4 - lg Medium</h4>
-              <p className="text-sm text-gray-500 mt-1">text-lg font-medium</p>
+              <h4 className="text-lg font-medium #ffffff">Heading 4 - lg Medium</h4>
+              <p className="text-sm #666666 mt-1">text-lg font-medium</p>
             </div>
             <div>
               <p className="text-base text-gray-700">Body text - base Regular</p>
-              <p className="text-sm text-gray-500 mt-1">text-base</p>
+              <p className="text-sm #666666 mt-1">text-base</p>
             </div>
             <div>
-              <p className="text-sm text-gray-600">Small text - sm Regular</p>
-              <p className="text-sm text-gray-500 mt-1">text-sm</p>
+              <p className="text-sm #cccccc">Small text - sm Regular</p>
+              <p className="text-sm #666666 mt-1">text-sm</p>
             </div>
             <div>
-              <p className="text-xs text-gray-500">Extra small text - xs Regular</p>
-              <p className="text-sm text-gray-500 mt-1">text-xs</p>
+              <p className="text-xs #666666">Extra small text - xs Regular</p>
+              <p className="text-sm #666666 mt-1">text-xs</p>
             </div>
           </div>
         </motion.div>
@@ -200,7 +251,14 @@ export default function SystemPage() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
-          className="bg-white rounded-lg shadow-lg p-6 mb-8"
+          style={{
+            padding: '28px',
+            border: '1px solid #333333',
+            borderRadius: '16px',
+            backgroundColor: 'rgba(255, 255, 255, 0.02)',
+            marginBottom: '32px',
+            backdropFilter: 'blur(10px)'
+          }}
         >
           <h2 className="text-xl font-semibold mb-4 flex items-center space-x-2">
             <Target className="w-5 h-5 text-green-500" />
@@ -278,7 +336,14 @@ export default function SystemPage() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.3 }}
-          className="bg-white rounded-lg shadow-lg p-6 mb-8"
+          style={{
+            padding: '28px',
+            border: '1px solid #333333',
+            borderRadius: '16px',
+            backgroundColor: 'rgba(255, 255, 255, 0.02)',
+            marginBottom: '32px',
+            backdropFilter: 'blur(10px)'
+          }}
         >
           <h2 className="text-xl font-semibold mb-4 flex items-center space-x-2">
             <Users className="w-5 h-5 text-indigo-500" />
@@ -297,7 +362,7 @@ export default function SystemPage() {
                   value={formData.text}
                   onChange={(e) => handleInputChange('text', e.target.value)}
                   placeholder="Escribe algo aquí..."
-                  className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full p-3 border #333333 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 />
               </div>
 
@@ -310,7 +375,7 @@ export default function SystemPage() {
                   value={formData.email}
                   onChange={(e) => handleInputChange('email', e.target.value)}
                   placeholder="tu@email.com"
-                  className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full p-3 border #333333 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 />
               </div>
 
@@ -323,7 +388,7 @@ export default function SystemPage() {
                   value={formData.password}
                   onChange={(e) => handleInputChange('password', e.target.value)}
                   placeholder="••••••••"
-                  className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full p-3 border #333333 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 />
               </div>
             </div>
@@ -339,7 +404,7 @@ export default function SystemPage() {
                   onChange={(e) => handleInputChange('textarea', e.target.value)}
                   placeholder="Escribe un párrafo..."
                   rows={3}
-                  className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full p-3 border #333333 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 />
               </div>
 
@@ -350,7 +415,7 @@ export default function SystemPage() {
                 <select
                   value={formData.select}
                   onChange={(e) => handleInputChange('select', e.target.value)}
-                  className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full p-3 border #333333 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 >
                   <option value="">Selecciona una opción</option>
                   <option value="option1">Opción 1</option>
@@ -368,13 +433,13 @@ export default function SystemPage() {
                     type="color"
                     value={formData.color}
                     onChange={(e) => handleInputChange('color', e.target.value)}
-                    className="w-12 h-10 border border-gray-300 rounded-lg cursor-pointer"
+                    className="w-12 h-10 border #333333 rounded-lg cursor-pointer"
                   />
                   <input
                     type="text"
                     value={formData.color}
                     onChange={(e) => handleInputChange('color', e.target.value)}
-                    className="flex-1 p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                    className="flex-1 p-2 border #333333 rounded-lg focus:ring-2 focus:ring-blue-500"
                   />
                 </div>
               </div>
@@ -461,7 +526,14 @@ export default function SystemPage() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.4 }}
-          className="bg-white rounded-lg shadow-lg p-6 mb-8"
+          style={{
+            padding: '28px',
+            border: '1px solid #333333',
+            borderRadius: '16px',
+            backgroundColor: 'rgba(255, 255, 255, 0.02)',
+            marginBottom: '32px',
+            backdropFilter: 'blur(10px)'
+          }}
         >
           <h2 className="text-xl font-semibold mb-4 flex items-center space-x-2">
             <Monitor className="w-5 h-5 text-orange-500" />
@@ -470,32 +542,32 @@ export default function SystemPage() {
           
           <div className="overflow-x-auto">
             <table className="min-w-full divide-y divide-gray-200">
-              <thead className="bg-gray-50">
+              <thead className="#000000">
                 <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-left text-xs font-medium #666666 uppercase tracking-wider">
                     ID
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-left text-xs font-medium #666666 uppercase tracking-wider">
                     Nombre
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-left text-xs font-medium #666666 uppercase tracking-wider">
                     Email
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-left text-xs font-medium #666666 uppercase tracking-wider">
                     Rol
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-left text-xs font-medium #666666 uppercase tracking-wider">
                     Estado
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-left text-xs font-medium #666666 uppercase tracking-wider">
                     Acciones
                   </th>
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
                 {tableData.map((row, index) => (
-                  <tr key={row.id} className="hover:bg-gray-50">
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                  <tr key={row.id} className="hover:#000000">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm #ffffff">
                       {row.id}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
@@ -503,7 +575,7 @@ export default function SystemPage() {
                         type="text"
                         value={row.name}
                         onChange={(e) => updateTableData(index, 'name', e.target.value)}
-                        className="w-full p-2 border border-gray-300 rounded focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        className="w-full p-2 border #333333 rounded focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                       />
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
@@ -511,14 +583,14 @@ export default function SystemPage() {
                         type="email"
                         value={row.email}
                         onChange={(e) => updateTableData(index, 'email', e.target.value)}
-                        className="w-full p-2 border border-gray-300 rounded focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        className="w-full p-2 border #333333 rounded focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                       />
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <select
                         value={row.role}
                         onChange={(e) => updateTableData(index, 'role', e.target.value)}
-                        className="w-full p-2 border border-gray-300 rounded focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        className="w-full p-2 border #333333 rounded focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                       >
                         <option value="Admin">Admin</option>
                         <option value="User">User</option>
@@ -557,7 +629,14 @@ export default function SystemPage() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.5 }}
-          className="bg-white rounded-lg shadow-lg p-6 mb-8"
+          style={{
+            padding: '28px',
+            border: '1px solid #333333',
+            borderRadius: '16px',
+            backgroundColor: 'rgba(255, 255, 255, 0.02)',
+            marginBottom: '32px',
+            backdropFilter: 'blur(10px)'
+          }}
         >
           <h2 className="text-xl font-semibold mb-4 flex items-center space-x-2">
             <Plus className="w-5 h-5 text-teal-500" />
@@ -586,7 +665,7 @@ export default function SystemPage() {
                     newItems[index] = e.target.value;
                     setListItems(newItems);
                   }}
-                  className="flex-1 p-2 border border-gray-300 rounded focus:ring-2 focus:ring-blue-500"
+                  className="flex-1 p-2 border #333333 rounded focus:ring-2 focus:ring-blue-500"
                 />
                 <button
                   onClick={() => removeListItem(index)}
@@ -604,7 +683,14 @@ export default function SystemPage() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.6 }}
-          className="bg-white rounded-lg shadow-lg p-6 mb-8"
+          style={{
+            padding: '28px',
+            border: '1px solid #333333',
+            borderRadius: '16px',
+            backgroundColor: 'rgba(255, 255, 255, 0.02)',
+            marginBottom: '32px',
+            backdropFilter: 'blur(10px)'
+          }}
         >
           <h2 className="text-xl font-semibold mb-4 flex items-center space-x-2">
             <Heart className="w-5 h-5 text-red-500" />
@@ -615,7 +701,7 @@ export default function SystemPage() {
             {/* Basic Card */}
             <div className="bg-white border border-gray-200 rounded-lg shadow-sm p-4">
               <h3 className="text-lg font-semibold mb-2">Tarjeta Básica</h3>
-              <p className="text-gray-600 text-sm mb-4">
+              <p className="#cccccc text-sm mb-4">
                 Esta es una tarjeta básica con contenido simple.
               </p>
               <Button variant="primary" size="sm">
@@ -631,7 +717,7 @@ export default function SystemPage() {
                 </div>
                 <h3 className="text-lg font-semibold">Con Icono</h3>
               </div>
-              <p className="text-gray-600 text-sm mb-4">
+              <p className="#cccccc text-sm mb-4">
                 Tarjeta con icono y contenido estructurado.
               </p>
               <div className="flex space-x-2">
@@ -649,7 +735,7 @@ export default function SystemPage() {
               <div className="h-32 bg-gradient-to-r from-purple-400 to-pink-400"></div>
               <div className="p-4">
                 <h3 className="text-lg font-semibold mb-2">Con Imagen</h3>
-                <p className="text-gray-600 text-sm mb-4">
+                <p className="#cccccc text-sm mb-4">
                   Tarjeta con imagen de fondo y contenido.
                 </p>
                 <Button variant="primary" size="sm" className="w-full">
@@ -665,7 +751,14 @@ export default function SystemPage() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.7 }}
-          className="bg-white rounded-lg shadow-lg p-6 mb-8"
+          style={{
+            padding: '28px',
+            border: '1px solid #333333',
+            borderRadius: '16px',
+            backgroundColor: 'rgba(255, 255, 255, 0.02)',
+            marginBottom: '32px',
+            backdropFilter: 'blur(10px)'
+          }}
         >
           <h2 className="text-xl font-semibold mb-4 flex items-center space-x-2">
             <CheckCircle className="w-5 h-5 text-green-500" />
@@ -732,7 +825,14 @@ export default function SystemPage() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.8 }}
-          className="bg-white rounded-lg shadow-lg p-6 mb-8"
+          style={{
+            padding: '28px',
+            border: '1px solid #333333',
+            borderRadius: '16px',
+            backgroundColor: 'rgba(255, 255, 255, 0.02)',
+            marginBottom: '32px',
+            backdropFilter: 'blur(10px)'
+          }}
         >
           <h2 className="text-xl font-semibold mb-4 flex items-center space-x-2">
             <Loader2 className="w-5 h-5 text-blue-500 animate-spin" />
@@ -770,7 +870,14 @@ export default function SystemPage() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.9 }}
-          className="bg-white rounded-lg shadow-lg p-6 mb-8"
+          style={{
+            padding: '28px',
+            border: '1px solid #333333',
+            borderRadius: '16px',
+            backgroundColor: 'rgba(255, 255, 255, 0.02)',
+            marginBottom: '32px',
+            backdropFilter: 'blur(10px)'
+          }}
         >
           <h2 className="text-xl font-semibold mb-4 flex items-center space-x-2">
             <TrendingUp className="w-5 h-5 text-indigo-500" />
@@ -781,7 +888,7 @@ export default function SystemPage() {
             {/* Basic Progress Bars */}
             <div className="space-y-3">
               <div>
-                <div className="flex justify-between text-sm text-gray-600 mb-1">
+                <div className="flex justify-between text-sm #cccccc mb-1">
                   <span>Progreso básico</span>
                   <span>75%</span>
                 </div>
@@ -791,7 +898,7 @@ export default function SystemPage() {
               </div>
 
               <div>
-                <div className="flex justify-between text-sm text-gray-600 mb-1">
+                <div className="flex justify-between text-sm #cccccc mb-1">
                   <span>Progreso con colores</span>
                   <span>90%</span>
                 </div>
@@ -801,7 +908,7 @@ export default function SystemPage() {
               </div>
 
               <div>
-                <div className="flex justify-between text-sm text-gray-600 mb-1">
+                <div className="flex justify-between text-sm #cccccc mb-1">
                   <span>Progreso con gradiente</span>
                   <span>60%</span>
                 </div>
@@ -831,9 +938,9 @@ export default function SystemPage() {
                 <div className="flex-1 h-1 bg-gray-200"></div>
                 <div className="flex items-center">
                   <div className="w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center">
-                    <span className="text-gray-500 text-sm font-bold">3</span>
+                    <span className="#666666 text-sm font-bold">3</span>
                   </div>
-                  <span className="ml-2 text-sm text-gray-500">Pendiente</span>
+                  <span className="ml-2 text-sm #666666">Pendiente</span>
                 </div>
               </div>
             </div>
@@ -845,7 +952,14 @@ export default function SystemPage() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 1.0 }}
-          className="bg-white rounded-lg shadow-lg p-6 mb-8"
+          style={{
+            padding: '28px',
+            border: '1px solid #333333',
+            borderRadius: '16px',
+            backgroundColor: 'rgba(255, 255, 255, 0.02)',
+            marginBottom: '32px',
+            backdropFilter: 'blur(10px)'
+          }}
         >
           <h2 className="text-xl font-semibold mb-4 flex items-center space-x-2">
             <Palette className="w-5 h-5 text-purple-500" />
@@ -859,9 +973,9 @@ export default function SystemPage() {
               Users, Search, TrendingUp, Sparkles, Loader2,
               Code, Play, Monitor, Upload, Eye, ExternalLink
             ].map((Icon, index) => (
-              <div key={index} className="flex flex-col items-center p-3 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">
-                <Icon className="w-6 h-6 text-gray-600 mb-2" />
-                <span className="text-xs text-gray-500 text-center">{Icon.name}</span>
+              <div key={index} className="flex flex-col items-center p-3 border border-gray-200 rounded-lg hover:#000000 transition-colors">
+                <Icon className="w-6 h-6 #cccccc mb-2" />
+                <span className="text-xs #666666 text-center">{Icon.name}</span>
               </div>
             ))}
           </div>
