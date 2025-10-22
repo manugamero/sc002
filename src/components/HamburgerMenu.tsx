@@ -17,7 +17,7 @@ export default function HamburgerMenu({ isOpen, onClick, className = '' }: Hambu
       whileTap={{ scale: 0.9 }}
     >
       <motion.span
-        className="block w-6 h-0.5 bg-gray-700 rounded-full"
+        className="block w-6 h-0.5 bg-white rounded-full"
         animate={{
           rotate: isOpen ? 45 : 0,
           y: isOpen ? 0 : -6,
@@ -25,7 +25,7 @@ export default function HamburgerMenu({ isOpen, onClick, className = '' }: Hambu
         transition={{ duration: 0.3, ease: "easeInOut" }}
       />
       <motion.span
-        className="block w-6 h-0.5 bg-gray-700 rounded-full"
+        className="block w-6 h-0.5 bg-white rounded-full"
         animate={{
           opacity: isOpen ? 0 : 1,
           x: isOpen ? 20 : 0,
@@ -33,7 +33,7 @@ export default function HamburgerMenu({ isOpen, onClick, className = '' }: Hambu
         transition={{ duration: 0.3, ease: "easeInOut" }}
       />
       <motion.span
-        className="block w-6 h-0.5 bg-gray-700 rounded-full"
+        className="block w-6 h-0.5 bg-white rounded-full"
         animate={{
           rotate: isOpen ? -45 : 0,
           y: isOpen ? 0 : 6,

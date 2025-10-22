@@ -2,6 +2,9 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { ArrowRight, ArrowLeft, Plus, Trash2, RefreshCw, Wand2, Menu, SkipForward, Mic, MicOff, Zap, Rocket, Lightbulb, Target, Star, Flame, Gem, Sparkles } from 'lucide-react';
+import StepCounter from '@/components/StepCounter';
+import NavigationDropdown from '@/components/NavigationDropdown';
+import AnimationPanel from '@/components/AnimationPanel';
 
 interface ProjectData {
   name: string;
@@ -21,8 +24,10 @@ interface ProjectData {
     prototype: string;
   };
   communication: {
+    mode?: string;
     social: { name: string; bio: string };
-    ads: string;
+    ads: Array<{ title: string; description: string; link: string }>;
+    merch?: { name: string };
   };
   launch: {
     questions: { question: string; answer: boolean }[];
@@ -32,11 +37,32 @@ interface ProjectData {
 const initialProjectData: ProjectData = {
   name: '',
   company: '',
-  strategy: { interviews: '', competitors: [], plan: [] },
-  brand: { values: [], names: [], selectedName: '' },
-  product: { features: [], prototype: '' },
-  communication: { social: { name: '', bio: '' }, ads: '' },
-  launch: { questions: [] }
+  strategy: { 
+    interviews: '', 
+    competitors: ['', '', ''], 
+    plan: ['', '', ''] 
+  },
+  brand: { 
+    values: [
+      { value: '', opposite: '' },
+      { value: '', opposite: '' },
+      { value: '', opposite: '' }
+    ], 
+    names: ['', '', ''], 
+    selectedName: '' 
+  },
+  product: { 
+    features: ['', '', ''], 
+    prototype: '' 
+  },
+  communication: { social: { name: '', bio: '' }, ads: [], merch: { name: '' } },
+  launch: { 
+    questions: [
+      { question: '', answer: false },
+      { question: '', answer: false },
+      { question: '', answer: false }
+    ] 
+  }
 };
 
 // Pasos individuales con contenido detallado
@@ -60,10 +86,10 @@ const steps = [
   { id: 'product-3', title: '3.3 Shipping / Lanzamiento', type: 'rollout', field: 'product.shippingQuestions' },
   
   // Messages
-  { id: 'messages-0', title: '4.0 Messages', type: 'mode-selector', field: 'messages.mode' },
-  { id: 'messages-1', title: '4.1 Social / Contenido', type: 'social', field: 'messages.social' },
-  { id: 'messages-2', title: '4.2 Ads / Campañas', type: 'campaign', field: 'messages.campaignText' },
-  { id: 'messages-3', title: '4.3 Merch / Merchandising', type: 'merch', field: 'messages.merchImages' },
+  { id: 'messages-0', title: '4.0 Messages', type: 'mode-selector', field: 'communication.mode' },
+  { id: 'messages-1', title: '4.1 Social / Contenido', type: 'social', field: 'communication.social' },
+  { id: 'messages-2', title: '4.2 Ads / Campañas', type: 'campaign', field: 'communication.ads' },
+  { id: 'messages-3', title: '4.3 Merch / Merchandising', type: 'merch', field: 'communication.merch' },
   
   // Launch
   { id: 'launch-1', title: '5.1 Validación Final', type: 'questions', field: 'launch.questions' },
@@ -98,6 +124,7 @@ export default function HomePage() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [selectedVersion, setSelectedVersion] = useState<number>(1);
   const [isAnimating, setIsAnimating] = useState(false);
+  const [animationType, setAnimationType] = useState('fade');
   const [showElements, setShowElements] = useState({
     video: false,
     title: false,
@@ -242,15 +269,15 @@ export default function HomePage() {
 
   // Actualizar título al cargar la página
   useEffect(() => {
-    document.title = "S+C 013";
+    document.title = "S+C 020";
     // Forzar actualización del título con un pequeño delay
     setTimeout(() => {
-      document.title = "S+C 013";
+      document.title = "S+C 020";
     }, 100);
 
     // Actualizar título cuando la ventana vuelva a estar activa
     const handleFocus = () => {
-      document.title = "S+C 013";
+      document.title = "S+C 020";
     };
 
     window.addEventListener('focus', handleFocus);
@@ -263,9 +290,9 @@ export default function HomePage() {
       videoRef.current.play().catch(console.error);
     }
     // Forzar actualización del título para evitar caché del navegador
-    document.title = "S+C 013";
+    document.title = "S+C 020";
     setTimeout(() => {
-      document.title = "S+C 013";
+      document.title = "S+C 020";
     }, 50);
   }, [currentStepIndex]);
 
@@ -280,38 +307,79 @@ export default function HomePage() {
       selectors: false
     });
 
-    // Todos los elementos aparecen juntos
-    setTimeout(() => setShowElements(prev => ({ 
-      ...prev, 
-      video: true, 
-      title: true 
-    })), 100);
-    
-            // Descripción con delay y fade-in por palabras
-            setTimeout(() => {
-              setShowElements(prev => ({ ...prev, description: true }));
-              const description = getStepContent(steps[currentStepIndex]?.id);
-              if (description) {
-                setTypewriterText('');
-                const words = description.split(' ');
-                let i = 0;
-                const wordInterval = setInterval(() => {
-                  if (i < words.length) {
-                    setTypewriterText(words.slice(0, i + 1).join(' '));
-                    i++;
-                  } else {
-                    clearInterval(wordInterval);
-                  }
-                }, 120); // Más sutil: 120ms por palabra
+    const description = getStepContent(steps[currentStepIndex]?.id);
+
+    // Diferentes variantes de animación
+    switch (animationType) {
+      case 'fade':
+        // Fade In Simple - Todo aparece suavemente
+        setTimeout(() => setShowElements({ video: true, title: true, description: true, form: true, selectors: true }), 100);
+        if (description) setTypewriterText(description);
+        break;
+
+      case 'slide-left':
+        // Slide desde la izquierda - cascada rápida
+        setTimeout(() => setShowElements(prev => ({ ...prev, video: true, title: true })), 50);
+        setTimeout(() => setShowElements(prev => ({ ...prev, description: true })), 200);
+        setTimeout(() => setShowElements(prev => ({ ...prev, form: true })), 350);
+        setTimeout(() => setShowElements(prev => ({ ...prev, selectors: true })), 500);
+        if (description) setTypewriterText(description);
+        break;
+
+      case 'slide-right':
+        // Slide desde la derecha - inverso
+        setTimeout(() => setShowElements(prev => ({ ...prev, video: true, selectors: true })), 50);
+        setTimeout(() => setShowElements(prev => ({ ...prev, form: true })), 200);
+        setTimeout(() => setShowElements(prev => ({ ...prev, description: true })), 350);
+        setTimeout(() => setShowElements(prev => ({ ...prev, title: true })), 500);
+        if (description) setTypewriterText(description);
+        break;
+
+      case 'typewriter':
+        // Typewriter - efecto máquina de escribir
+        setTimeout(() => setShowElements(prev => ({ ...prev, video: true, title: true })), 100);
+        setTimeout(() => {
+          setShowElements(prev => ({ ...prev, description: true }));
+          if (description) {
+            setTypewriterText('');
+            const words = description.split(' ');
+            let i = 0;
+            const wordInterval = setInterval(() => {
+              if (i < words.length) {
+                setTypewriterText(words.slice(0, i + 1).join(' '));
+                i++;
+              } else {
+                clearInterval(wordInterval);
               }
-            }, 1000);
-    
-    // Formulario después
-    setTimeout(() => setShowElements(prev => ({ ...prev, form: true })), 1400);
-    
-    // Selectores al final
-    setTimeout(() => setShowElements(prev => ({ ...prev, selectors: true })), 1800);
-  }, [currentStepIndex]);
+            }, 80); // Más rápido que antes
+          }
+        }, 500);
+        setTimeout(() => setShowElements(prev => ({ ...prev, form: true })), 1000);
+        setTimeout(() => setShowElements(prev => ({ ...prev, selectors: true })), 1200);
+        break;
+
+      case 'cascade':
+        // Cascade - cascada ultra rápida
+        setTimeout(() => setShowElements(prev => ({ ...prev, video: true })), 0);
+        setTimeout(() => setShowElements(prev => ({ ...prev, title: true })), 100);
+        setTimeout(() => setShowElements(prev => ({ ...prev, description: true })), 200);
+        setTimeout(() => setShowElements(prev => ({ ...prev, form: true })), 300);
+        setTimeout(() => setShowElements(prev => ({ ...prev, selectors: true })), 400);
+        if (description) setTypewriterText(description);
+        break;
+
+      case 'zoom':
+        // Zoom In - todos los elementos con zoom
+        setTimeout(() => setShowElements({ video: true, title: true, description: true, form: true, selectors: true }), 150);
+        if (description) setTypewriterText(description);
+        break;
+
+      default:
+        // Fade por defecto
+        setTimeout(() => setShowElements({ video: true, title: true, description: true, form: true, selectors: true }), 100);
+        if (description) setTypewriterText(description);
+    }
+  }, [currentStepIndex, animationType]);
 
   // Efecto para actualizar el texto cuando cambie la versión seleccionada
   useEffect(() => {
@@ -376,7 +444,10 @@ export default function HomePage() {
       },
       communication: {
         social: { name: 'TechStart', bio: 'Innovando el futuro de la tecnología' },
-        ads: 'Campaña de lanzamiento para TechStart'
+        ads: [
+          { title: 'Campaña de lanzamiento', description: 'Lanzamiento inicial de TechStart', link: 'https://example.com/campaign' }
+        ],
+        merch: { name: 'TechStart' }
       },
       launch: {
         questions: [
@@ -651,19 +722,19 @@ export default function HomePage() {
 
   const getSectionTitle = (stepId: string) => {
     const sectionMap: { [key: string]: string } = {
-      'strategy-0': '1 STRATEGY / 1.0 Strategy',
+      'strategy-0': '1 STRATEGY',
       'strategy-1': '1 STRATEGY / 1.1 Context',
       'strategy-2': '1 STRATEGY / 1.2 Market',
       'strategy-3': '1 STRATEGY / 1.3 Plan',
-      'brand-0': '2 BRANDS / 2.0 Brand',
+      'brand-0': '2 BRANDS',
       'brand-1': '2 BRANDS / 2.1 Values',
       'brand-2': '2 BRANDS / 2.2 Verbal',
       'brand-3': '2 BRANDS / 2.3 Visual',
-      'product-0': '3 PRODUCT / 3.0 Product',
+      'product-0': '3 PRODUCT',
       'product-1': '3 PRODUCT / 3.1 Features',
       'product-2': '3 PRODUCT / 3.2 Iteration',
       'product-3': '3 PRODUCT / 3.3 Shipping',
-      'messages-0': '4 MESSAGES / 4.0 Messages',
+      'messages-0': '4 MESSAGES',
       'messages-1': '4 MESSAGES / 4.1 Social',
       'messages-2': '4 MESSAGES / 4.2 Ads',
       'messages-3': '4 MESSAGES / 4.3 Merch',
@@ -714,12 +785,6 @@ export default function HomePage() {
       return steps.findIndex(step => step.id === stepId);
     }
     return -1;
-  };
-
-  // Función para verificar si estamos en un capítulo principal
-  const isMainChapter = (stepId: string) => {
-    const mainChapters = ['strategy-0', 'brand-0', 'product-0', 'messages-0'];
-    return mainChapters.includes(stepId);
   };
 
   const getStepContent = (stepId: string) => {
@@ -847,12 +912,12 @@ export default function HomePage() {
               placeholder={step.title}
               autoFocus
               onFocus={(e) => {
-                e.target.style.borderColor = '#ffffff';
-                e.target.style.boxShadow = '0 0 0 2px rgba(74, 158, 255, 0.2)';
+                e.currentTarget.style.borderColor = '#ffffff';
+                e.currentTarget.style.boxShadow = '0 0 0 2px rgba(74, 158, 255, 0.2)';
               }}
               onBlur={(e) => {
-                e.target.style.borderColor = '#333333';
-                e.target.style.boxShadow = 'none';
+                e.currentTarget.style.borderColor = '#333333';
+                e.currentTarget.style.boxShadow = 'none';
               }}
             />
           </div>
@@ -880,12 +945,12 @@ export default function HomePage() {
               placeholder={step.title}
               autoFocus
               onFocus={(e) => {
-                e.target.style.borderColor = '#ffffff';
-                e.target.style.boxShadow = '0 0 0 2px rgba(74, 158, 255, 0.2)';
+                e.currentTarget.style.borderColor = '#ffffff';
+                e.currentTarget.style.boxShadow = '0 0 0 2px rgba(74, 158, 255, 0.2)';
               }}
               onBlur={(e) => {
-                e.target.style.borderColor = '#333333';
-                e.target.style.boxShadow = 'none';
+                e.currentTarget.style.borderColor = '#333333';
+                e.currentTarget.style.boxShadow = 'none';
               }}
             />
           </div>
@@ -966,12 +1031,12 @@ export default function HomePage() {
                     }}
                     onMouseEnter={(e) => {
                       if (!isListening || activeVoiceField !== `${step.field}.name`) {
-                        e.target.style.color = '#ffffff';
+                        e.currentTarget.style.color = '#ffffff';
                       }
                     }}
                     onMouseLeave={(e) => {
                       if (!isListening || activeVoiceField !== `${step.field}.name`) {
-                        e.target.style.color = '#666666';
+                        e.currentTarget.style.color = '#666666';
                       }
                     }}
                   >
@@ -1038,8 +1103,8 @@ export default function HomePage() {
                 color: '#666666',
                 transition: 'color 0.2s ease'
               }}
-              onMouseEnter={(e) => e.target.style.color = '#ffffff'}
-              onMouseLeave={(e) => e.target.style.color = '#666666'}
+              onMouseEnter={(e) => e.currentTarget.style.color = '#ffffff'}
+              onMouseLeave={(e) => e.currentTarget.style.color = '#666666'}
             >
                     -
                   </button>
@@ -1080,8 +1145,8 @@ export default function HomePage() {
                       color: '#666666',
                       transition: 'color 0.2s ease'
                     }}
-                    onMouseEnter={(e) => e.target.style.color = '#ffffff'}
-                    onMouseLeave={(e) => e.target.style.color = '#666666'}
+                    onMouseEnter={(e) => e.currentTarget.style.color = '#ffffff'}
+                    onMouseLeave={(e) => e.currentTarget.style.color = '#666666'}
                   >
                     +
             </button>
@@ -1106,12 +1171,12 @@ export default function HomePage() {
                     }}
                     onMouseEnter={(e) => {
                       if (!isListening || activeVoiceField !== `${step.field}.size`) {
-                        e.target.style.color = '#ffffff';
+                        e.currentTarget.style.color = '#ffffff';
                       }
                     }}
                     onMouseLeave={(e) => {
                       if (!isListening || activeVoiceField !== `${step.field}.size`) {
-                        e.target.style.color = '#666666';
+                        e.currentTarget.style.color = '#666666';
                       }
                     }}
                   >
@@ -1262,12 +1327,12 @@ export default function HomePage() {
                     }}
                     onMouseEnter={(e) => {
                       if (!isListening || activeVoiceField !== `${step.field}.founder`) {
-                        e.target.style.color = '#ffffff';
+                        e.currentTarget.style.color = '#ffffff';
                       }
                     }}
                     onMouseLeave={(e) => {
                       if (!isListening || activeVoiceField !== `${step.field}.founder`) {
-                        e.target.style.color = '#666666';
+                        e.currentTarget.style.color = '#666666';
                       }
                     }}
                   >
@@ -1424,12 +1489,12 @@ export default function HomePage() {
                       boxShadow: '0 2px 8px rgba(0,0,0,0.3)'
                     }}
                     onMouseEnter={(e) => {
-                      e.target.style.transform = 'translate(-50%, -50%) scale(1.1)';
-                      e.target.style.boxShadow = '0 4px 12px rgba(0,0,0,0.4)';
+                      e.currentTarget.style.transform = 'translate(-50%, -50%) scale(1.1)';
+                      e.currentTarget.style.boxShadow = '0 4px 12px rgba(0,0,0,0.4)';
                     }}
                     onMouseLeave={(e) => {
-                      e.target.style.transform = 'translate(-50%, -50%) scale(1)';
-                      e.target.style.boxShadow = '0 2px 8px rgba(0,0,0,0.3)';
+                      e.currentTarget.style.transform = 'translate(-50%, -50%) scale(1)';
+                      e.currentTarget.style.boxShadow = '0 2px 8px rgba(0,0,0,0.3)';
                     }}
                     draggable
                     onDragStart={(e) => {
@@ -1499,8 +1564,8 @@ export default function HomePage() {
                       outline: 'none',
                       transition: 'all 0.2s ease'
                     }}
-                    onMouseEnter={(e) => e.target.style.borderBottomColor = '#ffffff'}
-                    onMouseLeave={(e) => e.target.style.borderBottomColor = '#333333'}
+                    onMouseEnter={(e) => e.currentTarget.style.borderBottomColor = '#ffffff'}
+                    onMouseLeave={(e) => e.currentTarget.style.borderBottomColor = '#333333'}
                   />
                   <input
                     type="text"
@@ -1518,8 +1583,8 @@ export default function HomePage() {
                       outline: 'none',
                       transition: 'all 0.2s ease'
                     }}
-                    onMouseEnter={(e) => e.target.style.borderBottomColor = '#ffffff'}
-                    onMouseLeave={(e) => e.target.style.borderBottomColor = '#333333'}
+                    onMouseEnter={(e) => e.currentTarget.style.borderBottomColor = '#ffffff'}
+                    onMouseLeave={(e) => e.currentTarget.style.borderBottomColor = '#333333'}
                   />
                 </div>
               </div>
@@ -1558,8 +1623,8 @@ export default function HomePage() {
                         outline: 'none',
                         transition: 'all 0.2s ease'
                       }}
-                      onMouseEnter={(e) => e.target.style.borderColor = '#ffffff'}
-                      onMouseLeave={(e) => e.target.style.borderColor = '#333333'}
+                      onMouseEnter={(e) => e.currentTarget.style.borderColor = '#ffffff'}
+                      onMouseLeave={(e) => e.currentTarget.style.borderColor = '#333333'}
                     placeholder="Nombre del competidor"
                       autoFocus={index === (value?.competitors || []).length - 1}
                     />
@@ -1581,8 +1646,8 @@ export default function HomePage() {
                       color: '#666666',
                       transition: 'color 0.2s ease'
                     }}
-                    onMouseEnter={(e) => e.target.style.color = '#ff4444'}
-                    onMouseLeave={(e) => e.target.style.color = '#666666'}
+                    onMouseEnter={(e) => e.currentTarget.style.color = '#ff4444'}
+                    onMouseLeave={(e) => e.currentTarget.style.color = '#666666'}
                   >
                     <Trash2 style={{ width: '16px', height: '16px' }} />
                 </button>
@@ -1621,16 +1686,16 @@ export default function HomePage() {
                   transition: 'all 0.2s ease'
                 }}
                 onMouseEnter={(e) => {
-                  e.target.style.color = '#ffffff';
-                  e.target.style.borderColor = '#ffffff';
+                  e.currentTarget.style.color = '#ffffff';
+                  e.currentTarget.style.borderColor = '#ffffff';
                 }}
                 onMouseLeave={(e) => {
-                  e.target.style.color = '#666666';
-                  e.target.style.borderColor = '#333333';
+                  e.currentTarget.style.color = '#666666';
+                  e.currentTarget.style.borderColor = '#333333';
                 }}
               >
                 <Plus style={{ width: '16px', height: '16px' }} />
-                Añadir competidor ({(value?.competitors || []).length}/{maxCompetitors})
+                Añadir competidor ({(value?.competitors || []).length}/5)
             </button>
             </div>
           </div>
@@ -1679,8 +1744,8 @@ export default function HomePage() {
                     color: '#666666',
                     transition: 'color 0.2s ease'
                   }}
-                  onMouseEnter={(e) => e.target.style.color = '#ff4444'}
-                  onMouseLeave={(e) => e.target.style.color = '#666666'}
+                  onMouseEnter={(e) => e.currentTarget.style.color = '#ff4444'}
+                  onMouseLeave={(e) => e.currentTarget.style.color = '#666666'}
                 >
                   <Trash2 style={{ width: '16px', height: '16px' }} />
                 </button>
@@ -1704,12 +1769,12 @@ export default function HomePage() {
                 transition: 'all 0.2s ease'
               }}
               onMouseEnter={(e) => {
-                e.target.style.color = '#ffffff';
-                e.target.style.borderColor = '#ffffff';
+                e.currentTarget.style.color = '#ffffff';
+                e.currentTarget.style.borderColor = '#ffffff';
               }}
               onMouseLeave={(e) => {
-                e.target.style.color = '#666666';
-                e.target.style.borderColor = '#333333';
+                e.currentTarget.style.color = '#666666';
+                e.currentTarget.style.borderColor = '#333333';
               }}
             >
               <Plus style={{ width: '16px', height: '16px' }} />
@@ -1789,8 +1854,8 @@ export default function HomePage() {
                     color: '#666666',
                     transition: 'color 0.2s ease'
                   }}
-                  onMouseEnter={(e) => e.target.style.color = '#ff4444'}
-                  onMouseLeave={(e) => e.target.style.color = '#666666'}
+                  onMouseEnter={(e) => e.currentTarget.style.color = '#ff4444'}
+                  onMouseLeave={(e) => e.currentTarget.style.color = '#666666'}
                 >
                   <Trash2 style={{ width: '16px', height: '16px' }} />
                 </button>
@@ -1813,12 +1878,12 @@ export default function HomePage() {
                 transition: 'all 0.2s ease'
               }}
               onMouseEnter={(e) => {
-                e.target.style.color = '#ffffff';
-                e.target.style.borderColor = '#ffffff';
+                e.currentTarget.style.color = '#ffffff';
+                e.currentTarget.style.borderColor = '#ffffff';
               }}
               onMouseLeave={(e) => {
-                e.target.style.color = '#666666';
-                e.target.style.borderColor = '#333333';
+                e.currentTarget.style.color = '#666666';
+                e.currentTarget.style.borderColor = '#333333';
               }}
             >
               <Plus style={{ width: '16px', height: '16px' }} />
@@ -1872,12 +1937,12 @@ export default function HomePage() {
                 transition: 'all 0.2s ease'
               }}
               onMouseEnter={(e) => {
-                e.target.style.color = '#ffffff';
-                e.target.style.borderColor = '#ffffff';
+                e.currentTarget.style.color = '#ffffff';
+                e.currentTarget.style.borderColor = '#ffffff';
               }}
               onMouseLeave={(e) => {
-                e.target.style.color = '#666666';
-                e.target.style.borderColor = '#333333';
+                e.currentTarget.style.color = '#666666';
+                e.currentTarget.style.borderColor = '#333333';
               }}
             >
               <Plus style={{ width: '16px', height: '16px' }} />
@@ -2095,8 +2160,8 @@ export default function HomePage() {
                     outline: 'none',
                     transition: 'all 0.2s ease'
                   }}
-                  onMouseEnter={(e) => e.target.style.borderBottomColor = '#ffffff'}
-                  onMouseLeave={(e) => e.target.style.borderBottomColor = '#333333'}
+                  onMouseEnter={(e) => e.currentTarget.style.borderBottomColor = '#ffffff'}
+                  onMouseLeave={(e) => e.currentTarget.style.borderBottomColor = '#333333'}
                 />
                 <input
                   type="text"
@@ -2122,8 +2187,8 @@ export default function HomePage() {
                     outline: 'none',
                     transition: 'all 0.2s ease'
                   }}
-                  onMouseEnter={(e) => e.target.style.borderBottomColor = '#ffffff'}
-                  onMouseLeave={(e) => e.target.style.borderBottomColor = '#333333'}
+                  onMouseEnter={(e) => e.currentTarget.style.borderBottomColor = '#ffffff'}
+                  onMouseLeave={(e) => e.currentTarget.style.borderBottomColor = '#333333'}
                   placeholder="Tarea del plan"
                 />
                 <button
@@ -2148,8 +2213,8 @@ export default function HomePage() {
                     justifyContent: 'center',
                     transition: 'all 0.2s ease'
                   }}
-                  onMouseEnter={(e) => e.target.style.borderColor = '#ffffff'}
-                  onMouseLeave={(e) => e.target.style.borderColor = '#333333'}
+                  onMouseEnter={(e) => e.currentTarget.style.borderColor = '#ffffff'}
+                  onMouseLeave={(e) => e.currentTarget.style.borderColor = '#333333'}
                 >
                   {item.completed && (
                     <div style={{ color: '#000000', fontSize: '14px', fontWeight: 'bold' }}>✓</div>
@@ -2179,12 +2244,12 @@ export default function HomePage() {
                 transition: 'all 0.2s ease'
               }}
               onMouseEnter={(e) => {
-                e.target.style.color = '#ffffff';
-                e.target.style.borderColor = '#ffffff';
+                e.currentTarget.style.color = '#ffffff';
+                e.currentTarget.style.borderColor = '#ffffff';
               }}
               onMouseLeave={(e) => {
-                e.target.style.color = '#666666';
-                e.target.style.borderColor = '#333333';
+                e.currentTarget.style.color = '#666666';
+                e.currentTarget.style.borderColor = '#333333';
               }}
             >
               <Plus style={{ width: '16px', height: '16px' }} />
@@ -2282,8 +2347,8 @@ export default function HomePage() {
                     color: '#666666',
                     transition: 'color 0.2s ease'
                   }}
-                  onMouseEnter={(e) => e.target.style.color = '#ff4444'}
-                  onMouseLeave={(e) => e.target.style.color = '#666666'}
+                  onMouseEnter={(e) => e.currentTarget.style.color = '#ff4444'}
+                  onMouseLeave={(e) => e.currentTarget.style.color = '#666666'}
                 >
                   <Trash2 style={{ width: '16px', height: '16px' }} />
                 </button>
@@ -2307,12 +2372,12 @@ export default function HomePage() {
                 transition: 'all 0.2s ease'
               }}
               onMouseEnter={(e) => {
-                e.target.style.color = '#ffffff';
-                e.target.style.borderColor = '#ffffff';
+                e.currentTarget.style.color = '#ffffff';
+                e.currentTarget.style.borderColor = '#ffffff';
               }}
               onMouseLeave={(e) => {
-                e.target.style.color = '#666666';
-                e.target.style.borderColor = '#333333';
+                e.currentTarget.style.color = '#666666';
+                e.currentTarget.style.borderColor = '#333333';
               }}
             >
               <Plus style={{ width: '16px', height: '16px' }} />
@@ -2393,14 +2458,14 @@ export default function HomePage() {
                     }}
                     onMouseEnter={(e) => {
                       if (value?.typography !== font) {
-                        e.target.style.borderColor = '#666666';
-                        e.target.style.color = '#ffffff';
+                        e.currentTarget.style.borderColor = '#666666';
+                        e.currentTarget.style.color = '#ffffff';
                       }
                     }}
                     onMouseLeave={(e) => {
                       if (value?.typography !== font) {
-                        e.target.style.borderColor = '#333333';
-                        e.target.style.color = '#666666';
+                        e.currentTarget.style.borderColor = '#333333';
+                        e.currentTarget.style.color = '#666666';
                       }
                     }}
                   >
@@ -2441,8 +2506,8 @@ export default function HomePage() {
                       cursor: 'pointer',
                       transition: 'all 0.2s ease'
                     }}
-                    onMouseEnter={(e) => e.target.style.borderColor = '#ffffff'}
-                    onMouseLeave={(e) => e.target.style.borderColor = '#333333'}
+                    onMouseEnter={(e) => e.currentTarget.style.borderColor = '#ffffff'}
+                    onMouseLeave={(e) => e.currentTarget.style.borderColor = '#333333'}
                   />
                 </div>
                 <div style={{ 
@@ -2465,8 +2530,8 @@ export default function HomePage() {
                       cursor: 'pointer',
                       transition: 'all 0.2s ease'
                     }}
-                    onMouseEnter={(e) => e.target.style.borderColor = '#ffffff'}
-                    onMouseLeave={(e) => e.target.style.borderColor = '#333333'}
+                    onMouseEnter={(e) => e.currentTarget.style.borderColor = '#ffffff'}
+                    onMouseLeave={(e) => e.currentTarget.style.borderColor = '#333333'}
                   />
                 </div>
               </div>
@@ -2506,14 +2571,14 @@ export default function HomePage() {
                     }}
                     onMouseEnter={(e) => {
                       if (value?.icon !== iconName) {
-                        e.target.style.borderColor = '#666666';
-                        e.target.style.color = '#ffffff';
+                        e.currentTarget.style.borderColor = '#666666';
+                        e.currentTarget.style.color = '#ffffff';
                       }
                     }}
                     onMouseLeave={(e) => {
                       if (value?.icon !== iconName) {
-                        e.target.style.borderColor = '#333333';
-                        e.target.style.color = '#666666';
+                        e.currentTarget.style.borderColor = '#333333';
+                        e.currentTarget.style.color = '#666666';
                       }
                     }}
                   >
@@ -2557,14 +2622,14 @@ export default function HomePage() {
                   }}
                   onMouseEnter={(e) => {
                     if (value?.name !== archetype.name) {
-                      e.target.style.backgroundColor = '#2a2a2a';
-                      e.target.style.borderColor = '#ffffff';
+                      e.currentTarget.style.backgroundColor = '#2a2a2a';
+                      e.currentTarget.style.borderColor = '#ffffff';
                     }
                   }}
                   onMouseLeave={(e) => {
                     if (value?.name !== archetype.name) {
-                      e.target.style.backgroundColor = '#1a1a1a';
-                      e.target.style.borderColor = '#333333';
+                      e.currentTarget.style.backgroundColor = '#1a1a1a';
+                      e.currentTarget.style.borderColor = '#333333';
                     }
                   }}
                 >
@@ -2703,12 +2768,12 @@ export default function HomePage() {
                     transition: 'all 0.2s ease'
                   }}
                   onMouseEnter={(e) => {
-                    e.target.style.backgroundColor = '#2a2a2a';
-                    e.target.style.borderColor = '#ffffff';
+                    e.currentTarget.style.backgroundColor = '#2a2a2a';
+                    e.currentTarget.style.borderColor = '#ffffff';
                   }}
                   onMouseLeave={(e) => {
-                    e.target.style.backgroundColor = '#1a1a1a';
-                    e.target.style.borderColor = '#333333';
+                    e.currentTarget.style.backgroundColor = '#1a1a1a';
+                    e.currentTarget.style.borderColor = '#333333';
                   }}
                   onClick={() => updateField(step.field, nameType)}
                 >
@@ -3048,8 +3113,8 @@ export default function HomePage() {
                             color: '#666666',
                             transition: 'color 0.2s ease'
                           }}
-                          onMouseEnter={(e) => e.target.style.color = '#ff4444'}
-                          onMouseLeave={(e) => e.target.style.color = '#666666'}
+                          onMouseEnter={(e) => e.currentTarget.style.color = '#ff4444'}
+                          onMouseLeave={(e) => e.currentTarget.style.color = '#666666'}
                         >
                           <Trash2 style={{ width: '16px', height: '16px' }} />
                         </button>
@@ -3075,12 +3140,12 @@ export default function HomePage() {
                         transition: 'all 0.2s ease'
                       }}
                       onMouseEnter={(e) => {
-                        e.target.style.color = '#ffffff';
-                        e.target.style.borderColor = '#ffffff';
+                        e.currentTarget.style.color = '#ffffff';
+                        e.currentTarget.style.borderColor = '#ffffff';
                       }}
                       onMouseLeave={(e) => {
-                        e.target.style.color = '#666666';
-                        e.target.style.borderColor = '#333333';
+                        e.currentTarget.style.color = '#666666';
+                        e.currentTarget.style.borderColor = '#333333';
                       }}
                     >
                       <Plus style={{ width: '16px', height: '16px' }} />
@@ -3191,8 +3256,8 @@ export default function HomePage() {
                         color: '#666666',
                         transition: 'color 0.2s ease'
                       }}
-                      onMouseEnter={(e) => e.target.style.color = '#ff4444'}
-                      onMouseLeave={(e) => e.target.style.color = '#666666'}
+                      onMouseEnter={(e) => e.currentTarget.style.color = '#ff4444'}
+                      onMouseLeave={(e) => e.currentTarget.style.color = '#666666'}
                     >
                       <Trash2 style={{ width: '16px', height: '16px' }} />
                     </button>
@@ -3219,12 +3284,12 @@ export default function HomePage() {
                     transition: 'all 0.2s ease'
                   }}
                   onMouseEnter={(e) => {
-                    e.target.style.color = '#ffffff';
-                    e.target.style.borderColor = '#ffffff';
+                    e.currentTarget.style.color = '#ffffff';
+                    e.currentTarget.style.borderColor = '#ffffff';
                   }}
                   onMouseLeave={(e) => {
-                    e.target.style.color = '#666666';
-                    e.target.style.borderColor = '#333333';
+                    e.currentTarget.style.color = '#666666';
+                    e.currentTarget.style.borderColor = '#333333';
                   }}
                 >
                   <Plus style={{ width: '16px', height: '16px' }} />
@@ -3311,8 +3376,8 @@ export default function HomePage() {
                         fontSize: '12px',
                         transition: 'all 0.2s ease'
                       }}
-                      onMouseEnter={(e) => e.target.style.backgroundColor = '#3a8eef'}
-                      onMouseLeave={(e) => e.target.style.backgroundColor = '#ffffff'}
+                      onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#3a8eef'}
+                      onMouseLeave={(e) => e.currentTarget.style.backgroundColor = '#ffffff'}
                     >
                       Abrir
                     </button>
@@ -3545,8 +3610,8 @@ export default function HomePage() {
                         color: '#666666',
                         transition: 'color 0.2s ease'
                       }}
-                      onMouseEnter={(e) => e.target.style.color = '#ff4444'}
-                      onMouseLeave={(e) => e.target.style.color = '#666666'}
+                      onMouseEnter={(e) => e.currentTarget.style.color = '#ff4444'}
+                      onMouseLeave={(e) => e.currentTarget.style.color = '#666666'}
                     >
                       <Trash2 style={{ width: '16px', height: '16px' }} />
                     </button>
@@ -3573,12 +3638,12 @@ export default function HomePage() {
                     transition: 'all 0.2s ease'
                   }}
                   onMouseEnter={(e) => {
-                    e.target.style.color = '#ffffff';
-                    e.target.style.borderColor = '#ffffff';
+                    e.currentTarget.style.color = '#ffffff';
+                    e.currentTarget.style.borderColor = '#ffffff';
                   }}
                   onMouseLeave={(e) => {
-                    e.target.style.color = '#666666';
-                    e.target.style.borderColor = '#333333';
+                    e.currentTarget.style.color = '#666666';
+                    e.currentTarget.style.borderColor = '#333333';
                   }}
                 >
                   <Plus style={{ width: '16px', height: '16px' }} />
@@ -3697,8 +3762,8 @@ export default function HomePage() {
                         color: '#666666',
                         transition: 'color 0.2s ease'
                       }}
-                      onMouseEnter={(e) => e.target.style.color = '#ff4444'}
-                      onMouseLeave={(e) => e.target.style.color = '#666666'}
+                      onMouseEnter={(e) => e.currentTarget.style.color = '#ff4444'}
+                      onMouseLeave={(e) => e.currentTarget.style.color = '#666666'}
                     >
                       <Trash2 style={{ width: '16px', height: '16px' }} />
                     </button>
@@ -3725,12 +3790,12 @@ export default function HomePage() {
                     transition: 'all 0.2s ease'
                   }}
                   onMouseEnter={(e) => {
-                    e.target.style.color = '#ffffff';
-                    e.target.style.borderColor = '#ffffff';
+                    e.currentTarget.style.color = '#ffffff';
+                    e.currentTarget.style.borderColor = '#ffffff';
                   }}
                   onMouseLeave={(e) => {
-                    e.target.style.color = '#666666';
-                    e.target.style.borderColor = '#333333';
+                    e.currentTarget.style.color = '#666666';
+                    e.currentTarget.style.borderColor = '#333333';
                   }}
                 >
                   <Plus style={{ width: '16px', height: '16px' }} />
@@ -3843,8 +3908,8 @@ export default function HomePage() {
                         color: '#666666',
                         transition: 'color 0.2s ease'
                       }}
-                      onMouseEnter={(e) => e.target.style.color = '#ff4444'}
-                      onMouseLeave={(e) => e.target.style.color = '#666666'}
+                      onMouseEnter={(e) => e.currentTarget.style.color = '#ff4444'}
+                      onMouseLeave={(e) => e.currentTarget.style.color = '#666666'}
                     >
                       <Trash2 style={{ width: '16px', height: '16px' }} />
                     </button>
@@ -3871,12 +3936,12 @@ export default function HomePage() {
                     transition: 'all 0.2s ease'
                   }}
                   onMouseEnter={(e) => {
-                    e.target.style.color = '#ffffff';
-                    e.target.style.borderColor = '#ffffff';
+                    e.currentTarget.style.color = '#ffffff';
+                    e.currentTarget.style.borderColor = '#ffffff';
                   }}
                   onMouseLeave={(e) => {
-                    e.target.style.color = '#666666';
-                    e.target.style.borderColor = '#333333';
+                    e.currentTarget.style.color = '#666666';
+                    e.currentTarget.style.borderColor = '#333333';
                   }}
                 >
                   <Plus style={{ width: '16px', height: '16px' }} />
@@ -4161,8 +4226,8 @@ export default function HomePage() {
                               color: '#666666',
                               transition: 'color 0.2s ease'
                             }}
-                            onMouseEnter={(e) => e.target.style.color = '#ff4444'}
-                            onMouseLeave={(e) => e.target.style.color = '#666666'}
+                            onMouseEnter={(e) => e.currentTarget.style.color = '#ff4444'}
+                            onMouseLeave={(e) => e.currentTarget.style.color = '#666666'}
                           >
                             <Trash2 style={{ width: '12px', height: '12px' }} />
                           </button>
@@ -4191,12 +4256,12 @@ export default function HomePage() {
                           transition: 'all 0.2s ease'
                         }}
                         onMouseEnter={(e) => {
-                          e.target.style.color = '#ffffff';
-                          e.target.style.borderColor = '#ffffff';
+                          e.currentTarget.style.color = '#ffffff';
+                          e.currentTarget.style.borderColor = '#ffffff';
                         }}
                         onMouseLeave={(e) => {
-                          e.target.style.color = '#666666';
-                          e.target.style.borderColor = '#333333';
+                          e.currentTarget.style.color = '#666666';
+                          e.currentTarget.style.borderColor = '#333333';
                         }}
                       >
                         <Plus style={{ width: '12px', height: '12px' }} />
@@ -4218,8 +4283,8 @@ export default function HomePage() {
                         color: '#666666',
                         transition: 'color 0.2s ease'
                       }}
-                      onMouseEnter={(e) => e.target.style.color = '#ff4444'}
-                      onMouseLeave={(e) => e.target.style.color = '#666666'}
+                      onMouseEnter={(e) => e.currentTarget.style.color = '#ff4444'}
+                      onMouseLeave={(e) => e.currentTarget.style.color = '#666666'}
                     >
                       <Trash2 style={{ width: '16px', height: '16px' }} />
                     </button>
@@ -4246,12 +4311,12 @@ export default function HomePage() {
                     transition: 'all 0.2s ease'
                   }}
                   onMouseEnter={(e) => {
-                    e.target.style.color = '#ffffff';
-                    e.target.style.borderColor = '#ffffff';
+                    e.currentTarget.style.color = '#ffffff';
+                    e.currentTarget.style.borderColor = '#ffffff';
                   }}
                   onMouseLeave={(e) => {
-                    e.target.style.color = '#666666';
-                    e.target.style.borderColor = '#333333';
+                    e.currentTarget.style.color = '#666666';
+                    e.currentTarget.style.borderColor = '#333333';
                   }}
                 >
                   <Plus style={{ width: '16px', height: '16px' }} />
@@ -4401,8 +4466,8 @@ export default function HomePage() {
                         color: '#666666',
                         transition: 'color 0.2s ease'
                       }}
-                      onMouseEnter={(e) => e.target.style.color = '#ff4444'}
-                      onMouseLeave={(e) => e.target.style.color = '#666666'}
+                      onMouseEnter={(e) => e.currentTarget.style.color = '#ff4444'}
+                      onMouseLeave={(e) => e.currentTarget.style.color = '#666666'}
                     >
                       <Trash2 style={{ width: '16px', height: '16px' }} />
                     </button>
@@ -4429,12 +4494,12 @@ export default function HomePage() {
                     transition: 'all 0.2s ease'
                   }}
                   onMouseEnter={(e) => {
-                    e.target.style.color = '#ffffff';
-                    e.target.style.borderColor = '#ffffff';
+                    e.currentTarget.style.color = '#ffffff';
+                    e.currentTarget.style.borderColor = '#ffffff';
                   }}
                   onMouseLeave={(e) => {
-                    e.target.style.color = '#666666';
-                    e.target.style.borderColor = '#333333';
+                    e.currentTarget.style.color = '#666666';
+                    e.currentTarget.style.borderColor = '#333333';
                   }}
                 >
                   <Plus style={{ width: '16px', height: '16px' }} />
@@ -4784,8 +4849,8 @@ export default function HomePage() {
                 cursor: 'pointer',
                 transition: 'all 0.2s ease'
               }}
-              onMouseEnter={(e) => e.target.style.backgroundColor = '#3a8eef'}
-              onMouseLeave={(e) => e.target.style.backgroundColor = '#ffffff'}
+              onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#3a8eef'}
+              onMouseLeave={(e) => e.currentTarget.style.backgroundColor = '#ffffff'}
             >
               <Wand2 style={{ width: '16px', height: '16px' }} />
               Generar mockups
@@ -4829,10 +4894,10 @@ export default function HomePage() {
                   transition: 'all 0.2s ease'
                 }}
                 placeholder="Nombre de la marca"
-                onMouseEnter={(e) => e.target.style.borderColor = '#666666'}
-                onMouseLeave={(e) => e.target.style.borderColor = '#333333'}
-                onFocus={(e) => e.target.style.borderColor = '#ffffff'}
-                onBlur={(e) => e.target.style.borderColor = '#333333'}
+                onMouseEnter={(e) => e.currentTarget.style.borderColor = '#666666'}
+                onMouseLeave={(e) => e.currentTarget.style.borderColor = '#333333'}
+                onFocus={(e) => e.currentTarget.style.borderColor = '#ffffff'}
+                onBlur={(e) => e.currentTarget.style.borderColor = '#333333'}
               />
             </div>
 
@@ -4876,10 +4941,10 @@ export default function HomePage() {
                 }}
                 onClick={() => updateField(step.field, { ...value, nameType })}
                 onMouseEnter={(e) => {
-                  e.target.style.backgroundColor = 'rgba(255, 255, 255, 0.05)';
+                  e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.05)';
                 }}
                 onMouseLeave={(e) => {
-                  e.target.style.backgroundColor = 'transparent';
+                  e.currentTarget.style.backgroundColor = 'transparent';
                 }}
               >
                 <span style={{
@@ -4906,8 +4971,7 @@ export default function HomePage() {
     }
   };
 
-
-      return (
+  return (
     <>
         <style jsx>{`
           @keyframes blink {
@@ -4923,25 +4987,44 @@ export default function HomePage() {
             50% { opacity: 0.3; }
           }
           
+          /* Layout principal usando CSS Grid */
           .main-container {
-            flex-direction: row;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            grid-template-rows: 100vh;
             width: 100vw;
             height: 100vh;
+            background-color: #000000;
+            font-family: 'Inter', system-ui, sans-serif;
             overflow: hidden;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
           }
           
           .video-column {
-            width: 50vw;
-            height: 100vh;
-            flex-shrink: 0;
+            grid-column: 1;
+            grid-row: 1;
+            position: relative;
+            background-color: #0a0a0a;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             overflow: hidden;
+            height: 100vh;
           }
           
           .content-column {
-            width: 50vw;
+            grid-column: 2;
+            grid-row: 1;
+            background-color: #000000;
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+            overflow-x: hidden;
             height: 100vh;
-            flex-shrink: 0;
-            overflow: hidden;
           }
           
           .mobile-menu {
@@ -4952,37 +5035,33 @@ export default function HomePage() {
             display: flex;
           }
           
-          @media (max-width: 767px) {
+          /* Tablet portrait y móvil (< 1024px) - stack vertical */
+          @media (max-width: 1023px) {
             .main-container {
-              flex-direction: column;
-              width: 100vw;
+              grid-template-columns: 1fr;
+              grid-template-rows: 40vh 60vh;
               height: 100vh;
-              overflow: hidden;
             }
             
             .video-column {
-              width: 100vw;
-              height: 100vh;
-              position: relative;
+              grid-column: 1;
+              grid-row: 1;
+              height: 40vh;
             }
             
             .content-column {
-              width: 100vw;
-              height: 100vh;
-              position: absolute;
-              top: 0;
-              left: 0;
-              z-index: 10;
-              background: linear-gradient(to bottom, transparent 0%, rgba(0,0,0,0.3) 30%, rgba(0,0,0,0.8) 70%, #000000 100%);
+              grid-column: 1;
+              grid-row: 2;
+              height: 60vh;
             }
             
             .mobile-menu {
               display: flex;
-              position: absolute;
+              position: fixed;
               top: 16px;
               left: 16px;
               right: 16px;
-              z-index: 20;
+              z-index: 50;
             }
             
             .desktop-header {
@@ -4990,49 +5069,17 @@ export default function HomePage() {
             }
           }
         `}</style>
-    <div className="main-container" style={{ 
-      minHeight: '100vh', 
-      backgroundColor: '#000000', 
-      display: 'flex', 
-      fontFamily: 'Inter, system-ui, sans-serif' 
-    }}>
+    <div className="main-container">
       {/* Video column - Izquierda en desktop, arriba en mobile */}
-      <div className="video-column" style={{ 
-        display: 'flex', 
-        alignItems: 'center', 
-        justifyContent: 'center',
-        backgroundColor: '#1a1a1a',
-        position: 'relative'
-      }}>
+      <div className="video-column">
         {/* Menú fijo sobre el video en móvil */}
-        <div className="mobile-menu" style={{ 
-          position: 'absolute', 
-          top: '16px', 
-          left: '16px', 
-          right: '16px',
-          zIndex: 20,
-          alignItems: 'center',
-          justifyContent: 'space-between'
-        }}>
+        <div className="mobile-menu">
+          <div className="flex items-center justify-between w-full bg-black/60 backdrop-blur-md rounded-lg px-3 py-2 border border-white/10">
             {/* Left: Menu + Previous */}
-            <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+            <div className="flex items-center gap-2">
               <button
                 onClick={() => setIsMenuOpen(!isMenuOpen)}
-                style={{ 
-                  width: '32px', 
-                  height: '32px', 
-                  display: 'flex', 
-                  alignItems: 'center', 
-                  justifyContent: 'center', 
-                  backgroundColor: 'rgba(0, 0, 0, 0.5)', 
-                  border: 'none', 
-                  borderRadius: '6px',
-                  cursor: 'pointer',
-                  color: '#ffffff',
-                  transition: 'background-color 0.2s ease'
-                }}
-                onMouseEnter={(e) => e.target.style.backgroundColor = 'rgba(0, 0, 0, 0.7)'}
-                onMouseLeave={(e) => e.target.style.backgroundColor = 'rgba(0, 0, 0, 0.5)'}
+                className="w-8 h-8 flex items-center justify-center bg-transparent border-none cursor-pointer text-white transition-colors duration-200 hover:text-gray-300"
               >
                 <Menu size={16} />
               </button>
@@ -5040,63 +5087,45 @@ export default function HomePage() {
               <button
                 onClick={handlePrevious}
                 disabled={currentStepIndex === 0}
-                style={{ 
-                  width: '32px', 
-                  height: '32px', 
-                  display: 'flex', 
-                  alignItems: 'center', 
-                  justifyContent: 'center', 
-                  backgroundColor: currentStepIndex === 0 ? 'rgba(0, 0, 0, 0.3)' : 'rgba(0, 0, 0, 0.5)', 
-                  border: 'none', 
-                  borderRadius: '6px',
-                  cursor: currentStepIndex === 0 ? 'not-allowed' : 'pointer',
-                  color: currentStepIndex === 0 ? '#666666' : '#ffffff',
-                  transition: 'all 0.2s ease'
-                }}
+                className={`w-8 h-8 flex items-center justify-center border-none rounded-md transition-all duration-200 ${
+                  currentStepIndex === 0 
+                    ? 'cursor-not-allowed text-gray-600 opacity-50' 
+                    : 'cursor-pointer text-white hover:text-gray-300'
+                }`}
               >
                 <ArrowLeft size={16} />
               </button>
             </div>
 
+            {/* Center: Step Counter */}
+            <StepCounter 
+              currentStep={currentStepIndex}
+              totalSteps={steps.length}
+              className="scale-90"
+            />
+
             {/* Right: Next */}
             <button
               onClick={handleNext}
               disabled={currentStepIndex === steps.length - 1}
-              style={{ 
-                width: '32px', 
-                height: '32px', 
-                display: 'flex', 
-                alignItems: 'center', 
-                justifyContent: 'center', 
-                backgroundColor: currentStepIndex === steps.length - 1 ? 'rgba(0, 0, 0, 0.3)' : 'rgba(0, 0, 0, 0.5)', 
-                border: 'none', 
-                borderRadius: '6px',
-                cursor: currentStepIndex === steps.length - 1 ? 'not-allowed' : 'pointer',
-                color: currentStepIndex === steps.length - 1 ? '#666666' : '#ffffff',
-                transition: 'all 0.2s ease'
-              }}
+              className={`w-8 h-8 flex items-center justify-center border-none rounded-md transition-all duration-200 ${
+                currentStepIndex === steps.length - 1 
+                  ? 'cursor-not-allowed text-gray-600 opacity-50' 
+                  : 'cursor-pointer text-white hover:text-gray-300'
+              }`}
             >
               <ArrowRight size={16} />
             </button>
           </div>
         </div>
 
-        <div style={{ 
-          position: 'relative', 
-          width: '100%', 
-          height: '100%', 
-          overflow: 'hidden' 
-        }}>
+        <div className="relative w-full h-full overflow-hidden">
           <video
             ref={videoRef}
             key={currentStepIndex}
-            style={{ 
-              width: '100%', 
-              height: '100%', 
-              objectFit: 'cover',
-              opacity: showElements.video ? 1 : 0,
-              transition: 'opacity 0.8s ease-in-out'
-            }}
+            className={`w-full h-full object-cover transition-opacity duration-700 ${
+              showElements.video ? 'opacity-100' : 'opacity-0'
+            }`}
             autoPlay
             muted
             loop
@@ -5108,145 +5137,81 @@ export default function HomePage() {
       </div>
 
       {/* Content column - Derecha en desktop, abajo en mobile */}
-      <div className="content-column" style={{ 
-        backgroundColor: '#000000', 
-        display: 'flex', 
-        flexDirection: 'column',
-        overflow: 'hidden'
-      }}>
+      <div className="content-column">
         {/* Header - Solo visible en desktop */}
-        <div className="desktop-header" style={{ 
-          position: 'sticky', 
-          top: 0, 
-          backgroundColor: '#000000', 
-          padding: '16px', 
-          zIndex: 10,
-          alignItems: 'center',
-          justifyContent: 'space-between'
-        }}>
-          {/* Left: Menu + Previous */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+        <div className="desktop-header sticky top-0 bg-black/80 backdrop-blur-sm p-4 z-50 flex items-center justify-between border-b border-gray-800/50">
+          {/* Left: Menu + Previous + Navigation */}
+          <div className="flex items-center gap-3">
             <button
               onClick={() => setIsMenuOpen(!isMenuOpen)}
-              style={{ 
-                width: '32px', 
-                height: '32px', 
-                display: 'flex', 
-                alignItems: 'center', 
-                justifyContent: 'center', 
-                backgroundColor: 'transparent', 
-                border: 'none', 
-                cursor: 'pointer',
-                color: '#666666',
-                transition: 'color 0.2s ease'
-              }}
-              onMouseEnter={(e) => e.target.style.color = '#ffffff'}
-              onMouseLeave={(e) => e.target.style.color = '#666666'}
+              className="w-8 h-8 flex items-center justify-center bg-transparent border-none cursor-pointer text-white transition-colors duration-200 hover:text-gray-300"
             >
-              <Menu style={{ width: '16px', height: '16px' }} />
+              <Menu className="w-4 h-4" />
             </button>
+            <div className="w-px h-6 bg-gray-800" />
             <button
               onClick={handlePrevious}
               disabled={currentStepIndex === 0}
-              style={{ 
-                width: '32px', 
-                height: '32px', 
-                display: 'flex', 
-                alignItems: 'center', 
-                justifyContent: 'center', 
-                backgroundColor: 'transparent', 
-                border: 'none', 
-                cursor: currentStepIndex === 0 ? 'not-allowed' : 'pointer',
-                color: currentStepIndex === 0 ? '#333333' : '#666666',
-                opacity: currentStepIndex === 0 ? 0.5 : 1,
-                transition: 'color 0.2s ease'
-              }}
-              onMouseEnter={(e) => {
-                if (currentStepIndex > 0) e.target.style.color = '#ffffff';
-              }}
-              onMouseLeave={(e) => {
-                if (currentStepIndex > 0) e.target.style.color = '#666666';
-              }}
+              className={`w-8 h-8 flex items-center justify-center bg-transparent border-none transition-colors duration-200 ${
+                currentStepIndex === 0 
+                  ? 'cursor-not-allowed text-gray-600 opacity-50' 
+                  : 'cursor-pointer text-white hover:text-gray-300'
+              }`}
             >
-              <ArrowLeft style={{ width: '16px', height: '16px' }} />
+              <ArrowLeft className="w-4 h-4" />
             </button>
+            <NavigationDropdown 
+              steps={steps}
+              currentStepIndex={currentStepIndex}
+              onStepChange={setCurrentStepIndex}
+              className="hidden lg:block"
+            />
           </div>
           
+          {/* Center: Step Counter */}
+          <StepCounter 
+            currentStep={currentStepIndex}
+            totalSteps={steps.length}
+          />
           
-          {/* Right: Voice + Next */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+          {/* Right: Voice + AI + Animation + Next */}
+          <div className="flex items-center gap-3">
             <button
               onClick={startGlobalVoiceRecognition}
               disabled={isListening}
-              style={{ 
-                width: '32px', 
-                height: '32px', 
-                display: 'flex', 
-                alignItems: 'center', 
-                justifyContent: 'center', 
-                backgroundColor: 'transparent', 
-                border: 'none', 
-                cursor: isListening ? 'not-allowed' : 'pointer',
-                color: isListening ? '#ffffff' : '#666666',
-                opacity: isListening ? 0.8 : 1,
-                transition: 'color 0.2s ease'
-              }}
-              onMouseEnter={(e) => {
-                if (!isListening) e.target.style.color = '#ffffff';
-              }}
-              onMouseLeave={(e) => {
-                if (!isListening) e.target.style.color = '#666666';
-              }}
+              className={`w-8 h-8 flex items-center justify-center bg-transparent border-none transition-colors duration-200 ${
+                isListening 
+                  ? 'cursor-not-allowed text-white opacity-80' 
+                  : 'cursor-pointer text-white hover:text-gray-300'
+              }`}
             >
               {isListening ? (
-                <MicOff style={{ width: '16px', height: '16px' }} />
+                <MicOff className="w-4 h-4" />
               ) : (
-                <Mic style={{ width: '16px', height: '16px' }} />
+                <Mic className="w-4 h-4" />
               )}
             </button>
             <button
               onClick={handleGlobalAIGenerate}
-              style={{ 
-                width: '32px', 
-                height: '32px', 
-                display: 'flex', 
-                alignItems: 'center', 
-                justifyContent: 'center', 
-                backgroundColor: 'transparent', 
-                border: 'none', 
-                cursor: 'pointer',
-                color: '#666666',
-                transition: 'color 0.2s ease'
-              }}
-              onMouseEnter={(e) => e.target.style.color = '#ffffff'}
-              onMouseLeave={(e) => e.target.style.color = '#666666'}
+              className="w-8 h-8 flex items-center justify-center bg-transparent border-none cursor-pointer text-white transition-colors duration-200 hover:text-gray-300"
             >
-              <Wand2 style={{ width: '16px', height: '16px' }} />
+              <Wand2 className="w-4 h-4" />
             </button>
+            <AnimationPanel 
+              currentAnimation={animationType}
+              onAnimationChange={setAnimationType}
+            />
+            <div className="w-px h-6 bg-gray-800" />
             <button
               onClick={handleNext}
               disabled={currentStepIndex === steps.length - 1}
-              style={{ 
-                width: '32px', 
-                height: '32px', 
-                display: 'flex', 
-                alignItems: 'center', 
-                justifyContent: 'center', 
-                backgroundColor: 'transparent', 
-                border: 'none', 
-                cursor: currentStepIndex === steps.length - 1 ? 'not-allowed' : 'pointer',
-                color: currentStepIndex === steps.length - 1 ? '#333333' : '#666666',
-                opacity: currentStepIndex === steps.length - 1 ? 0.5 : 1,
-                transition: 'color 0.2s ease'
-              }}
-              onMouseEnter={(e) => {
-                if (currentStepIndex < steps.length - 1) e.target.style.color = '#ffffff';
-              }}
-              onMouseLeave={(e) => {
-                if (currentStepIndex < steps.length - 1) e.target.style.color = '#666666';
-              }}
+              className={`w-8 h-8 flex items-center justify-center bg-transparent border-none transition-colors duration-200 ${
+                currentStepIndex === steps.length - 1 
+                  ? 'cursor-not-allowed text-gray-600 opacity-50' 
+                  : 'cursor-pointer text-white hover:text-gray-300'
+              }`}
             >
-              <ArrowRight style={{ width: '16px', height: '16px' }} />
+              <ArrowRight className="w-4 h-4" />
             </button>
           </div>
         </div>
@@ -5316,12 +5281,12 @@ export default function HomePage() {
                   transition: 'all 0.2s ease'
                 }}
                 onMouseEnter={(e) => {
-                  e.target.style.color = '#ffffff';
-                  e.target.style.borderColor = '#ffffff';
+                  e.currentTarget.style.color = '#ffffff';
+                  e.currentTarget.style.borderColor = '#ffffff';
                 }}
                 onMouseLeave={(e) => {
-                  e.target.style.color = '#666666';
-                  e.target.style.borderColor = '#333333';
+                  e.currentTarget.style.color = '#666666';
+                  e.currentTarget.style.borderColor = '#333333';
                 }}
               >
                 Cerrar
@@ -5386,8 +5351,8 @@ export default function HomePage() {
                   transition: 'color 0.2s ease',
                   fontSize: '16px'
                 }}
-                onMouseEnter={(e) => e.target.style.color = '#ffffff'}
-                onMouseLeave={(e) => e.target.style.color = '#666666'}
+                onMouseEnter={(e) => e.currentTarget.style.color = '#ffffff'}
+                onMouseLeave={(e) => e.currentTarget.style.color = '#666666'}
               >
                 ×
               </button>
@@ -5413,12 +5378,12 @@ export default function HomePage() {
                 }}
                 onMouseEnter={(e) => {
                   if (index !== currentStepIndex) {
-                    e.target.style.backgroundColor = '#333333';
+                    e.currentTarget.style.backgroundColor = '#333333';
                   }
                 }}
                 onMouseLeave={(e) => {
                   if (index !== currentStepIndex) {
-                    e.target.style.backgroundColor = 'transparent';
+                    e.currentTarget.style.backgroundColor = 'transparent';
                   }
                 }}
               >
@@ -5455,21 +5420,42 @@ export default function HomePage() {
               {/* Título interactivo */}
               <div style={{ 
                 marginBottom: '16px',
-                opacity: showElements.title ? 1 : 0,
-                transform: showElements.title ? 'translateY(0)' : 'translateY(20px)',
-                transition: 'opacity 0.6s ease-out, transform 0.6s ease-out'
+                opacity: showElements.title ? 1 : 0.7,
+                transform: showElements.title ? 'translateY(0)' : 'translateY(-10px)',
+                transition: 'all 0.4s ease-out'
               }}>
                 <div style={{ 
                   fontSize: '24px', 
                   color: '#666666', 
                   marginBottom: '4px',
                   cursor: 'pointer',
-                  transition: 'color 0.2s ease'
+                  transition: 'color 0.2s ease',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '2px'
                 }}
-                onMouseEnter={(e) => e.target.style.color = '#ffffff'}
-                onMouseLeave={(e) => e.target.style.color = '#666666'}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.color = '#ffffff';
+                  const img = e.currentTarget.querySelector('img');
+                  if (img) img.style.filter = 'brightness(0) invert(1)';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.color = '#666666';
+                  const img = e.currentTarget.querySelector('img');
+                  if (img) img.style.filter = 'brightness(0) saturate(100%) invert(42%) sepia(0%) saturate(0%) hue-rotate(173deg) brightness(95%) contrast(88%)';
+                }}
                 onClick={() => {/* TODO: Navigate to home */}}
                 >
+                  <img 
+                    src="/sensa.svg" 
+                    alt="Sensa" 
+                    style={{ 
+                      height: '24px',
+                      width: 'auto',
+                      filter: 'brightness(0) saturate(100%) invert(42%) sepia(0%) saturate(0%) hue-rotate(173deg) brightness(95%) contrast(88%)',
+                      transition: 'filter 0.2s ease'
+                    }} 
+                  />
                   S+C
                 </div>
                 <div style={{ 
@@ -5479,8 +5465,8 @@ export default function HomePage() {
                   cursor: 'pointer',
                   transition: 'color 0.2s ease'
                 }}
-                onMouseEnter={(e) => e.target.style.color = '#ffffff'}
-                onMouseLeave={(e) => e.target.style.color = '#ffffff'}
+                onMouseEnter={(e) => e.currentTarget.style.color = '#ffffff'}
+                onMouseLeave={(e) => e.currentTarget.style.color = '#ffffff'}
                 onClick={() => {
                   const sectionName = getSectionTitle(steps[currentStepIndex]?.id || 'intro').split(' / ')[0].split(' ')[1];
                   const targetIndex = findSectionIndex(sectionName);
@@ -5489,7 +5475,7 @@ export default function HomePage() {
                   }
                 }}
                 >
-                  {getSectionTitle(steps[currentStepIndex]?.id || 'intro').split(' / ')[0].toUpperCase()}
+                  {getSectionTitle(steps[currentStepIndex]?.id || 'intro').split(' / ')[0]?.toUpperCase() || ''}
                 </div>
                 <div style={{ 
                   fontSize: '24px', 
@@ -5497,8 +5483,8 @@ export default function HomePage() {
                   cursor: 'pointer',
                   transition: 'color 0.2s ease'
                 }}
-                onMouseEnter={(e) => e.target.style.color = '#ffffff'}
-                onMouseLeave={(e) => e.target.style.color = '#cccccc'}
+                onMouseEnter={(e) => e.currentTarget.style.color = '#ffffff'}
+                onMouseLeave={(e) => e.currentTarget.style.color = '#cccccc'}
                 onClick={() => {
                   const subsectionName = getSectionTitle(steps[currentStepIndex]?.id || 'intro').split(' / ')[1];
                   const targetIndex = findSubsectionIndex(subsectionName);
@@ -5507,144 +5493,31 @@ export default function HomePage() {
                   }
                 }}
                 >
-                  {getSectionTitle(steps[currentStepIndex]?.id || 'intro').split(' / ')[1].toUpperCase()}
+                  {getSectionTitle(steps[currentStepIndex]?.id || 'intro').split(' / ')[1]?.toUpperCase() || ''}
                 </div>
               </div>
               
-              {/* Selector de modo - Solo en capítulos principales */}
-              {isMainChapter(steps[currentStepIndex].id) && (
-              <div style={{ 
-                display: 'flex', 
-                gap: '8px', 
-                marginBottom: '24px',
-                justifyContent: 'center',
-                opacity: showElements.title ? 1 : 0,
-                transform: showElements.title ? 'translateY(0)' : 'translateY(20px)',
-                transition: 'opacity 0.6s ease-out, transform 0.6s ease-out'
-              }}>
-                <button
-                  onClick={() => setSelectedMode('startup')}
-                  style={{
-                    padding: '8px 16px',
-                    fontSize: '14px',
-                    border: '1px solid #333333',
-                    borderRadius: '20px',
-                    backgroundColor: '#ffffff',
-                    color: '#000000',
-                    cursor: 'pointer',
-                    transition: 'all 0.2s ease'
-                  }}
-                >
-                  Startup
-                </button>
-                <button
-                  onClick={() => setSelectedMode('scaleup')}
-                  style={{
-                    padding: '8px 16px',
-                    fontSize: '14px',
-                    border: '1px solid #333333',
-                    borderRadius: '20px',
-                    backgroundColor: 'transparent',
-                    color: '#666666',
-                    cursor: 'pointer',
-                    transition: 'all 0.2s ease'
-                  }}
-                >
-                  ScaleUp
-                </button>
-                <button
-                  onClick={() => setSelectedMode('corporate')}
-                  style={{
-                    padding: '8px 16px',
-                    fontSize: '14px',
-                    border: '1px solid #333333',
-                    borderRadius: '20px',
-                    backgroundColor: 'transparent',
-                    color: '#666666',
-                    cursor: 'pointer',
-                    transition: 'all 0.2s ease'
-                  }}
-                >
-                  Corporate
-                </button>
-              </div>
-              )}
-              
-              {/* Contenido narrativo */}
+              {/* Contenido narrativo - SIEMPRE visible, sin animación */}
               {getStepContent(steps[currentStepIndex]?.id) && (
                 <div style={{
                   fontSize: '16px',
                   lineHeight: '1.6',
                   color: '#cccccc',
                   marginBottom: '32px',
-                opacity: showElements.description ? 1 : 0,
-                transform: showElements.description ? 'translateY(0)' : 'translateY(20px)',
-                transition: 'opacity 0.6s ease-out, transform 0.6s ease-out',
-                minHeight: '60px'
-              }}>
-                {/* Selector de versiones integrado */}
-                <div style={{
-                  display: 'flex',
-                  alignItems: 'flex-start',
-                  gap: '12px',
-                  marginBottom: '8px'
+                  minHeight: '60px'
                 }}>
-                  <div style={{
-                    display: 'flex',
-                    gap: '4px'
-                  }}>
-                    {[1, 2, 3].map((version) => (
-                      <button
-                        key={version}
-                        onClick={() => setSelectedVersion(version)}
-                        style={{
-                          width: '24px',
-                          height: '24px',
-                          borderRadius: '50%',
-                          border: '1px solid #333333',
-                          backgroundColor: selectedVersion === version ? '#ffffff' : 'transparent',
-                          color: selectedVersion === version ? '#000000' : '#666666',
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                          cursor: 'pointer',
-                          fontSize: '12px',
-                          fontWeight: '500',
-                          transition: 'all 0.2s ease'
-                        }}
-                        onMouseEnter={(e) => {
-                          if (selectedVersion !== version) {
-                            e.target.style.backgroundColor = '#333333';
-                            e.target.style.color = '#ffffff';
-                          }
-                        }}
-                        onMouseLeave={(e) => {
-                          if (selectedVersion !== version) {
-                            e.target.style.backgroundColor = 'transparent';
-                            e.target.style.color = '#666666';
-                          }
-                        }}
-                      >
-                        {version}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Texto de descripción */}
-                <div>
                   {typewriterText}
                 </div>
-              </div>
               )}
               
               {/* Formulario */}
               <div style={{
-                opacity: showElements.form ? 1 : 0,
-                transform: showElements.form ? 'translateY(0)' : 'translateY(20px)',
-                transition: 'opacity 0.6s ease-out, transform 0.6s ease-out'
+                opacity: showElements.form ? 1 : 0.5,
+                transform: showElements.form ? 'translateY(0)' : 'translateY(15px)',
+                transition: 'all 0.5s ease-out'
               }}>
-              {renderStep()}
+                {renderStep()}
+              </div>
             </div>
           </div>
         </div>

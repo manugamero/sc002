@@ -139,3 +139,64 @@ export interface ProjectData {
     launch: number;
   };
 }
+
+export interface AppConfig {
+  // Información básica
+  version: string;
+  title: string;
+  
+  // Colores por defecto
+  colors: {
+    primary: string;
+    secondary: string;
+    background: string;
+    text: string;
+    accent: string;
+  };
+  
+  // Iconos disponibles
+  icons: {
+    name: string;
+    component: string;
+    category?: string;
+  }[];
+  
+  // Videos disponibles
+  videos?: {
+    name: string;
+    url: string;
+    stepId?: string;
+    category?: string;
+  }[];
+  
+  // Tipografías disponibles
+  typographies: string[];
+  
+  // Industrias disponibles
+  industries: string[];
+  
+  // Tamaños de empresa
+  companySizes: string[];
+  
+  // Introducciones por sección
+  introductions: {
+    [key: string]: {
+      title: string;
+      description: string;
+      alternatives: string[];
+    };
+  };
+  
+  // Configuración de pasos
+  steps: {
+    id: string;
+    title: string;
+    description: string;
+    type: string;
+    required: boolean;
+    alternatives?: string[];
+    videoUrl?: string;
+    icon?: string;
+    order?: number;
+  }[];
+}

@@ -1,56 +1,11 @@
-// Configuración global de la aplicación
-export interface AppConfig {
-  // Información básica
-  version: string;
-  title: string;
-  
-  // Colores por defecto
-  colors: {
-    primary: string;
-    secondary: string;
-    background: string;
-    text: string;
-    accent: string;
-  };
-  
-  // Iconos disponibles
-  icons: {
-    name: string;
-    component: string;
-  }[];
-  
-  // Tipografías disponibles
-  typographies: string[];
-  
-  // Industrias disponibles
-  industries: string[];
-  
-  // Tamaños de empresa
-  companySizes: string[];
-  
-  // Introducciones por sección
-  introductions: {
-    [key: string]: {
-      title: string;
-      description: string;
-      alternatives: string[];
-    };
-  };
-  
-  // Configuración de pasos
-  steps: {
-    id: string;
-    title: string;
-    description: string;
-    type: string;
-    required: boolean;
-    alternatives?: string[];
-  }[];
-}
+import { AppConfig } from '@/types';
+
+// Versión centralizada de la aplicación
+export const APP_VERSION = "0.3.0";
 
 // Configuración por defecto
 export const defaultConfig: AppConfig = {
-  version: "013",
+  version: APP_VERSION,
   title: "S+C",
   
   colors: {
@@ -62,14 +17,25 @@ export const defaultConfig: AppConfig = {
   },
   
   icons: [
-    { name: "zap", component: "Zap" },
-    { name: "rocket", component: "Rocket" },
-    { name: "lightbulb", component: "Lightbulb" },
-    { name: "target", component: "Target" },
-    { name: "star", component: "Star" },
-    { name: "flame", component: "Flame" },
-    { name: "gem", component: "Gem" },
-    { name: "sparkles", component: "Sparkles" }
+    { name: "zap", component: "Zap", category: "action" },
+    { name: "rocket", component: "Rocket", category: "action" },
+    { name: "lightbulb", component: "Lightbulb", category: "idea" },
+    { name: "target", component: "Target", category: "goal" },
+    { name: "star", component: "Star", category: "quality" },
+    { name: "flame", component: "Flame", category: "energy" },
+    { name: "gem", component: "Gem", category: "premium" },
+    { name: "sparkles", component: "Sparkles", category: "magic" },
+    { name: "users", component: "Users", category: "team" },
+    { name: "trending-up", component: "TrendingUp", category: "growth" },
+    { name: "shield", component: "Shield", category: "security" },
+    { name: "heart", component: "Heart", category: "love" }
+  ],
+  
+  videos: [
+    { name: "Strategy Introduction", url: "/video00.00.mp4", stepId: "strategy-1", category: "introduction" },
+    { name: "Brand Introduction", url: "/video00.01.mp4", stepId: "brand-1", category: "introduction" },
+    { name: "Product Introduction", url: "/video00.02.mp4", stepId: "product-1", category: "introduction" },
+    { name: "Communication Introduction", url: "/video00.03.mp4", stepId: "messages-1", category: "introduction" }
   ],
   
   typographies: [
@@ -148,84 +114,120 @@ export const defaultConfig: AppConfig = {
       title: "Context",
       description: "Entrevistas con fundadores, equipo y usuarios para entender la historia desde dentro.",
       type: "interview",
-      required: true
+      required: true,
+      videoUrl: "/video00.00.mp4",
+      icon: "users",
+      order: 1
     },
     {
       id: "strategy-2", 
       title: "Market",
       description: "Análisis del mercado y competidores para identificar oportunidades.",
       type: "competitors",
-      required: true
+      required: true,
+      videoUrl: "/video00.01.mp4",
+      icon: "trending-up",
+      order: 2
     },
     {
       id: "strategy-3",
       title: "Plan",
       description: "Definición de la propuesta de valor y roadmap del proyecto.",
       type: "plan",
-      required: true
+      required: true,
+      videoUrl: "/video00.02.mp4",
+      icon: "target",
+      order: 3
     },
     {
       id: "brand-1",
       title: "Values",
       description: "Definición de valores, propósito y personalidad de la marca.",
       type: "values",
-      required: true
+      required: true,
+      videoUrl: "/video00.03.mp4",
+      icon: "heart",
+      order: 4
     },
     {
       id: "brand-2",
       title: "Verbal",
       description: "Desarrollo del sistema verbal: naming, mensajes y tono de voz.",
       type: "names",
-      required: true
+      required: true,
+      videoUrl: "/video00.04.mp4",
+      icon: "zap",
+      order: 5
     },
     {
       id: "brand-3",
       title: "Visual",
       description: "Creación del sistema visual: logo, colores y tipografía.",
       type: "logo",
-      required: true
+      required: true,
+      videoUrl: "/video00.05.mp4",
+      icon: "sparkles",
+      order: 6
     },
     {
       id: "product-1",
       title: "Features",
       description: "Definición de funcionalidades y flujos de usuario principales.",
       type: "userflow",
-      required: true
+      required: true,
+      videoUrl: "/video00.06.mp4",
+      icon: "lightbulb",
+      order: 7
     },
     {
       id: "product-2",
       title: "Prototype",
       description: "Desarrollo de prototipos interactivos y validación con usuarios.",
       type: "prototype",
-      required: true
+      required: true,
+      videoUrl: "/video00.07.mp4",
+      icon: "gem",
+      order: 8
     },
     {
       id: "product-3",
       title: "Launch",
       description: "Planificación del lanzamiento y estrategia de go-to-market.",
       type: "rollout",
-      required: true
+      required: true,
+      videoUrl: "/video01.00.mp4",
+      icon: "rocket",
+      order: 9
     },
     {
       id: "messages-1",
       title: "Social",
       description: "Desarrollo de presencia en redes sociales y contenido.",
       type: "social",
-      required: true
+      required: true,
+      videoUrl: "/video01.01.mp4",
+      icon: "flame",
+      order: 10
     },
     {
       id: "messages-2",
       title: "Campaigns",
       description: "Creación de campañas publicitarias y piezas creativas.",
       type: "campaign",
-      required: true
+      required: true,
+      videoUrl: "/video02.00.mp4",
+      icon: "star",
+      order: 11
     },
     {
       id: "messages-3",
       title: "Merch",
       description: "Desarrollo de merchandising y elementos promocionales.",
       type: "merch",
-      required: true
+      required: true,
+      videoUrl: "/video02.01.mp4",
+      icon: "shield",
+      order: 12
     }
   ]
 };

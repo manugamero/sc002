@@ -1,7 +1,8 @@
 'use client';
 
 import { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { APP_VERSION } from '@/lib/config';
+import { motion } from 'framer-motion';
 import { 
   Target, 
   Palette, 
@@ -27,1021 +28,717 @@ import {
   Eye,
   ExternalLink,
   ArrowLeft,
-  ChevronDown,
-  ChevronUp,
-  Maximize2,
-  Minimize2
+  Zap,
+  Shield,
+  Star
 } from 'lucide-react';
-import Button from '@/components/ui/Button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Badge } from '@/components/ui/badge';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import { Progress } from '@/components/ui/progress';
 import HamburgerMenu from '@/components/HamburgerMenu';
+import { cn } from '@/lib/utils';
 
 export default function SystemPage() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [expandedSections, setExpandedSections] = useState({
-    colors: true,
-    typography: true,
-    buttons: true,
-    forms: true,
-    tables: true,
-    lists: true,
-    cards: true,
-    alerts: true,
-    loading: true,
-    progress: true,
-    icons: true
-  });
-  const [allExpanded, setAllExpanded] = useState(true);
-  
-  const [formData, setFormData] = useState({
-    text: '',
-    email: '',
-    password: '',
-    textarea: '',
-    select: '',
-    checkbox: false,
-    radio: '',
-    switch: false,
-    range: 50,
-    date: '',
-    time: '',
-    color: '#3B82F6',
-    file: null as File | null,
-  });
+  const [currentTab, setCurrentTab] = useState('colors');
 
-  const [tableData, setTableData] = useState([
-    { id: 1, name: 'John Doe', email: 'john@example.com', role: 'Admin', status: 'Active' },
-    { id: 2, name: 'Jane Smith', email: 'jane@example.com', role: 'User', status: 'Inactive' },
-    { id: 3, name: 'Bob Johnson', email: 'bob@example.com', role: 'Editor', status: 'Active' },
-  ]);
+  const colorPalette = [
+    { name: 'Primary', value: '#3B82F6', bg: 'bg-blue-600', description: 'Color principal' },
+    { name: 'Secondary', value: '#8B5CF6', bg: 'bg-purple-600', description: 'Color secundario' },
+    { name: 'Success', value: '#10B981', bg: 'bg-emerald-600', description: 'Éxito' },
+    { name: 'Warning', value: '#F59E0B', bg: 'bg-amber-500', description: 'Advertencia' },
+    { name: 'Error', value: '#EF4444', bg: 'bg-red-500', description: 'Error' },
+    { name: 'Info', value: '#06B6D4', bg: 'bg-cyan-500', description: 'Información' },
+  ];
 
-  const [listItems, setListItems] = useState(['Item 1', 'Item 2', 'Item 3']);
+  const typography = [
+    { name: 'Heading 1', class: 'text-4xl font-bold', example: 'Título Principal' },
+    { name: 'Heading 2', class: 'text-3xl font-semibold', example: 'Subtítulo' },
+    { name: 'Heading 3', class: 'text-2xl font-medium', example: 'Sección' },
+    { name: 'Body Large', class: 'text-lg', example: 'Texto grande' },
+    { name: 'Body', class: 'text-base', example: 'Texto normal' },
+    { name: 'Body Small', class: 'text-sm', example: 'Texto pequeño' },
+    { name: 'Caption', class: 'text-xs text-muted-foreground', example: 'Pie de texto' },
+  ];
 
-  const handleInputChange = (field: string, value: any) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
-  };
+  const buttonVariants = [
+    { name: 'Default', variant: 'default' },
+    { name: 'Destructive', variant: 'destructive' },
+    { name: 'Outline', variant: 'outline' },
+    { name: 'Secondary', variant: 'secondary' },
+    { name: 'Ghost', variant: 'ghost' },
+    { name: 'Link', variant: 'link' },
+  ];
 
-  const addListItem = () => {
-    setListItems(prev => [...prev, `Item ${prev.length + 1}`]);
-  };
-
-  const removeListItem = (index: number) => {
-    setListItems(prev => prev.filter((_, i) => i !== index));
-  };
-
-  const updateTableData = (index: number, field: string, value: string) => {
-    setTableData(prev => prev.map((item, i) => 
-      i === index ? { ...item, [field]: value } : item
-    ));
-  };
-
-  const toggleSection = (section: string) => {
-    setExpandedSections(prev => ({
-      ...prev,
-      [section]: !prev[section as keyof typeof prev]
-    }));
-  };
-
-  const toggleAllSections = () => {
-    const newState = !allExpanded;
-    setAllExpanded(newState);
-    setExpandedSections({
-      colors: newState,
-      typography: newState,
-      buttons: newState,
-      forms: newState,
-      tables: newState,
-      lists: newState,
-      cards: newState,
-      alerts: newState,
-      loading: newState,
-      progress: newState,
-      icons: newState
-    });
-  };
+  const iconSet = [
+    { name: 'Target', icon: Target, description: 'Objetivo' },
+    { name: 'Palette', icon: Palette, description: 'Diseño' },
+    { name: 'Smartphone', icon: Smartphone, description: 'Móvil' },
+    { name: 'Megaphone', icon: Megaphone, description: 'Marketing' },
+    { name: 'Rocket', icon: Rocket, description: 'Lanzamiento' },
+    { name: 'Heart', icon: Heart, description: 'Favorito' },
+    { name: 'Users', icon: Users, description: 'Usuarios' },
+    { name: 'Search', icon: Search, description: 'Búsqueda' },
+    { name: 'TrendingUp', icon: TrendingUp, description: 'Crecimiento' },
+    { name: 'Code', icon: Code, description: 'Desarrollo' },
+    { name: 'Play', icon: Play, description: 'Reproducir' },
+    { name: 'Monitor', icon: Monitor, description: 'Pantalla' },
+    { name: 'Upload', icon: Upload, description: 'Subir' },
+    { name: 'Eye', icon: Eye, description: 'Ver' },
+    { name: 'ExternalLink', icon: ExternalLink, description: 'Enlace' },
+    { name: 'Zap', icon: Zap, description: 'Rápido' },
+    { name: 'Shield', icon: Shield, description: 'Seguridad' },
+    { name: 'Star', icon: Star, description: 'Destacado' },
+  ];
 
   return (
-    <div style={{ 
-      minHeight: '100vh', 
-      backgroundColor: '#000000', 
-      fontFamily: 'Inter, system-ui, sans-serif' 
-    }}>
+    <div className="min-h-screen bg-black">
       {/* Header */}
-      <div style={{ 
-        position: 'sticky', 
-        top: 0, 
-        backgroundColor: '#000000', 
-        padding: '20px 24px', 
-        zIndex: 10,
-        borderBottom: '1px solid #333333',
-        backdropFilter: 'blur(10px)'
-      }}>
-        <div style={{ 
-          display: 'flex', 
-          alignItems: 'center', 
-          justifyContent: 'space-between',
-          maxWidth: '1200px',
-          margin: '0 auto'
-        }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-            <button
-              onClick={() => window.history.back()}
-              style={{ 
-                width: '40px', 
-                height: '40px', 
-                display: 'flex', 
-                alignItems: 'center', 
-                justifyContent: 'center', 
-                backgroundColor: 'rgba(255, 255, 255, 0.05)', 
-                border: '1px solid #333333', 
-                borderRadius: '8px',
-                cursor: 'pointer',
-                color: '#ffffff',
-                transition: 'all 0.2s ease'
-              }}
-            >
-              <ArrowLeft style={{ width: '18px', height: '18px' }} />
-            </button>
-            
-            <div style={{ 
-              fontSize: '20px', 
-              color: '#ffffff', 
-              fontWeight: '600',
-              letterSpacing: '-0.02em'
-            }}>
-              🎨 Design System
+      <header className="sticky top-0 z-50 bg-black/80 backdrop-blur-md border-b border-gray-800/50">
+        <div className="container mx-auto px-6 py-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-4">
+              <button
+                onClick={() => window.history.back()}
+                className="h-9 px-3 flex items-center gap-2 text-gray-300 hover:text-white transition-colors duration-200 bg-transparent border-none cursor-pointer"
+              >
+                <ArrowLeft className="h-4 w-4" />
+                Volver
+              </button>
+              <div className="h-6 w-px bg-gray-800" />
+              <div className="flex items-center space-x-3">
+                <div className="p-2 bg-gradient-to-r from-blue-500 to-purple-500 rounded-lg shadow-lg">
+                  <Sparkles className="h-5 w-5 text-white" />
+                </div>
+                <div>
+                  <h1 className="text-2xl font-bold text-white">
+                    Design System
+                  </h1>
+                  <p className="text-xs text-gray-400">v{APP_VERSION} - Animation System</p>
+                </div>
+              </div>
             </div>
-          </div>
-          
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
             <HamburgerMenu isOpen={isMenuOpen} onClick={() => setIsMenuOpen(!isMenuOpen)} />
           </div>
         </div>
-      </div>
+      </header>
 
-      <div style={{ 
-        padding: '40px 24px',
-        maxWidth: '1200px',
-        margin: '0 auto'
-      }}>
-        
-        {/* Control Panel */}
-        <div className="mb-8 p-6 bg-gray-900 border border-gray-700 rounded-xl">
-          <div className="flex items-center justify-between mb-4">
-            <h1 className="text-2xl font-bold text-white">Design System</h1>
-            <button
-              onClick={toggleAllSections}
-              className="flex items-center space-x-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors"
+      <div className="max-w-7xl mx-auto p-6">
+        <Tabs value={currentTab} onValueChange={setCurrentTab} className="w-full">
+          <TabsList className="grid w-full grid-cols-5 lg:grid-cols-10 bg-gray-900/50 border border-gray-800/50 backdrop-blur-sm">
+            <TabsTrigger value="colors" className="text-xs data-[state=active]:bg-gray-800 data-[state=active]:text-white">
+              <Palette className="w-4 h-4 mr-1" />
+              Colores
+            </TabsTrigger>
+            <TabsTrigger value="typography" className="text-xs data-[state=active]:bg-gray-800 data-[state=active]:text-white">
+              <Type className="w-4 h-4 mr-1" />
+              Tipografía
+            </TabsTrigger>
+            <TabsTrigger value="buttons" className="text-xs data-[state=active]:bg-gray-800 data-[state=active]:text-white">
+              <Target className="w-4 h-4 mr-1" />
+              Botones
+            </TabsTrigger>
+            <TabsTrigger value="forms" className="text-xs data-[state=active]:bg-gray-800 data-[state=active]:text-white">
+              <Smartphone className="w-4 h-4 mr-1" />
+              Formularios
+            </TabsTrigger>
+            <TabsTrigger value="tables" className="text-xs data-[state=active]:bg-gray-800 data-[state=active]:text-white">
+              <Monitor className="w-4 h-4 mr-1" />
+              Tablas
+            </TabsTrigger>
+            <TabsTrigger value="cards" className="text-xs data-[state=active]:bg-gray-800 data-[state=active]:text-white">
+              <Code className="w-4 h-4 mr-1" />
+              Tarjetas
+            </TabsTrigger>
+            <TabsTrigger value="alerts" className="text-xs data-[state=active]:bg-gray-800 data-[state=active]:text-white">
+              <Megaphone className="w-4 h-4 mr-1" />
+              Alertas
+            </TabsTrigger>
+            <TabsTrigger value="loading" className="text-xs data-[state=active]:bg-gray-800 data-[state=active]:text-white">
+              <Loader2 className="w-4 h-4 mr-1" />
+              Carga
+            </TabsTrigger>
+            <TabsTrigger value="progress" className="text-xs data-[state=active]:bg-gray-800 data-[state=active]:text-white">
+              <TrendingUp className="w-4 h-4 mr-1" />
+              Progreso
+            </TabsTrigger>
+            <TabsTrigger value="icons" className="text-xs data-[state=active]:bg-gray-800 data-[state=active]:text-white">
+              <Star className="w-4 h-4 mr-1" />
+              Iconos
+            </TabsTrigger>
+          </TabsList>
+
+          {/* Colors Tab */}
+          <TabsContent value="colors" className="mt-8">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5 }}
             >
-              {allExpanded ? <Minimize2 className="w-4 h-4" /> : <Maximize2 className="w-4 h-4" />}
-              <span>{allExpanded ? 'Colapsar Todo' : 'Expandir Todo'}</span>
-            </button>
-          </div>
-          <p className="text-gray-400">
-            Sistema de diseño completo con componentes interactivos y colapsables
-          </p>
-        </div>
-        
-        {/* Colors Section */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          style={{
-            padding: '28px',
-            border: '1px solid #333333',
-            borderRadius: '16px',
-            backgroundColor: 'rgba(255, 255, 255, 0.02)',
-            marginBottom: '32px',
-            backdropFilter: 'blur(10px)'
-          }}
-        >
-          <h2 className="text-xl font-semibold mb-4 flex items-center space-x-2">
-            <Palette className="w-5 h-5 text-purple-500" />
-            <span>Paleta de Colores</span>
-          </h2>
-          
-          <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
-            {/* Primary Colors */}
-            <div className="text-center">
-              <div className="w-16 h-16 bg-gray-900 rounded-lg mx-auto mb-2"></div>
-              <p className="text-sm font-medium">Gray 900</p>
-              <p className="text-xs #666666">#111827</p>
-            </div>
-            <div className="text-center">
-              <div className="w-16 h-16 bg-gray-800 rounded-lg mx-auto mb-2"></div>
-              <p className="text-sm font-medium">Gray 800</p>
-              <p className="text-xs #666666">#1F2937</p>
-            </div>
-            <div className="text-center">
-              <div className="w-16 h-16 #333333 rounded-lg mx-auto mb-2"></div>
-              <p className="text-sm font-medium">Gray 100</p>
-              <p className="text-xs #666666">#F3F4F6</p>
-            </div>
-            
-            {/* Accent Colors */}
-            <div className="text-center">
-              <div className="w-16 h-16 bg-blue-500 rounded-lg mx-auto mb-2"></div>
-              <p className="text-sm font-medium">Blue 500</p>
-              <p className="text-xs #666666">#3B82F6</p>
-            </div>
-            <div className="text-center">
-              <div className="w-16 h-16 bg-red-500 rounded-lg mx-auto mb-2"></div>
-              <p className="text-sm font-medium">Red 500</p>
-              <p className="text-xs #666666">#EF4444</p>
-            </div>
-            <div className="text-center">
-              <div className="w-16 h-16 bg-green-500 rounded-lg mx-auto mb-2"></div>
-              <p className="text-sm font-medium">Green 500</p>
-              <p className="text-xs #666666">#10B981</p>
-            </div>
-          </div>
-        </motion.div>
-
-        {/* Typography Section */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.1 }}
-          style={{
-            padding: '28px',
-            border: '1px solid #333333',
-            borderRadius: '16px',
-            backgroundColor: 'rgba(255, 255, 255, 0.02)',
-            marginBottom: '32px',
-            backdropFilter: 'blur(10px)'
-          }}
-        >
-          <h2 className="text-xl font-semibold mb-4 flex items-center space-x-2">
-            <Type className="w-5 h-5 text-blue-500" />
-            <span>Tipografía</span>
-          </h2>
-          
-          <div className="space-y-4">
-            <div>
-              <h1 className="text-4xl font-bold #ffffff">Heading 1 - 4xl Bold</h1>
-              <p className="text-sm #666666 mt-1">text-4xl font-bold</p>
-            </div>
-            <div>
-              <h2 className="text-3xl font-bold #ffffff">Heading 2 - 3xl Bold</h2>
-              <p className="text-sm #666666 mt-1">text-3xl font-bold</p>
-            </div>
-            <div>
-              <h3 className="text-xl font-semibold #ffffff">Heading 3 - xl Semibold</h3>
-              <p className="text-sm #666666 mt-1">text-xl font-semibold</p>
-            </div>
-            <div>
-              <h4 className="text-lg font-medium #ffffff">Heading 4 - lg Medium</h4>
-              <p className="text-sm #666666 mt-1">text-lg font-medium</p>
-            </div>
-            <div>
-              <p className="text-base text-gray-700">Body text - base Regular</p>
-              <p className="text-sm #666666 mt-1">text-base</p>
-            </div>
-            <div>
-              <p className="text-sm #cccccc">Small text - sm Regular</p>
-              <p className="text-sm #666666 mt-1">text-sm</p>
-            </div>
-            <div>
-              <p className="text-xs #666666">Extra small text - xs Regular</p>
-              <p className="text-sm #666666 mt-1">text-xs</p>
-            </div>
-          </div>
-        </motion.div>
-
-        {/* Buttons Section */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.2 }}
-          style={{
-            padding: '28px',
-            border: '1px solid #333333',
-            borderRadius: '16px',
-            backgroundColor: 'rgba(255, 255, 255, 0.02)',
-            marginBottom: '32px',
-            backdropFilter: 'blur(10px)'
-          }}
-        >
-          <h2 className="text-xl font-semibold mb-4 flex items-center space-x-2">
-            <Target className="w-5 h-5 text-green-500" />
-            <span>Botones</span>
-          </h2>
-          
-          <div className="space-y-6">
-            {/* Button Variants */}
-            <div>
-              <h3 className="text-lg font-medium mb-3">Variantes</h3>
-              <div className="flex flex-wrap gap-3">
-                <Button variant="primary" size="md">
-                  Primary Button
-                </Button>
-                <Button variant="secondary" size="md">
-                  Secondary Button
-                </Button>
-                <Button variant="ghost" size="md">
-                  Ghost Button
-                </Button>
-              </div>
-            </div>
-
-            {/* Button Sizes */}
-            <div>
-              <h3 className="text-lg font-medium mb-3">Tamaños</h3>
-              <div className="flex flex-wrap items-center gap-3">
-                <Button variant="primary" size="sm">
-                  Small
-                </Button>
-                <Button variant="primary" size="md">
-                  Medium
-                </Button>
-                <Button variant="primary" size="lg">
-                  Large
-                </Button>
-              </div>
-            </div>
-
-            {/* Button States */}
-            <div>
-              <h3 className="text-lg font-medium mb-3">Estados</h3>
-              <div className="flex flex-wrap gap-3">
-                <Button variant="primary" size="md">
-                  Normal
-                </Button>
-                <Button variant="primary" size="md" disabled>
-                  Disabled
-                </Button>
-                <Button variant="primary" size="md" className="opacity-75">
-                  Loading
-                </Button>
-              </div>
-            </div>
-
-            {/* Gradient Buttons */}
-            <div>
-              <h3 className="text-lg font-medium mb-3">Botones con Gradiente</h3>
-              <div className="flex flex-wrap gap-3">
-                <button className="flex items-center space-x-2 px-4 py-2 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-lg hover:from-purple-600 hover:to-pink-600 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105">
-                  <Sparkles className="w-4 h-4" />
-                  <span>Gradient Button</span>
-                </button>
-                <button className="flex items-center space-x-2 px-4 py-2 bg-gradient-to-r from-blue-500 to-cyan-500 text-white rounded-lg hover:from-blue-600 hover:to-cyan-600 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105">
-                  <Sparkles className="w-4 h-4" />
-                  <span>AI Generate</span>
-                </button>
-              </div>
-            </div>
-          </div>
-        </motion.div>
-
-        {/* Form Elements Section */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.3 }}
-          style={{
-            padding: '28px',
-            border: '1px solid #333333',
-            borderRadius: '16px',
-            backgroundColor: 'rgba(255, 255, 255, 0.02)',
-            marginBottom: '32px',
-            backdropFilter: 'blur(10px)'
-          }}
-        >
-          <h2 className="text-xl font-semibold mb-4 flex items-center space-x-2">
-            <Users className="w-5 h-5 text-indigo-500" />
-            <span>Elementos de Formulario</span>
-          </h2>
-          
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            {/* Text Inputs */}
-            <div className="space-y-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Text Input
-                </label>
-                <input
-                  type="text"
-                  value={formData.text}
-                  onChange={(e) => handleInputChange('text', e.target.value)}
-                  placeholder="Escribe algo aquí..."
-                  className="w-full p-3 border #333333 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Email Input
-                </label>
-                <input
-                  type="email"
-                  value={formData.email}
-                  onChange={(e) => handleInputChange('email', e.target.value)}
-                  placeholder="tu@email.com"
-                  className="w-full p-3 border #333333 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Password Input
-                </label>
-                <input
-                  type="password"
-                  value={formData.password}
-                  onChange={(e) => handleInputChange('password', e.target.value)}
-                  placeholder="••••••••"
-                  className="w-full p-3 border #333333 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                />
-              </div>
-            </div>
-
-            {/* Other Inputs */}
-            <div className="space-y-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Textarea
-                </label>
-                <textarea
-                  value={formData.textarea}
-                  onChange={(e) => handleInputChange('textarea', e.target.value)}
-                  placeholder="Escribe un párrafo..."
-                  rows={3}
-                  className="w-full p-3 border #333333 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Select
-                </label>
-                <select
-                  value={formData.select}
-                  onChange={(e) => handleInputChange('select', e.target.value)}
-                  className="w-full p-3 border #333333 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                >
-                  <option value="">Selecciona una opción</option>
-                  <option value="option1">Opción 1</option>
-                  <option value="option2">Opción 2</option>
-                  <option value="option3">Opción 3</option>
-                </select>
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Color Picker
-                </label>
-                <div className="flex items-center space-x-3">
-                  <input
-                    type="color"
-                    value={formData.color}
-                    onChange={(e) => handleInputChange('color', e.target.value)}
-                    className="w-12 h-10 border #333333 rounded-lg cursor-pointer"
-                  />
-                  <input
-                    type="text"
-                    value={formData.color}
-                    onChange={(e) => handleInputChange('color', e.target.value)}
-                    className="flex-1 p-2 border #333333 rounded-lg focus:ring-2 focus:ring-blue-500"
-                  />
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Checkboxes and Radio Buttons */}
-          <div className="mt-6 grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <div className="space-y-4">
-              <h3 className="text-lg font-medium">Checkboxes</h3>
-              <label className="flex items-center space-x-2">
-                <input
-                  type="checkbox"
-                  checked={formData.checkbox}
-                  onChange={(e) => handleInputChange('checkbox', e.target.checked)}
-                  className="w-4 h-4 text-blue-600 rounded focus:ring-blue-500"
-                />
-                <span>Checkbox normal</span>
-              </label>
-              
-              <label className="flex items-center space-x-2">
-                <input
-                  type="checkbox"
-                  checked={true}
-                  disabled
-                  className="w-4 h-4 text-blue-600 rounded focus:ring-blue-500"
-                />
-                <span>Checkbox checked</span>
-              </label>
-              
-              <label className="flex items-center space-x-2">
-                <input
-                  type="checkbox"
-                  disabled
-                  className="w-4 h-4 text-blue-600 rounded focus:ring-blue-500"
-                />
-                <span>Checkbox disabled</span>
-              </label>
-            </div>
-
-            <div className="space-y-4">
-              <h3 className="text-lg font-medium">Radio Buttons</h3>
-              <label className="flex items-center space-x-2">
-                <input
-                  type="radio"
-                  name="radio-group"
-                  value="option1"
-                  checked={formData.radio === 'option1'}
-                  onChange={(e) => handleInputChange('radio', e.target.value)}
-                  className="w-4 h-4 text-blue-600 focus:ring-blue-500"
-                />
-                <span>Opción 1</span>
-              </label>
-              
-              <label className="flex items-center space-x-2">
-                <input
-                  type="radio"
-                  name="radio-group"
-                  value="option2"
-                  checked={formData.radio === 'option2'}
-                  onChange={(e) => handleInputChange('radio', e.target.value)}
-                  className="w-4 h-4 text-blue-600 focus:ring-blue-500"
-                />
-                <span>Opción 2</span>
-              </label>
-              
-              <label className="flex items-center space-x-2">
-                <input
-                  type="radio"
-                  name="radio-group"
-                  value="option3"
-                  checked={formData.radio === 'option3'}
-                  onChange={(e) => handleInputChange('radio', e.target.value)}
-                  className="w-4 h-4 text-blue-600 focus:ring-blue-500"
-                />
-                <span>Opción 3</span>
-              </label>
-            </div>
-          </div>
-        </motion.div>
-
-        {/* Complex Tables Section */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.4 }}
-          style={{
-            padding: '28px',
-            border: '1px solid #333333',
-            borderRadius: '16px',
-            backgroundColor: 'rgba(255, 255, 255, 0.02)',
-            marginBottom: '32px',
-            backdropFilter: 'blur(10px)'
-          }}
-        >
-          <h2 className="text-xl font-semibold mb-4 flex items-center space-x-2">
-            <Monitor className="w-5 h-5 text-orange-500" />
-            <span>Tablas Complejas con Inputs</span>
-          </h2>
-          
-          <div className="overflow-x-auto">
-            <table className="min-w-full divide-y divide-gray-200">
-              <thead className="#000000">
-                <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium #666666 uppercase tracking-wider">
-                    ID
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium #666666 uppercase tracking-wider">
-                    Nombre
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium #666666 uppercase tracking-wider">
-                    Email
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium #666666 uppercase tracking-wider">
-                    Rol
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium #666666 uppercase tracking-wider">
-                    Estado
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium #666666 uppercase tracking-wider">
-                    Acciones
-                  </th>
-                </tr>
-              </thead>
-              <tbody className="bg-white divide-y divide-gray-200">
-                {tableData.map((row, index) => (
-                  <tr key={row.id} className="hover:#000000">
-                    <td className="px-6 py-4 whitespace-nowrap text-sm #ffffff">
-                      {row.id}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <input
-                        type="text"
-                        value={row.name}
-                        onChange={(e) => updateTableData(index, 'name', e.target.value)}
-                        className="w-full p-2 border #333333 rounded focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                      />
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <input
-                        type="email"
-                        value={row.email}
-                        onChange={(e) => updateTableData(index, 'email', e.target.value)}
-                        className="w-full p-2 border #333333 rounded focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                      />
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <select
-                        value={row.role}
-                        onChange={(e) => updateTableData(index, 'role', e.target.value)}
-                        className="w-full p-2 border #333333 rounded focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              <Card className="bg-gray-900/50 border-gray-800/50 backdrop-blur-sm shadow-2xl">
+                <CardHeader className="border-b border-gray-800/50">
+                  <CardTitle className="flex items-center gap-3 text-white text-2xl">
+                    <div className="p-2 bg-gradient-to-r from-purple-500 to-pink-500 rounded-lg">
+                      <Palette className="w-6 h-6 text-white" />
+                    </div>
+                    Paleta de Colores
+                  </CardTitle>
+                  <CardDescription className="text-gray-400 text-lg">
+                    Sistema de colores unificado para toda la aplicación
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="p-8">
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {colorPalette.map((color, index) => (
+                      <motion.div
+                        key={color.name}
+                        initial={{ opacity: 0, scale: 0.9 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        transition={{ duration: 0.3, delay: index * 0.1 }}
+                        className="group"
                       >
-                        <option value="Admin">Admin</option>
-                        <option value="User">User</option>
-                        <option value="Editor">Editor</option>
-                        <option value="Viewer">Viewer</option>
-                      </select>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <select
-                        value={row.status}
-                        onChange={(e) => updateTableData(index, 'status', e.target.value)}
-                        className={`w-full p-2 border rounded focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
-                          row.status === 'Active' 
-                            ? 'border-green-300 bg-green-50 text-green-800' 
-                            : 'border-red-300 bg-red-50 text-red-800'
-                        }`}
+                        <Card className="bg-gray-800/50 border-gray-700/50 hover:bg-gray-800/70 transition-all duration-300 hover:shadow-lg">
+                          <CardContent className="p-6">
+                            <div className="flex items-center space-x-4">
+                              <div className={cn("w-16 h-16 rounded-lg shadow-lg", color.bg)} />
+                              <div>
+                                <h3 className="text-white font-semibold">{color.name}</h3>
+                                <p className="text-gray-400 text-sm">{color.value}</p>
+                                <p className="text-gray-500 text-xs">{color.description}</p>
+                              </div>
+                            </div>
+                          </CardContent>
+                        </Card>
+                      </motion.div>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
+            </motion.div>
+          </TabsContent>
+
+          {/* Typography Tab */}
+          <TabsContent value="typography" className="mt-8">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5 }}
+            >
+              <Card className="bg-gray-900/50 border-gray-800/50 backdrop-blur-sm shadow-2xl">
+                <CardHeader className="border-b border-gray-800/50">
+                  <CardTitle className="flex items-center gap-3 text-white text-2xl">
+                    <div className="p-2 bg-gradient-to-r from-blue-600 to-cyan-600 rounded-lg">
+                      <Type className="w-6 h-6 text-white" />
+                    </div>
+                    Tipografía
+                  </CardTitle>
+                  <CardDescription className="text-gray-400 text-lg">
+                    Jerarquía tipográfica y estilos de texto
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="p-8">
+                  <div className="space-y-6">
+                    {typography.map((type, index) => (
+                      <motion.div
+                        key={type.name}
+                        initial={{ opacity: 0, x: -20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ duration: 0.3, delay: index * 0.1 }}
+                        className="flex items-center justify-between p-4 bg-gray-800/30 rounded-lg border border-gray-700/30"
                       >
-                        <option value="Active">Active</option>
-                        <option value="Inactive">Inactive</option>
-                      </select>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                      <button className="text-red-600 hover:text-red-900 p-2 hover:bg-red-50 rounded transition-colors">
-                        <Trash2 className="w-4 h-4" />
+                        <div>
+                          <h4 className="text-gray-300 font-medium">{type.name}</h4>
+                          <p className="text-gray-500 text-sm">{type.class}</p>
+                        </div>
+                        <div className={cn("text-white", type.class)}>
+                          {type.example}
+                        </div>
+                      </motion.div>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
+            </motion.div>
+          </TabsContent>
+
+          {/* Buttons Tab */}
+          <TabsContent value="buttons" className="mt-8">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5 }}
+            >
+              <Card className="bg-gray-900/50 border-gray-800/50 backdrop-blur-sm shadow-2xl">
+                <CardHeader className="border-b border-gray-800/50">
+                  <CardTitle className="flex items-center gap-3 text-white text-2xl">
+                    <div className="p-2 bg-gradient-to-r from-green-600 to-emerald-600 rounded-lg">
+                      <Target className="w-6 h-6 text-white" />
+                    </div>
+                    Botones
+                  </CardTitle>
+                  <CardDescription className="text-gray-400 text-lg">
+                    Variantes y estados de botones
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="p-8">
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {buttonVariants.map((variant, index) => (
+                      <motion.div
+                        key={variant.name}
+                        initial={{ opacity: 0, scale: 0.9 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        transition={{ duration: 0.3, delay: index * 0.1 }}
+                        className="flex flex-col items-center space-y-3 p-6 bg-gray-800/30 rounded-lg border border-gray-700/30"
+                      >
+                        <h4 className="text-gray-300 font-medium text-sm mb-2">{variant.name}</h4>
+                        <button className="w-full h-10 px-4 rounded-lg bg-white/10 border border-gray-700 text-white font-medium transition-all duration-200 hover:bg-white/20 hover:border-white">
+                          {variant.name}
+                        </button>
+                        <button className="w-full h-8 px-3 text-sm rounded-md bg-white/10 border border-gray-700 text-white font-medium transition-all duration-200 hover:bg-white/20 hover:border-white">
+                          Pequeño
+                        </button>
+                        <button className="w-full h-12 px-6 rounded-lg bg-white/10 border border-gray-700 text-white font-medium transition-all duration-200 hover:bg-white/20 hover:border-white">
+                          Grande
+                        </button>
+                      </motion.div>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
+            </motion.div>
+          </TabsContent>
+
+          {/* Forms Tab */}
+          <TabsContent value="forms" className="mt-8">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5 }}
+            >
+              <Card className="bg-gray-900/50 border-gray-800/50 backdrop-blur-sm shadow-2xl">
+                <CardHeader className="border-b border-gray-800/50">
+                  <CardTitle className="flex items-center gap-3 text-white text-2xl">
+                    <div className="p-2 bg-gradient-to-r from-orange-600 to-red-600 rounded-lg">
+                      <Smartphone className="w-6 h-6 text-white" />
+                    </div>
+                    Formularios
+                  </CardTitle>
+                  <CardDescription className="text-gray-400 text-lg">
+                    Componentes de formulario y validación
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="p-8">
+                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                    <div className="space-y-6">
+                      <div>
+                        <label className="text-gray-300 text-sm font-medium mb-2 block">Email</label>
+                        <input
+                          type="email"
+                          placeholder="tu@email.com"
+                          className="w-full h-12 px-4 text-base border border-gray-700 rounded-lg bg-transparent text-white placeholder:text-gray-500 outline-none transition-all duration-200 focus:border-white focus:shadow-[0_0_0_2px_rgba(74,158,255,0.2)]"
+                        />
+                      </div>
+                      <div>
+                        <label className="text-gray-300 text-sm font-medium mb-2 block">Contraseña</label>
+                        <input
+                          type="password"
+                          placeholder="••••••••"
+                          className="w-full h-12 px-4 text-base border border-gray-700 rounded-lg bg-transparent text-white placeholder:text-gray-500 outline-none transition-all duration-200 focus:border-white focus:shadow-[0_0_0_2px_rgba(74,158,255,0.2)]"
+                        />
+                      </div>
+                      <div>
+                        <label className="text-gray-300 text-sm font-medium mb-2 block">Mensaje</label>
+                        <textarea
+                          placeholder="Escribe tu mensaje aquí..."
+                          rows={4}
+                          className="w-full px-4 py-3 text-base border border-gray-700 rounded-lg bg-transparent text-white placeholder:text-gray-500 outline-none transition-all duration-200 resize-none focus:border-white focus:shadow-[0_0_0_2px_rgba(74,158,255,0.2)]"
+                        />
+                      </div>
+                    </div>
+                    <div className="space-y-6">
+                      <div>
+                        <label className="text-gray-300 text-sm font-medium mb-2 block">País</label>
+                        <select className="w-full h-12 px-4 text-base border border-gray-700 rounded-lg bg-black text-white outline-none transition-all duration-200 cursor-pointer focus:border-white focus:shadow-[0_0_0_2px_rgba(74,158,255,0.2)]">
+                          <option value="">Selecciona un país</option>
+                          <option value="es">España</option>
+                          <option value="mx">México</option>
+                          <option value="ar">Argentina</option>
+                        </select>
+                      </div>
+                      <div className="flex items-center space-x-3 py-4">
+                        <input 
+                          type="checkbox" 
+                          id="terms" 
+                          className="w-4 h-4 rounded border-gray-700 bg-transparent cursor-pointer accent-blue-500"
+                        />
+                        <label htmlFor="terms" className="text-gray-300 text-sm cursor-pointer">
+                          Acepto los términos y condiciones
+                        </label>
+                      </div>
+                      <button className="w-full h-12 rounded-lg bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white font-medium transition-all duration-200 shadow-lg hover:shadow-xl">
+                        Enviar Formulario
                       </button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </motion.div>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </motion.div>
+          </TabsContent>
 
-        {/* Dynamic Lists Section */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.5 }}
-          style={{
-            padding: '28px',
-            border: '1px solid #333333',
-            borderRadius: '16px',
-            backgroundColor: 'rgba(255, 255, 255, 0.02)',
-            marginBottom: '32px',
-            backdropFilter: 'blur(10px)'
-          }}
-        >
-          <h2 className="text-xl font-semibold mb-4 flex items-center space-x-2">
-            <Plus className="w-5 h-5 text-teal-500" />
-            <span>Listas Dinámicas</span>
-          </h2>
-          
-          <div className="space-y-4">
-            <div className="flex items-center justify-between">
-              <h3 className="text-lg font-medium">Lista con inputs</h3>
-              <button
-                onClick={addListItem}
-                className="flex items-center space-x-2 px-3 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
-              >
-                <Plus className="w-4 h-4" />
-                <span>Agregar</span>
-              </button>
-            </div>
-            
-            {listItems.map((item, index) => (
-              <div key={index} className="flex items-center space-x-2 p-3 border border-gray-200 rounded-lg">
-                <input
-                  type="text"
-                  value={item}
-                  onChange={(e) => {
-                    const newItems = [...listItems];
-                    newItems[index] = e.target.value;
-                    setListItems(newItems);
-                  }}
-                  className="flex-1 p-2 border #333333 rounded focus:ring-2 focus:ring-blue-500"
-                />
-                <button
-                  onClick={() => removeListItem(index)}
-                  className="p-2 text-red-500 hover:bg-red-50 rounded transition-colors"
-                >
-                  <Trash2 className="w-4 h-4" />
-                </button>
+          {/* Tables Tab */}
+          <TabsContent value="tables" className="mt-8">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5 }}
+            >
+              <Card className="bg-gray-900/50 border-gray-800/50 backdrop-blur-sm shadow-2xl">
+                <CardHeader className="border-b border-gray-800/50">
+                  <CardTitle className="flex items-center gap-3 text-white text-2xl">
+                    <div className="p-2 bg-gradient-to-r from-indigo-600 to-purple-600 rounded-lg">
+                      <Monitor className="w-6 h-6 text-white" />
+                    </div>
+                    Tablas
+                  </CardTitle>
+                  <CardDescription className="text-gray-400 text-lg">
+                    Componentes de tabla y datos estructurados
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="p-8">
+                  <Table>
+                    <TableHeader>
+                      <TableRow className="border-gray-700/50">
+                        <TableHead className="text-gray-300">Nombre</TableHead>
+                        <TableHead className="text-gray-300">Email</TableHead>
+                        <TableHead className="text-gray-300">Rol</TableHead>
+                        <TableHead className="text-gray-300">Estado</TableHead>
+                        <TableHead className="text-gray-300">Acciones</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      <TableRow className="border-gray-700/30 hover:bg-gray-800/30">
+                        <TableCell className="text-gray-300">Juan Pérez</TableCell>
+                        <TableCell className="text-gray-400">juan@email.com</TableCell>
+                        <TableCell>
+                          <Badge variant="secondary" className="bg-blue-600/20 text-blue-400 border-blue-600/30">
+                            Admin
+                          </Badge>
+                        </TableCell>
+                        <TableCell>
+                          <Badge variant="outline" className="border-green-600/30 text-green-400">
+                            Activo
+                          </Badge>
+                        </TableCell>
+                        <TableCell>
+                          <button className="p-2 bg-transparent hover:bg-gray-800/50 rounded-md text-gray-400 hover:text-white transition-colors duration-200 border-none cursor-pointer">
+                            <Eye className="w-4 h-4" />
+                          </button>
+                        </TableCell>
+                      </TableRow>
+                      <TableRow className="border-gray-700/30 hover:bg-gray-800/30">
+                        <TableCell className="text-gray-300">María García</TableCell>
+                        <TableCell className="text-gray-400">maria@email.com</TableCell>
+                        <TableCell>
+                          <Badge variant="secondary" className="bg-purple-600/20 text-purple-400 border-purple-600/30">
+                            Usuario
+                          </Badge>
+                        </TableCell>
+                        <TableCell>
+                          <Badge variant="outline" className="border-yellow-600/30 text-yellow-400">
+                            Pendiente
+                          </Badge>
+                        </TableCell>
+                        <TableCell>
+                          <button className="p-2 bg-transparent hover:bg-gray-800/50 rounded-md text-gray-400 hover:text-white transition-colors duration-200 border-none cursor-pointer">
+                            <Eye className="w-4 h-4" />
+                          </button>
+                        </TableCell>
+                      </TableRow>
+                    </TableBody>
+                  </Table>
+                </CardContent>
+              </Card>
+            </motion.div>
+          </TabsContent>
+
+          {/* Cards Tab */}
+          <TabsContent value="cards" className="mt-8">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5 }}
+            >
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <Card className="bg-gray-900/50 border-gray-800/50 backdrop-blur-sm shadow-2xl hover:shadow-3xl transition-all duration-300">
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2 text-white">
+                      <div className="p-2 bg-gradient-to-r from-blue-600 to-cyan-600 rounded-lg">
+                        <Rocket className="w-5 h-5 text-white" />
+                      </div>
+                      Lanzamiento
+                    </CardTitle>
+                    <CardDescription className="text-gray-400">
+                      Información sobre el próximo lanzamiento
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="text-gray-300 mb-4">
+                      Preparando el lanzamiento de la nueva versión con características innovadoras.
+                    </p>
+                    <button className="w-full h-10 rounded-lg bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600 text-white font-medium transition-all duration-200 shadow-lg hover:shadow-xl border-none cursor-pointer">
+                      Ver Detalles
+                    </button>
+                  </CardContent>
+                </Card>
+
+                <Card className="bg-gray-900/50 border-gray-800/50 backdrop-blur-sm shadow-2xl hover:shadow-3xl transition-all duration-300">
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2 text-white">
+                      <div className="p-2 bg-gradient-to-r from-green-600 to-emerald-600 rounded-lg">
+                        <TrendingUp className="w-5 h-5 text-white" />
+                      </div>
+                      Estadísticas
+                    </CardTitle>
+                    <CardDescription className="text-gray-400">
+                      Métricas de rendimiento
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-2">
+                      <div className="flex justify-between">
+                        <span className="text-gray-400">Usuarios activos</span>
+                        <span className="text-white font-semibold">1,234</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-gray-400">Conversiones</span>
+                        <span className="text-white font-semibold">89%</span>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+
+                <Card className="bg-gray-900/50 border-gray-800/50 backdrop-blur-sm shadow-2xl hover:shadow-3xl transition-all duration-300">
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2 text-white">
+                      <div className="p-2 bg-gradient-to-r from-purple-600 to-pink-600 rounded-lg">
+                        <Heart className="w-5 h-5 text-white" />
+                      </div>
+                      Feedback
+                    </CardTitle>
+                    <CardDescription className="text-gray-400">
+                      Comentarios de usuarios
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="text-gray-300 mb-4">
+                      "Excelente experiencia de usuario y diseño intuitivo."
+                    </p>
+                    <div className="flex items-center gap-1">
+                      {[...Array(5)].map((_, i) => (
+                        <Star key={i} className="w-4 h-4 fill-yellow-400 text-yellow-400" />
+                      ))}
+                    </div>
+                  </CardContent>
+                </Card>
               </div>
-            ))}
-          </div>
-        </motion.div>
+            </motion.div>
+          </TabsContent>
 
-        {/* Cards Section */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.6 }}
-          style={{
-            padding: '28px',
-            border: '1px solid #333333',
-            borderRadius: '16px',
-            backgroundColor: 'rgba(255, 255, 255, 0.02)',
-            marginBottom: '32px',
-            backdropFilter: 'blur(10px)'
-          }}
-        >
-          <h2 className="text-xl font-semibold mb-4 flex items-center space-x-2">
-            <Heart className="w-5 h-5 text-red-500" />
-            <span>Tarjetas</span>
-          </h2>
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {/* Basic Card */}
-            <div className="bg-white border border-gray-200 rounded-lg shadow-sm p-4">
-              <h3 className="text-lg font-semibold mb-2">Tarjeta Básica</h3>
-              <p className="#cccccc text-sm mb-4">
-                Esta es una tarjeta básica con contenido simple.
-              </p>
-              <Button variant="primary" size="sm">
-                Acción
-              </Button>
-            </div>
+          {/* Alerts Tab */}
+          <TabsContent value="alerts" className="mt-8">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5 }}
+            >
+              <div className="space-y-6">
+                <Alert className="bg-blue-600/10 border-blue-600/30 text-blue-300">
+                  <CheckCircle className="h-4 w-4" />
+                  <AlertTitle className="text-blue-200">Información</AlertTitle>
+                  <AlertDescription className="text-blue-300">
+                    Esta es una alerta informativa con información importante.
+                  </AlertDescription>
+                </Alert>
 
-            {/* Card with Icon */}
-            <div className="bg-white border border-gray-200 rounded-lg shadow-sm p-4">
-              <div className="flex items-center space-x-3 mb-3">
-                <div className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center">
-                  <Target className="w-4 h-4 text-white" />
-                </div>
-                <h3 className="text-lg font-semibold">Con Icono</h3>
-              </div>
-              <p className="#cccccc text-sm mb-4">
-                Tarjeta con icono y contenido estructurado.
-              </p>
-              <div className="flex space-x-2">
-                <Button variant="primary" size="sm">
-                  Primario
-                </Button>
-                <Button variant="ghost" size="sm">
-                  Secundario
-                </Button>
-              </div>
-            </div>
-
-            {/* Card with Image */}
-            <div className="bg-white border border-gray-200 rounded-lg shadow-sm overflow-hidden">
-              <div className="h-32 bg-gradient-to-r from-purple-400 to-pink-400"></div>
-              <div className="p-4">
-                <h3 className="text-lg font-semibold mb-2">Con Imagen</h3>
-                <p className="#cccccc text-sm mb-4">
-                  Tarjeta con imagen de fondo y contenido.
-                </p>
-                <Button variant="primary" size="sm" className="w-full">
-                  Ver más
-                </Button>
-              </div>
-            </div>
-          </div>
-        </motion.div>
-
-        {/* Alerts Section */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.7 }}
-          style={{
-            padding: '28px',
-            border: '1px solid #333333',
-            borderRadius: '16px',
-            backgroundColor: 'rgba(255, 255, 255, 0.02)',
-            marginBottom: '32px',
-            backdropFilter: 'blur(10px)'
-          }}
-        >
-          <h2 className="text-xl font-semibold mb-4 flex items-center space-x-2">
-            <CheckCircle className="w-5 h-5 text-green-500" />
-            <span>Alertas y Notificaciones</span>
-          </h2>
-          
-          <div className="space-y-4">
-            {/* Success Alert */}
-            <div className="bg-green-50 border border-green-200 rounded-lg p-4">
-              <div className="flex items-center space-x-3">
-                <CheckCircle className="w-5 h-5 text-green-500" />
-                <div>
-                  <h3 className="text-sm font-medium text-green-800">Éxito</h3>
-                  <p className="text-sm text-green-700 mt-1">
+                <Alert className="bg-green-600/10 border-green-600/30 text-green-300">
+                  <CheckCircle className="h-4 w-4" />
+                  <AlertTitle className="text-green-200">Éxito</AlertTitle>
+                  <AlertDescription className="text-green-300">
                     Operación completada exitosamente.
-                  </p>
-                </div>
-              </div>
-            </div>
+                  </AlertDescription>
+                </Alert>
 
-            {/* Error Alert */}
-            <div className="bg-red-50 border border-red-200 rounded-lg p-4">
-              <div className="flex items-center space-x-3">
-                <X className="w-5 h-5 text-red-500" />
-                <div>
-                  <h3 className="text-sm font-medium text-red-800">Error</h3>
-                  <p className="text-sm text-red-700 mt-1">
-                    Ha ocurrido un error en la operación.
-                  </p>
-                </div>
-              </div>
-            </div>
+                <Alert className="bg-yellow-600/10 border-yellow-600/30 text-yellow-300">
+                  <CheckCircle className="h-4 w-4" />
+                  <AlertTitle className="text-yellow-200">Advertencia</AlertTitle>
+                  <AlertDescription className="text-yellow-300">
+                    Por favor, revisa la información antes de continuar.
+                  </AlertDescription>
+                </Alert>
 
-            {/* Warning Alert */}
-            <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
-              <div className="flex items-center space-x-3">
-                <Search className="w-5 h-5 text-yellow-500" />
-                <div>
-                  <h3 className="text-sm font-medium text-yellow-800">Advertencia</h3>
-                  <p className="text-sm text-yellow-700 mt-1">
-                    Por favor, revisa los datos ingresados.
-                  </p>
-                </div>
+                <Alert className="bg-red-600/10 border-red-600/30 text-red-300">
+                  <X className="h-4 w-4" />
+                  <AlertTitle className="text-red-200">Error</AlertTitle>
+                  <AlertDescription className="text-red-300">
+                    Ha ocurrido un error. Por favor, inténtalo de nuevo.
+                  </AlertDescription>
+                </Alert>
               </div>
-            </div>
+            </motion.div>
+          </TabsContent>
 
-            {/* Info Alert */}
-            <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-              <div className="flex items-center space-x-3">
-                <TrendingUp className="w-5 h-5 text-blue-500" />
-                <div>
-                  <h3 className="text-sm font-medium text-blue-800">Información</h3>
-                  <p className="text-sm text-blue-700 mt-1">
-                    Esta es una notificación informativa.
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </motion.div>
-
-        {/* Loading States Section */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.8 }}
-          style={{
-            padding: '28px',
-            border: '1px solid #333333',
-            borderRadius: '16px',
-            backgroundColor: 'rgba(255, 255, 255, 0.02)',
-            marginBottom: '32px',
-            backdropFilter: 'blur(10px)'
-          }}
-        >
-          <h2 className="text-xl font-semibold mb-4 flex items-center space-x-2">
-            <Loader2 className="w-5 h-5 text-blue-500 animate-spin" />
-            <span>Estados de Carga</span>
-          </h2>
-          
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <div className="space-y-4">
-              <h3 className="text-lg font-medium">Spinners</h3>
-              <div className="flex items-center space-x-4">
-                <Loader2 className="w-4 h-4 animate-spin text-blue-500" />
-                <Loader2 className="w-6 h-6 animate-spin text-green-500" />
-                <Loader2 className="w-8 h-8 animate-spin text-purple-500" />
-              </div>
-            </div>
-
-            <div className="space-y-4">
-              <h3 className="text-lg font-medium">Botones con Loading</h3>
-              <div className="flex flex-wrap gap-3">
-                <button className="flex items-center space-x-2 px-4 py-2 bg-blue-500 text-white rounded-lg opacity-50 cursor-not-allowed">
-                  <Loader2 className="w-4 h-4 animate-spin" />
-                  <span>Cargando...</span>
-                </button>
-                <button className="flex items-center space-x-2 px-4 py-2 bg-green-500 text-white rounded-lg opacity-50 cursor-not-allowed">
-                  <Loader2 className="w-4 h-4 animate-spin" />
-                  <span>Guardando...</span>
-                </button>
-              </div>
-            </div>
-          </div>
-        </motion.div>
-
-        {/* Progress Bars Section */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.9 }}
-          style={{
-            padding: '28px',
-            border: '1px solid #333333',
-            borderRadius: '16px',
-            backgroundColor: 'rgba(255, 255, 255, 0.02)',
-            marginBottom: '32px',
-            backdropFilter: 'blur(10px)'
-          }}
-        >
-          <h2 className="text-xl font-semibold mb-4 flex items-center space-x-2">
-            <TrendingUp className="w-5 h-5 text-indigo-500" />
-            <span>Barras de Progreso</span>
-          </h2>
-          
-          <div className="space-y-6">
-            {/* Basic Progress Bars */}
-            <div className="space-y-3">
-              <div>
-                <div className="flex justify-between text-sm #cccccc mb-1">
-                  <span>Progreso básico</span>
-                  <span>75%</span>
-                </div>
-                <div className="w-full bg-gray-200 rounded-full h-2">
-                  <div className="bg-blue-500 h-2 rounded-full" style={{ width: '75%' }}></div>
-                </div>
-              </div>
-
-              <div>
-                <div className="flex justify-between text-sm #cccccc mb-1">
-                  <span>Progreso con colores</span>
-                  <span>90%</span>
-                </div>
-                <div className="w-full bg-gray-200 rounded-full h-2">
-                  <div className="bg-green-500 h-2 rounded-full" style={{ width: '90%' }}></div>
-                </div>
-              </div>
-
-              <div>
-                <div className="flex justify-between text-sm #cccccc mb-1">
-                  <span>Progreso con gradiente</span>
-                  <span>60%</span>
-                </div>
-                <div className="w-full bg-gray-200 rounded-full h-2">
-                  <div className="bg-gradient-to-r from-purple-500 to-pink-500 h-2 rounded-full" style={{ width: '60%' }}></div>
-                </div>
-              </div>
-            </div>
-
-            {/* Progress with Steps */}
-            <div>
-              <h3 className="text-lg font-medium mb-3">Progreso por pasos</h3>
-              <div className="flex items-center space-x-2">
-                <div className="flex items-center">
-                  <div className="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center">
-                    <CheckCircle className="w-4 h-4 text-white" />
+          {/* Loading Tab */}
+          <TabsContent value="loading" className="mt-8">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5 }}
+            >
+              <Card className="bg-gray-900/50 border-gray-800/50 backdrop-blur-sm shadow-2xl">
+                <CardHeader className="border-b border-gray-800/50">
+                  <CardTitle className="flex items-center gap-3 text-white text-2xl">
+                    <div className="p-2 bg-gradient-to-r from-cyan-600 to-blue-600 rounded-lg">
+                      <Loader2 className="w-6 h-6 text-white" />
+                    </div>
+                    Estados de Carga
+                  </CardTitle>
+                  <CardDescription className="text-gray-400 text-lg">
+                    Indicadores de carga y estados de espera
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="p-8">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div className="space-y-6">
+                      <div className="flex items-center space-x-4">
+                        <Loader2 className="h-6 w-6 animate-spin text-blue-500" />
+                        <span className="text-gray-300">Cargando datos...</span>
+                      </div>
+                      <div className="flex items-center space-x-4">
+                        <div className="animate-pulse flex space-x-4 w-full">
+                          <div className="rounded-full bg-gray-700 h-10 w-10"></div>
+                          <div className="flex-1 space-y-2 py-1">
+                            <div className="h-4 bg-gray-700 rounded w-3/4"></div>
+                            <div className="space-y-2">
+                              <div className="h-4 bg-gray-700 rounded"></div>
+                              <div className="h-4 bg-gray-700 rounded w-5/6"></div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="space-y-6">
+                      <button disabled className="w-full h-10 rounded-lg bg-white/10 border border-gray-700 text-white font-medium cursor-not-allowed opacity-50 flex items-center justify-center gap-2">
+                        <Loader2 className="w-4 h-4 animate-spin" />
+                        Procesando...
+                      </button>
+                      <div className="flex items-center justify-center p-8 bg-gray-800/30 rounded-lg">
+                        <div className="text-center">
+                          <Loader2 className="h-8 w-8 animate-spin text-blue-500 mx-auto mb-2" />
+                          <p className="text-gray-400">Cargando contenido...</p>
+                        </div>
+                      </div>
+                    </div>
                   </div>
-                  <span className="ml-2 text-sm text-green-600">Completado</span>
-                </div>
-                <div className="flex-1 h-1 bg-green-500"></div>
-                <div className="flex items-center">
-                  <div className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center">
-                    <span className="text-white text-sm font-bold">2</span>
-                  </div>
-                  <span className="ml-2 text-sm text-blue-600">Actual</span>
-                </div>
-                <div className="flex-1 h-1 bg-gray-200"></div>
-                <div className="flex items-center">
-                  <div className="w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center">
-                    <span className="#666666 text-sm font-bold">3</span>
-                  </div>
-                  <span className="ml-2 text-sm #666666">Pendiente</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </motion.div>
+                </CardContent>
+              </Card>
+            </motion.div>
+          </TabsContent>
 
-        {/* Icons Section */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 1.0 }}
-          style={{
-            padding: '28px',
-            border: '1px solid #333333',
-            borderRadius: '16px',
-            backgroundColor: 'rgba(255, 255, 255, 0.02)',
-            marginBottom: '32px',
-            backdropFilter: 'blur(10px)'
-          }}
-        >
-          <h2 className="text-xl font-semibold mb-4 flex items-center space-x-2">
-            <Palette className="w-5 h-5 text-purple-500" />
-            <span>Iconos</span>
-          </h2>
-          
-          <div className="grid grid-cols-4 md:grid-cols-8 lg:grid-cols-12 gap-4">
-            {[
-              Target, Palette, Smartphone, Megaphone, Rocket,
-              CheckCircle, Circle, X, Plus, Trash2, Heart, Type,
-              Users, Search, TrendingUp, Sparkles, Loader2,
-              Code, Play, Monitor, Upload, Eye, ExternalLink
-            ].map((Icon, index) => (
-              <div key={index} className="flex flex-col items-center p-3 border border-gray-200 rounded-lg hover:#000000 transition-colors">
-                <Icon className="w-6 h-6 #cccccc mb-2" />
-                <span className="text-xs #666666 text-center">{Icon.name}</span>
-              </div>
-            ))}
-          </div>
-        </motion.div>
+          {/* Progress Tab */}
+          <TabsContent value="progress" className="mt-8">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5 }}
+            >
+              <Card className="bg-gray-900/50 border-gray-800/50 backdrop-blur-sm shadow-2xl">
+                <CardHeader className="border-b border-gray-800/50">
+                  <CardTitle className="flex items-center gap-3 text-white text-2xl">
+                    <div className="p-2 bg-gradient-to-r from-emerald-600 to-green-600 rounded-lg">
+                      <TrendingUp className="w-6 h-6 text-white" />
+                    </div>
+                    Barras de Progreso
+                  </CardTitle>
+                  <CardDescription className="text-gray-400 text-lg">
+                    Indicadores de progreso y completado
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="p-8">
+                  <div className="space-y-8">
+                    <div className="space-y-4">
+                      <div className="flex justify-between">
+                        <span className="text-gray-300">Progreso básico</span>
+                        <span className="text-gray-400">75%</span>
+                      </div>
+                      <Progress value={75} className="h-2" />
+                    </div>
+                    
+                    <div className="space-y-4">
+                      <div className="flex justify-between">
+                        <span className="text-gray-300">Carga de archivos</span>
+                        <span className="text-gray-400">45%</span>
+                      </div>
+                      <Progress value={45} className="h-3" />
+                    </div>
+                    
+                    <div className="space-y-4">
+                      <div className="flex justify-between">
+                        <span className="text-gray-300">Instalación</span>
+                        <span className="text-gray-400">100%</span>
+                      </div>
+                      <Progress value={100} className="h-2" />
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </motion.div>
+          </TabsContent>
 
+          {/* Icons Tab */}
+          <TabsContent value="icons" className="mt-8">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5 }}
+            >
+              <Card className="bg-gray-900/50 border-gray-800/50 backdrop-blur-sm shadow-2xl">
+                <CardHeader className="border-b border-gray-800/50">
+                  <CardTitle className="flex items-center gap-3 text-white text-2xl">
+                    <div className="p-2 bg-gradient-to-r from-yellow-600 to-orange-600 rounded-lg">
+                      <Star className="w-6 h-6 text-white" />
+                    </div>
+                    Iconografía
+                  </CardTitle>
+                  <CardDescription className="text-gray-400 text-lg">
+                    Biblioteca de iconos del sistema
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="p-8">
+                  <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-6">
+                    {iconSet.map((icon, index) => (
+                      <motion.div
+                        key={icon.name}
+                        initial={{ opacity: 0, scale: 0.8 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        transition={{ duration: 0.3, delay: index * 0.05 }}
+                        className="group flex flex-col items-center p-4 bg-gray-800/30 rounded-lg border border-gray-700/30 hover:bg-gray-800/50 hover:border-gray-600/50 transition-all duration-300 cursor-pointer"
+                      >
+                        <div className="p-3 bg-gray-700/50 rounded-lg group-hover:bg-gray-600/50 transition-colors duration-300 mb-3">
+                          <icon.icon className="w-6 h-6 text-gray-300 group-hover:text-white transition-colors duration-300" />
+                        </div>
+                        <h4 className="text-gray-300 text-sm font-medium text-center">{icon.name}</h4>
+                        <p className="text-gray-500 text-xs text-center mt-1">{icon.description}</p>
+                      </motion.div>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
+            </motion.div>
+          </TabsContent>
+        </Tabs>
       </div>
     </div>
   );
