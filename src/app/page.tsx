@@ -4925,18 +4925,23 @@ export default function HomePage() {
           
           .main-container {
             flex-direction: row;
+            width: 100vw;
+            height: 100vh;
+            overflow: hidden;
           }
           
           .video-column {
-            width: 50%;
+            width: 50vw;
             height: 100vh;
             flex-shrink: 0;
+            overflow: hidden;
           }
           
           .content-column {
-            width: 50%;
+            width: 50vw;
             height: 100vh;
             flex-shrink: 0;
+            overflow: hidden;
           }
           
           .mobile-menu {
@@ -4950,20 +4955,34 @@ export default function HomePage() {
           @media (max-width: 767px) {
             .main-container {
               flex-direction: column;
+              width: 100vw;
+              height: 100vh;
+              overflow: hidden;
             }
             
             .video-column {
-              width: 100%;
-              height: 40vh;
+              width: 100vw;
+              height: 100vh;
+              position: relative;
             }
             
             .content-column {
-              width: 100%;
-              height: 60vh;
+              width: 100vw;
+              height: 100vh;
+              position: absolute;
+              top: 0;
+              left: 0;
+              z-index: 10;
+              background: linear-gradient(to bottom, transparent 0%, rgba(0,0,0,0.3) 30%, rgba(0,0,0,0.8) 70%, #000000 100%);
             }
             
             .mobile-menu {
               display: flex;
+              position: absolute;
+              top: 16px;
+              left: 16px;
+              right: 16px;
+              z-index: 20;
             }
             
             .desktop-header {
